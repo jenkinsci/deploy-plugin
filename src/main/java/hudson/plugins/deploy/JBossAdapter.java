@@ -5,7 +5,7 @@ package hudson.plugins.deploy;
  *
  * @author Kohsuke Kawaguchi
  */
-public abstract class JBossAdapter extends PasswordProtectedAdapter {
+public abstract class JBossAdapter extends PasswordProtectedAdapterCargo {
     protected JBossAdapter(String userName, String password) {
         super(userName, password);
     }

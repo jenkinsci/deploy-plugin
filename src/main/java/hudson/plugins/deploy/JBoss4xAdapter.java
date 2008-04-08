@@ -8,7 +8,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
  *
  * @author Kohsuke Kawaguchi
  */
-public class JBoss4xAdapter extends PasswordProtectedAdapter {
+public class JBoss4xAdapter extends PasswordProtectedAdapterCargo {
     @DataBoundConstructor
     public JBoss4xAdapter(String userName, String password) {
         super(userName, password);

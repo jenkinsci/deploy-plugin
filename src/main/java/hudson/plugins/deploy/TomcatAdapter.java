@@ -11,7 +11,7 @@ import java.net.MalformedURLException;
  * 
  * @author Kohsuke Kawaguchi
  */
-public abstract class TomcatAdapter extends PasswordProtectedAdapter {
+public abstract class TomcatAdapter extends PasswordProtectedAdapterCargo {
     /**
      * Top URL of Tomcat.
      */

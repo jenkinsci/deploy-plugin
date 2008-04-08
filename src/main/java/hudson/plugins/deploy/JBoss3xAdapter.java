@@ -8,7 +8,7 @@ import hudson.model.Descriptor;
  * 
  * @author Kohsuke Kawaguchi
  */
-public class JBoss3xAdapter extends PasswordProtectedAdapter {
+public class JBoss3xAdapter extends PasswordProtectedAdapterCargo {
     @DataBoundConstructor
     public JBoss3xAdapter(String userName, String password) {
         super(userName, password);

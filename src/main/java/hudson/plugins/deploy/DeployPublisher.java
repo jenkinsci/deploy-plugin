@@ -36,11 +36,11 @@ import java.io.Serializable;
  * @author Kohsuke Kawaguchi
  */
 public class DeployPublisher extends Publisher implements Serializable {
-    public final ContainerAdapter adapter;
+    public final CargoContainerAdapter adapter;
 
     public final String war;
 
-    public DeployPublisher(ContainerAdapter adapter, String war) {
+    public DeployPublisher(CargoContainerAdapter adapter, String war) {
         this.adapter = adapter;
         this.war = war;
     }
@@ -99,7 +99,7 @@ public class DeployPublisher extends Publisher implements Serializable {
             return Messages.DeployPublisher_DisplayName();
         }
 
-        public DescriptorList<ContainerAdapter> getContainerAdapters() {
+        public DescriptorList<CargoContainerAdapter> getContainerAdapters() {
             return ContainerAdapter.LIST;
         }
 
