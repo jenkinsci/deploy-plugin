@@ -23,6 +23,8 @@ public interface ContainerAdapter extends Describable<ContainerAdapter>, Extensi
 
     public static DescriptorList<ContainerAdapter> LIST = new DescriptorList<ContainerAdapter>(
         Tomcat5xAdapter.DESCRIPTOR,
-        Tomcat4xAdapter.DESCRIPTOR
+        Tomcat4xAdapter.DESCRIPTOR,
+        JBoss4xAdapter.DESCRIPTOR,
+        JBoss3xAdapter.DESCRIPTOR
     );
 }

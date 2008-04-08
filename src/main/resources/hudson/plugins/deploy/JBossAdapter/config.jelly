@@ -1,0 +1,12 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+         xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <f:entry title="Manager user name">
+    <f:textbox name="deploy.userName" value="${instance.userName}" />
+  </f:entry>
+  <f:entry title="Manager password">
+    <f:password name="deploy.password" value="${instance.password}" />
+  </f:entry>
+  <f:entry title="JBoss URL">
+    <f:textbox name="deploy.url" value="${instance.url}" />
+  </f:entry>
+</j:jelly>
