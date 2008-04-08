@@ -26,7 +26,7 @@ public class Tomcat4xAdapter extends TomcatAdapter {
         return DESCRIPTOR;
     }
 
-    public static final Descriptor<ContainerAdapter> DESCRIPTOR = new Descriptor<ContainerAdapter>(Tomcat5xAdapter.class) {
+    public static final Descriptor<ContainerAdapter> DESCRIPTOR = new Descriptor<ContainerAdapter>(Tomcat4xAdapter.class) {
         public String getDisplayName() {
             return "Tomcat 4.x";
         }
