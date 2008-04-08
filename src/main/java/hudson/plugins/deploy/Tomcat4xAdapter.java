@@ -1,24 +1,25 @@
 package hudson.plugins.deploy;
 
-import hudson.model.Descriptor;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.net.URL;
 
+import hudson.model.Descriptor;
+
 /**
  * Tomcat 5.x.
- * 
+ *
  * @author Kohsuke Kawaguchi
  */
-public class Tomcat5xAdapter extends TomcatAdapter {
+public class Tomcat4xAdapter extends TomcatAdapter {
 
     @DataBoundConstructor
-    public Tomcat5xAdapter(String userName, String password, URL url) {
+    public Tomcat4xAdapter(String userName, String password, URL url) {
         super(userName, password, url);
     }
 
     public String getContainerId() {
-        return "tomcat5x";
+        return "tomcat4x";
     }
 
     public Descriptor<ContainerAdapter> getDescriptor() {
@@ -27,7 +28,7 @@ public class Tomcat5xAdapter extends TomcatAdapter {
 
     public static final Descriptor<ContainerAdapter> DESCRIPTOR = new Descriptor<ContainerAdapter>(Tomcat5xAdapter.class) {
         public String getDisplayName() {
-            return "Tomcat 5.x";
+            return "Tomcat 4.x";
         }
     };
 }
