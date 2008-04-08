@@ -1,0 +1,20 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+         xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <f:entry title="WAR file">
+    <f:textbox name="deploy.war" value="${instance.war}" />
+  </f:entry>
+
+  <f:dropdownList name="value" title="${%Container}">
+    <j:forEach var="descriptor" items="${descriptor.containerAdapters}" varStatus="loop">
+      <f:dropdownListBlock value="${loop.index}" title="${descriptor.displayName}" selected="${instance.adapter.descriptor==descriptor}">
+        <f:nested>
+          <table width="100%">
+            <j:set var="instance" value="${h.ifThenElse(instance.adapter.descriptor==descriptor, instance.adapter, null)}"/>
+            <st:include from="${descriptor}" page="${descriptor.configPage}"/>
+          </table>
+        </f:nested>
+      </f:dropdownListBlock>
+    </j:forEach>
+  </f:dropdownList>
+
+</j:jelly>
