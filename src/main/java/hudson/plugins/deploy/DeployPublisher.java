@@ -36,42 +36,19 @@ import java.io.Serializable;
  * @author Kohsuke Kawaguchi
  */
 public class DeployPublisher extends Publisher implements Serializable {
-    public final CargoContainerAdapter adapter;
+    public final ContainerAdapter adapter;
 
     public final String war;
 
-    public DeployPublisher(CargoContainerAdapter adapter, String war) {
+    public DeployPublisher(ContainerAdapter adapter, String war) {
         this.adapter = adapter;
         this.war = war;
     }
 
-    public boolean perform(AbstractBuild<?,?> build, Launcher launcher, final BuildListener listener) throws InterruptedException, IOException {
-        FilePath war = build.getParent().getWorkspace().child(this.war);
-        if(!war.act(new FileCallable<Boolean>() {
-            public Boolean invoke(File f, VirtualChannel channel) throws IOException {
-                if(!f.exists()) {
-                    listener.error(Messages.DeployPublisher_NoSuchFile(f));
-                    return true;
-                }
-                ConfigurationFactory configFactory = new DefaultConfigurationFactory();
-                ContainerFactory containerFactory = new DefaultContainerFactory();
-                DeployerFactory deployerFactory = new DefaultDeployerFactory();
-
-                String id = adapter.getContainerId();
-                Configuration config = configFactory.createConfiguration(id, ContainerType.REMOTE, ConfigurationType.RUNTIME);
-                adapter.configure(config);
-                Container container = containerFactory.createContainer(id, ContainerType.REMOTE, config);
-                Deployer deployer = deployerFactory.createDeployer(container);
-
-                listener.getLogger().println("Deploying "+f);
-                deployer.setLogger(new LoggerImpl(listener.getLogger()));
-                deployer.redeploy(new WAR(f.getAbsolutePath()));
-
-                return true;
-            }
-        })) {
+    public boolean perform(AbstractBuild<?,?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
+        FilePath warFile = build.getParent().getWorkspace().child(this.war);
+        if(!adapter.redeploy(warFile,build,launcher,listener))
             build.setResult(Result.FAILURE);
-        }
 
         return true;
     }
@@ -99,7 +76,7 @@ public class DeployPublisher extends Publisher implements Serializable {
             return Messages.DeployPublisher_DisplayName();
         }
 
-        public DescriptorList<CargoContainerAdapter> getContainerAdapters() {
+        public DescriptorList<ContainerAdapter> getContainerAdapters() {
             return ContainerAdapter.LIST;
         }
 
