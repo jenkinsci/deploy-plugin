@@ -4,7 +4,7 @@
     <f:textbox name="deploy.userName" value="${instance.userName}" />
   </f:entry>
   <f:entry title="Manager password">
-    <f:textbox name="deploy.password" value="${instance.password}" />
+    <f:password name="deploy.password" value="${instance.password}" />
   </f:entry>
   <f:entry title="Tomcat URL">
     <f:textbox name="deploy.url" value="${instance.url}" />

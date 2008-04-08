@@ -20,5 +20,18 @@
       <artifactId>cargo-maven2-plugin</artifactId>
       <version>0.3.1</version>
     </dependency>
+    <dependency>
+      <groupId>org.jvnet.hudson.main</groupId>
+      <artifactId>hudson-war</artifactId>
+      <type>war</type>
+      <version>1.206-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jvnet.hudson.main</groupId>
+      <artifactId>hudson-core</artifactId>
+      <version>1.206-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 </project>
