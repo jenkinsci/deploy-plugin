@@ -10,7 +10,7 @@
         <f:nested>
           <table width="100%">
             <j:set var="instance" value="${h.ifThenElse(instance.adapter.descriptor==descriptor, instance.adapter, null)}"/>
-            <st:include from="${descriptor}" page="${descriptor.configPage}"/>
+            <st:include class="${descriptor.clazz}" page="config.jelly"/>
           </table>
         </f:nested>
       </f:dropdownListBlock>
