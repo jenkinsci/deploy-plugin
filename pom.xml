@@ -12,26 +12,59 @@
   <version>1.0-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <name>Deploy to container Plugin</name>
-  <!--url>http://hudson.gotdns.com/wiki/display/HUDSON/Claim+Plugin</url-->
+  <url>http://hudson.gotdns.com/wiki/display/HUDSON/Deploy+Plugin</url>
 
   <dependencies>
     <dependency>
       <groupId>org.codehaus.cargo</groupId>
-      <artifactId>cargo-maven2-plugin</artifactId>
-      <version>0.3.1</version>
+      <artifactId>cargo-core-api-generic</artifactId>
+      <version>0.9</version>
+    </dependency>
+    <!--dependency>
+      <groupId>org.codehaus.cargo</groupId>
+      <artifactId>cargo-core-container-geronimo</artifactId>
+      <version>0.9</version>
+    </dependency-->
+    <dependency>
+      <groupId>org.codehaus.cargo</groupId>
+      <artifactId>cargo-core-container-jboss</artifactId>
+      <version>0.9</version>
+    </dependency>
+    <!--dependency>
+      <groupId>org.codehaus.cargo</groupId>
+      <artifactId>cargo-core-container-jetty</artifactId>
+      <version>0.9</version>
     </dependency>
     <dependency>
-      <groupId>org.jvnet.hudson.main</groupId>
-      <artifactId>hudson-war</artifactId>
-      <type>war</type>
-      <version>1.206-SNAPSHOT</version>
-      <scope>test</scope>
+      <groupId>org.codehaus.cargo</groupId>
+      <artifactId>cargo-core-container-jo</artifactId>
+      <version>0.9</version>
     </dependency>
     <dependency>
-      <groupId>org.jvnet.hudson.main</groupId>
-      <artifactId>hudson-core</artifactId>
-      <version>1.206-SNAPSHOT</version>
-      <scope>provided</scope>
+      <groupId>org.codehaus.cargo</groupId>
+      <artifactId>cargo-core-container-orion</artifactId>
+      <version>0.9</version>
     </dependency>
+    <dependency>
+      <groupId>org.codehaus.cargo</groupId>
+      <artifactId>cargo-core-container-resin</artifactId>
+      <version>0.9</version>
+    </dependency-->
+    <dependency>
+      <groupId>org.codehaus.cargo</groupId>
+      <artifactId>cargo-core-container-tomcat</artifactId>
+      <version>0.9</version>
+      <exclusions>
+        <exclusion>
+          <groupId>ant</groupId>
+          <artifactId>ant</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <!--dependency>
+      <groupId>org.codehaus.cargo</groupId>
+      <artifactId>cargo-core-container-weblogic</artifactId>
+      <version>0.9</version>
+    </dependency-->
   </dependencies>
 </project>
