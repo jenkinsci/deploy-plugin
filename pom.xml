@@ -30,6 +30,20 @@
       <groupId>org.codehaus.cargo</groupId>
       <artifactId>cargo-core-api-generic</artifactId>
       <version>${cargo.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>dom4j</groupId>
+          <artifactId>dom4j</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jaxen</groupId>
+          <artifactId>jaxen</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>ant</groupId>
+          <artifactId>ant</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <!--dependency>
       <groupId>org.codehaus.cargo</groupId>
@@ -65,12 +79,6 @@
       <groupId>org.codehaus.cargo</groupId>
       <artifactId>cargo-core-container-tomcat</artifactId>
       <version>${cargo.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>ant</groupId>
-          <artifactId>ant</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <!--dependency>
       <groupId>org.codehaus.cargo</groupId>
