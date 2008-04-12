@@ -1,8 +1,8 @@
 package hudson.plugins.deploy;
 
-import org.codehaus.cargo.util.log.Logger;
-import org.codehaus.cargo.util.log.LogLevel;
 import org.codehaus.cargo.util.internal.log.AbstractLogger;
+import org.codehaus.cargo.util.log.LogLevel;
+import org.codehaus.cargo.util.log.Logger;
 
 import java.io.PrintStream;
 

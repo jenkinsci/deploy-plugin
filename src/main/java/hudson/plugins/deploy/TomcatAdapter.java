@@ -3,8 +3,8 @@ package hudson.plugins.deploy;
 import org.codehaus.cargo.container.configuration.Configuration;
 import org.codehaus.cargo.container.tomcat.TomcatPropertySet;
 
-import java.net.URL;
 import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Base class for Tomcat adapters.

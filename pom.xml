@@ -18,7 +18,7 @@
     <dependency>
       <groupId>org.codehaus.cargo</groupId>
       <artifactId>cargo-core-api-generic</artifactId>
-      <version>0.9</version>
+      <version>${cargo.version}</version>
     </dependency>
     <!--dependency>
       <groupId>org.codehaus.cargo</groupId>
@@ -28,7 +28,7 @@
     <dependency>
       <groupId>org.codehaus.cargo</groupId>
       <artifactId>cargo-core-container-jboss</artifactId>
-      <version>0.9</version>
+      <version>${cargo.version}</version>
     </dependency>
     <!--dependency>
       <groupId>org.codehaus.cargo</groupId>
@@ -53,7 +53,7 @@
     <dependency>
       <groupId>org.codehaus.cargo</groupId>
       <artifactId>cargo-core-container-tomcat</artifactId>
-      <version>0.9</version>
+      <version>${cargo.version}</version>
       <exclusions>
         <exclusion>
           <groupId>ant</groupId>
@@ -67,4 +67,15 @@
       <version>0.9</version>
     </dependency-->
   </dependencies>
+
+  <repositories>
+    <repository>
+      <id>codehaus-snapshot</id>
+      <url>http://snapshots.repository.codehaus.org/</url>
+    </repository>
+  </repositories>
+
+  <properties>
+    <cargo.version>1.0-SNAPSHOT</cargo.version>
+  </properties>
 </project>
