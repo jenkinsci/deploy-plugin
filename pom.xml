@@ -14,6 +14,17 @@
   <name>Deploy to container Plugin</name>
   <url>http://hudson.gotdns.com/wiki/display/HUDSON/Deploy+Plugin</url>
 
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-release-plugin</artifactId>
+        <configuration>
+          <allowTimestampedSnapshots>true</allowTimestampedSnapshots>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  
   <dependencies>
     <dependency>
       <groupId>org.codehaus.cargo</groupId>
