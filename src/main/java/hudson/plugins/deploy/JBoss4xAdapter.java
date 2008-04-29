@@ -3,6 +3,8 @@ package hudson.plugins.deploy;
 import hudson.model.Descriptor;
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import java.net.URL;
+
 /**
  * JBoss 4.x.
  *
@@ -10,8 +12,8 @@ import org.kohsuke.stapler.DataBoundConstructor;
  */
 public class JBoss4xAdapter extends JBossAdapter {
     @DataBoundConstructor
-    public JBoss4xAdapter(String userName, String password) {
-        super(userName, password);
+    public JBoss4xAdapter(URL url, String userName, String password) {
+        super(url, userName, password);
     }
 
     public String getContainerId() {
