@@ -3,13 +3,15 @@ package hudson.plugins.deploy;
 import hudson.model.Descriptor;
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import java.net.URL;
+
 /**
  * @author Kohsuke Kawaguchi
  */
 public class JBoss5xAdapter extends JBossAdapter {
     @DataBoundConstructor
-    public JBoss5xAdapter(String userName, String password) {
-        super(userName, password);
+    public JBoss5xAdapter(URL url, String userName, String password) {
+        super(url, userName, password);
     }
 
     public String getContainerId() {
