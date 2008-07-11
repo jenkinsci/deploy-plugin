@@ -11,6 +11,7 @@ import hudson.tasks.Publisher;
 import hudson.util.DescriptorList;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -25,6 +26,7 @@ public class DeployPublisher extends Publisher implements Serializable {
 
     public final String war;
 
+    @DataBoundConstructor
     public DeployPublisher(ContainerAdapter adapter, String war) {
         this.adapter = adapter;
         this.war = war;
@@ -49,12 +51,6 @@ public class DeployPublisher extends Publisher implements Serializable {
 
         public boolean isApplicable(Class<? extends AbstractProject> jobType) {
             return true;
-        }
-
-        public Publisher newInstance(StaplerRequest req, JSONObject formData) throws FormException {
-            return new DeployPublisher(
-                ContainerAdapter.LIST.newInstanceFromRadioList(formData),
-                formData.getString("war"));
         }
 
         public String getDisplayName() {
