@@ -21,13 +21,17 @@ import org.codehaus.cargo.generic.deployer.DeployerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 
 /**
  * Provides container-specific glue code.
  *
+ * <p>
+ * To support remote operations as an inner class, marking the class as serializable.
+ *
  * @author Kohsuke Kawaguchi
  */
-public abstract class CargoContainerAdapter implements ContainerAdapter {
+public abstract class CargoContainerAdapter implements ContainerAdapter, Serializable {
     /**
      * Returns the container ID used by Cargo. 
      */
