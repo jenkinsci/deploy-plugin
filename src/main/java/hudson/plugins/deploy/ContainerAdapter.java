@@ -11,6 +11,13 @@ import hudson.util.DescriptorList;
 import java.io.IOException;
 
 /**
+ * Encapsulates container-specific deployment operation.
+ *
+ * <h2>Persistence</h2>
+ * <p>
+ * Instances of these objects are persisted in projects' configuration XML via XStream.
+ * 
+ *
  * @author Kohsuke Kawaguchi
  */
 public interface ContainerAdapter extends Describable<ContainerAdapter>, ExtensionPoint {
