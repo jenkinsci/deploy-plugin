@@ -4,6 +4,7 @@ import org.codehaus.cargo.container.configuration.Configuration;
 import org.codehaus.cargo.container.property.GeneralPropertySet;
 import org.codehaus.cargo.container.property.ServletPropertySet;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -12,20 +13,26 @@ import java.net.URL;
  * @author Kohsuke Kawaguchi
  */
 public abstract class JBossAdapter extends PasswordProtectedAdapterCargo {
-    public final URL url;
+    public final String url;
 
-    protected JBossAdapter(URL url, String userName, String password) {
+    protected JBossAdapter(String url, String password, String userName) {    	
         super(userName, password);
+        System.out.println("US: " + userName + " P: " + password + " U: " + url);
         this.url = url;
     }
 
     @Override
     public void configure(Configuration config) {
         super.configure(config);
-        config.setProperty(GeneralPropertySet.PROTOCOL,url.getProtocol());
-        config.setProperty(GeneralPropertySet.HOSTNAME,url.getHost());
-        int p = url.getPort();
-        if(p<0) p=80;
-        config.setProperty(ServletPropertySet.PORT,String.valueOf(p));
+        try {
+	        URL _url = new URL(url);
+	        config.setProperty(GeneralPropertySet.PROTOCOL,_url.getProtocol());
+	        config.setProperty(GeneralPropertySet.HOSTNAME,_url.getHost());
+	        int p = _url.getPort();
+	        if(p<0) p=80;
+	        config.setProperty(ServletPropertySet.PORT,String.valueOf(p));
+        } catch (MalformedURLException ex) {
+        	throw new AssertionError(ex);
+        }
     }
 }

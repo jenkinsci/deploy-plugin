@@ -10,8 +10,8 @@ import java.net.URL;
  */
 public class JBoss5xAdapter extends JBossAdapter {
     @DataBoundConstructor
-    public JBoss5xAdapter(URL url, String userName, String password) {
-        super(url, userName, password);
+    protected JBoss5xAdapter(String url, String password, String userName) {
+        super(url, password, userName);
     }
 
     public String getContainerId() {

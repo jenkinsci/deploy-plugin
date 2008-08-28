@@ -12,8 +12,8 @@ import java.net.URL;
  */
 public class JBoss3xAdapter extends JBossAdapter {
     @DataBoundConstructor
-    public JBoss3xAdapter(URL url, String userName, String password) {
-        super(url, userName, password);
+    public JBoss3xAdapter(String url, String password, String userName) {
+        super(url, password, userName);
     }
 
     public String getContainerId() {

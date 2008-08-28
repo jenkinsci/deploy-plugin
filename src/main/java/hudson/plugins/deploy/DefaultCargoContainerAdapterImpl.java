@@ -17,7 +17,7 @@ public abstract class DefaultCargoContainerAdapterImpl extends CargoContainerAda
     @Target(FIELD)
     @Retention(RUNTIME)
     @Documented
-    @interface Property {
+    public @interface Property {
         /**
          * Property name.
          */

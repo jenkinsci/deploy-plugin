@@ -7,6 +7,6 @@
     <f:password name="deploy.password" value="${instance.password}" />
   </f:entry>
   <f:entry title="Tomcat URL">
-    <f:textbox name="deploy.url" value="${instance.url}" />
+    <f:textbox name="deploy.url" value="${instance.url}" checkUrl="'/publisher/DeployPublisher/checkUrl?value='+escape(this.value)"  />
   </f:entry>
 </j:jelly>

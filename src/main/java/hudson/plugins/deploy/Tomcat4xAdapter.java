@@ -13,8 +13,8 @@ import java.net.URL;
 public class Tomcat4xAdapter extends TomcatAdapter {
 
     @DataBoundConstructor
-    public Tomcat4xAdapter(String userName, String password, URL url) {
-        super(userName, password, url);
+    public Tomcat4xAdapter(String url, String password, String userName) {
+        super(url, password, userName);
     }
 
     public String getContainerId() {
