@@ -1,11 +1,16 @@
 package hudson.plugins.deploy;
 
 import hudson.FilePath;
-import hudson.FilePath.FileCallable;
 import hudson.Launcher;
+import hudson.FilePath.FileCallable;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.remoting.VirtualChannel;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
+
 import org.codehaus.cargo.container.Container;
 import org.codehaus.cargo.container.ContainerType;
 import org.codehaus.cargo.container.configuration.Configuration;
@@ -18,10 +23,6 @@ import org.codehaus.cargo.generic.configuration.ConfigurationFactory;
 import org.codehaus.cargo.generic.configuration.DefaultConfigurationFactory;
 import org.codehaus.cargo.generic.deployer.DefaultDeployerFactory;
 import org.codehaus.cargo.generic.deployer.DeployerFactory;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
 
 /**
  * Provides container-specific glue code.
@@ -41,6 +42,20 @@ public abstract class CargoContainerAdapter implements ContainerAdapter, Seriali
      * Fills in the {@link Configuration} object.
      */
     protected abstract void configure(Configuration config);
+    
+    protected Container getContainer(ConfigurationFactory configFactory, ContainerFactory containerFactory, String id) {    	
+        Configuration config = configFactory.createConfiguration(id, ContainerType.REMOTE, ConfigurationType.RUNTIME);
+        configure(config);
+        return containerFactory.createContainer(id, ContainerType.REMOTE, config);
+    }
+    
+    protected void deploy(DeployerFactory deployerFactory, final BuildListener listener, Container container, File f) {
+    	Deployer deployer = deployerFactory.createDeployer(container);
+
+        listener.getLogger().println("Deploying "+f);
+        deployer.setLogger(new LoggerImpl(listener.getLogger()));
+        deployer.redeploy(new WAR(f.getAbsolutePath()));
+    }
 
     public boolean redeploy(FilePath war, AbstractBuild<?, ?> build, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException {
         return war.act(new FileCallable<Boolean>() {
@@ -48,21 +63,14 @@ public abstract class CargoContainerAdapter implements ContainerAdapter, Seriali
                 if(!f.exists()) {
                     listener.error(Messages.DeployPublisher_NoSuchFile(f));
                     return true;
-                }
-                ConfigurationFactory configFactory = new DefaultConfigurationFactory();
-                ContainerFactory containerFactory = new DefaultContainerFactory();
-                DeployerFactory deployerFactory = new DefaultDeployerFactory();
+                }                
+                final ConfigurationFactory configFactory = new DefaultConfigurationFactory();
+                final ContainerFactory containerFactory = new DefaultContainerFactory();
+                final DeployerFactory deployerFactory = new DefaultDeployerFactory();
 
-                String id = getContainerId();
-                Configuration config = configFactory.createConfiguration(id, ContainerType.REMOTE, ConfigurationType.RUNTIME);
-                configure(config);
-                Container container = containerFactory.createContainer(id, ContainerType.REMOTE, config);
-                Deployer deployer = deployerFactory.createDeployer(container);
-
-                listener.getLogger().println("Deploying "+f);
-                deployer.setLogger(new LoggerImpl(listener.getLogger()));
-                deployer.redeploy(new WAR(f.getAbsolutePath()));
-
+                Container container = getContainer(configFactory, containerFactory, getContainerId());
+                
+                deploy(deployerFactory, listener, container, f);
                 return true;
             }
         });

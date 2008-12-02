@@ -1,10 +1,12 @@
-package hudson.plugins.deploy;
+package hudson.plugins.deploy.tomcat;
 
-import org.codehaus.cargo.container.configuration.Configuration;
-import org.codehaus.cargo.container.tomcat.TomcatPropertySet;
+import hudson.plugins.deploy.PasswordProtectedAdapterCargo;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import org.codehaus.cargo.container.configuration.Configuration;
+import org.codehaus.cargo.container.tomcat.TomcatPropertySet;
 
 /**
  * Base class for Tomcat adapters.

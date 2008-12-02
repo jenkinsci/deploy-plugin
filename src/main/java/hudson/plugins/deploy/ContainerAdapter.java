@@ -6,6 +6,13 @@ import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.model.Describable;
+import hudson.plugins.deploy.glassfish.GlassFish2xAdapter;
+import hudson.plugins.deploy.jboss.JBoss3xAdapter;
+import hudson.plugins.deploy.jboss.JBoss4xAdapter;
+import hudson.plugins.deploy.jboss.JBoss5xAdapter;
+import hudson.plugins.deploy.tomcat.Tomcat4xAdapter;
+import hudson.plugins.deploy.tomcat.Tomcat5xAdapter;
+import hudson.plugins.deploy.tomcat.Tomcat6xAdapter;
 import hudson.util.DescriptorList;
 
 import java.io.IOException;
@@ -34,6 +41,7 @@ public interface ContainerAdapter extends Describable<ContainerAdapter>, Extensi
         Tomcat4xAdapter.DESCRIPTOR,
         JBoss5xAdapter.DESCRIPTOR,
         JBoss4xAdapter.DESCRIPTOR,
-        JBoss3xAdapter.DESCRIPTOR
+        JBoss3xAdapter.DESCRIPTOR,
+        GlassFish2xAdapter.DESCRIPTOR
     );
 }

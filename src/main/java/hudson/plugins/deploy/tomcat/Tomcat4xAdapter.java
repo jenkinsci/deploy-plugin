@@ -1,9 +1,9 @@
-package hudson.plugins.deploy;
+package hudson.plugins.deploy.tomcat;
 
 import hudson.model.Descriptor;
-import org.kohsuke.stapler.DataBoundConstructor;
+import hudson.plugins.deploy.ContainerAdapter;
 
-import java.net.URL;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * Tomcat 5.x.

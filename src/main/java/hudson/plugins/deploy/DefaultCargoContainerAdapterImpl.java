@@ -1,14 +1,15 @@
 package hudson.plugins.deploy;
 
-import org.apache.commons.beanutils.ConvertUtils;
-import org.codehaus.cargo.container.configuration.Configuration;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Documented;
-import static java.lang.annotation.ElementType.FIELD;
 import java.lang.annotation.Retention;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
+
+import org.apache.commons.beanutils.ConvertUtils;
+import org.codehaus.cargo.container.configuration.Configuration;
 
 /**
  * @author Kohsuke Kawaguchi
