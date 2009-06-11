@@ -2,6 +2,7 @@ package hudson.plugins.deploy;
 
 import hudson.FilePath;
 import hudson.Launcher;
+import hudson.Extension;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
@@ -9,7 +10,7 @@ import hudson.model.Result;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
 import hudson.util.DescriptorList;
-import hudson.util.FormFieldValidator;
+import hudson.util.FormValidation;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -20,6 +21,7 @@ import javax.servlet.ServletException;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.QueryParameter;
 
 /**
  * Deploys WAR to a continer.
@@ -49,15 +51,8 @@ public class DeployPublisher extends Publisher implements Serializable {
         return true;
     }
 
-    public DescriptorImpl getDescriptor() {
-        return DescriptorImpl.INSTANCE;
-    }
-
+    @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
-        private DescriptorImpl() {
-            super(DeployPublisher.class);
-        }
-
         public boolean isApplicable(Class<? extends AbstractProject> jobType) {
             return true;
         }
@@ -70,25 +65,18 @@ public class DeployPublisher extends Publisher implements Serializable {
             return ContainerAdapter.LIST;
         }
 
-        public static final DescriptorImpl INSTANCE = new DescriptorImpl();
-        
-        public void doCheckUrl(final StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {        
-	        new FormFieldValidator(req,rsp,true) {
-	            public void check() throws IOException, ServletException {
-	            	String url = req.getParameter("value");
-	            	
-	            	if (url != null && url.length() > 0) {
-	            		try {
-		            		URL u = new URL(url);
-		            	} catch (Exception e) {
-		            		error(Messages.DeployPublisher_BadFormedUrl());
-		            		return;
-		            	}	
-	            	}
-	            		                	                
-	                ok();
-	            }
-	        }.process();
+        public FormValidation doCheckUrl(final StaplerRequest req, StaplerResponse rsp, @QueryParameter String value) throws IOException, ServletException {
+            String url = value;
+
+            if (url != null && url.length() > 0) {
+                try {
+                    URL u = new URL(url);
+                } catch (Exception e) {
+                    return FormValidation.error(Messages.DeployPublisher_BadFormedUrl());
+                }
+            }
+
+            return FormValidation.ok();
 	    }
 
     }
