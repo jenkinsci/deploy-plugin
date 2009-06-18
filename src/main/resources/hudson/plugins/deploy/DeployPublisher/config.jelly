@@ -1,7 +1,7 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
          xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-  <f:entry title="${%WAR/EAR file}">
-    <f:textbox name="deploy.war" value="${instance.war}" />
+  <f:entry title="${%WAR/EAR file}" field="war">
+    <f:textbox />
   </f:entry>
 
   <f:dropdownList name="adapter" title="${%Container}">
@@ -23,8 +23,8 @@
     </j:forEach>
   </f:dropdownList>
 
-  <f:entry title="${%Deploy on failure}">
-  	<f:checkbox name="deploy.onFailure" checked="${instance.onFailure}"/>
+  <f:entry title="${%Deploy on failure}" field="onFailure">
+  	<f:checkbox />
   </f:entry>
 
 </j:jelly>

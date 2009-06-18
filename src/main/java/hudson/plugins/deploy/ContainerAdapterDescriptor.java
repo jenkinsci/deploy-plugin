@@ -22,7 +22,6 @@ public abstract class ContainerAdapterDescriptor extends Descriptor<ContainerAda
     }
 
     public FormValidation doCheckUrl(@QueryParameter String value) throws IOException, ServletException {
-
         if (value != null && value.length() > 0) {
             try {
                 new URL(value);

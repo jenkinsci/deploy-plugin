@@ -17,6 +17,10 @@ import hudson.util.FormValidation;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import javax.servlet.ServletException;
 
@@ -63,8 +67,17 @@ public class DeployPublisher extends Publisher implements Serializable {
             return Messages.DeployPublisher_DisplayName();
         }
 
-        public DescriptorExtensionList<ContainerAdapter, ContainerAdapterDescriptor> getContainerAdapters() {
-            return ContainerAdapter.all();
+        /**
+         * Sort the descriptors so that the order they are displayed is more predictable
+         */
+        public List<ContainerAdapterDescriptor> getContainerAdapters() {
+            List<ContainerAdapterDescriptor> r = new ArrayList<ContainerAdapterDescriptor>(ContainerAdapter.all());
+            Collections.sort(r,new Comparator<ContainerAdapterDescriptor>() {
+                public int compare(ContainerAdapterDescriptor o1, ContainerAdapterDescriptor o2) {
+                    return o1.getDisplayName().compareTo(o2.getDisplayName());
+                }
+            });
+            return r;
         }
     }
 
