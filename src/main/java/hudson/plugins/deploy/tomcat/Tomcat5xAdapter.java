@@ -2,6 +2,8 @@ package hudson.plugins.deploy.tomcat;
 
 import hudson.model.Descriptor;
 import hudson.plugins.deploy.ContainerAdapter;
+import hudson.plugins.deploy.ContainerAdapterDescriptor;
+import hudson.Extension;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -21,13 +23,10 @@ public class Tomcat5xAdapter extends TomcatAdapter {
         return "tomcat5x";
     }
 
-    public Descriptor<ContainerAdapter> getDescriptor() {
-        return DESCRIPTOR;
-    }
-
-    public static final Descriptor<ContainerAdapter> DESCRIPTOR = new Descriptor<ContainerAdapter>(Tomcat5xAdapter.class) {
+    @Extension
+	public static final class DescriptorImpl extends ContainerAdapterDescriptor {
         public String getDisplayName() {
             return "Tomcat 5.x";
         }
-    };
+    }
 }

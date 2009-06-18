@@ -85,11 +85,11 @@
       <artifactId>cargo-core-container-glassfish</artifactId>
       <version>${cargo.version}</version>
     </dependency>
-    <!--dependency>
+    <dependency>
       <groupId>org.codehaus.cargo</groupId>
       <artifactId>cargo-core-container-weblogic</artifactId>
-      <version>0.9</version>
-    </dependency-->
+      <version>${cargo.version}</version>
+    </dependency>
   </dependencies>
 
   <repositories>
@@ -100,6 +100,6 @@
   </repositories>
 
   <properties>
-    <cargo.version>1.0-alpha-6</cargo.version>
+    <cargo.version>1.0</cargo.version>
   </properties>
 </project>

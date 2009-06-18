@@ -3,10 +3,12 @@ package hudson.plugins.deploy;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Extension;
+import hudson.DescriptorExtensionList;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
 import hudson.model.Result;
+import hudson.model.Descriptor;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
 import hudson.util.DescriptorList;
@@ -61,24 +63,9 @@ public class DeployPublisher extends Publisher implements Serializable {
             return Messages.DeployPublisher_DisplayName();
         }
 
-        public DescriptorList<ContainerAdapter> getContainerAdapters() {
-            return ContainerAdapter.LIST;
+        public DescriptorExtensionList<ContainerAdapter, ContainerAdapterDescriptor> getContainerAdapters() {
+            return ContainerAdapter.all();
         }
-
-        public FormValidation doCheckUrl(final StaplerRequest req, StaplerResponse rsp, @QueryParameter String value) throws IOException, ServletException {
-            String url = value;
-
-            if (url != null && url.length() > 0) {
-                try {
-                    URL u = new URL(url);
-                } catch (Exception e) {
-                    return FormValidation.error(Messages.DeployPublisher_BadFormedUrl());
-                }
-            }
-
-            return FormValidation.ok();
-	    }
-
     }
 
     private static final long serialVersionUID = 1L;

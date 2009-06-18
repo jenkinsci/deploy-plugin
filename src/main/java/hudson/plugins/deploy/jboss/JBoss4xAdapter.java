@@ -2,6 +2,8 @@ package hudson.plugins.deploy.jboss;
 
 import hudson.model.Descriptor;
 import hudson.plugins.deploy.ContainerAdapter;
+import hudson.plugins.deploy.ContainerAdapterDescriptor;
+import hudson.Extension;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -20,13 +22,10 @@ public class JBoss4xAdapter extends JBossAdapter {
         return "jboss4x";
     }
 
-    public Descriptor<ContainerAdapter> getDescriptor() {
-        return DESCRIPTOR;
-    }
-
-    public static final Descriptor<ContainerAdapter> DESCRIPTOR = new Descriptor<ContainerAdapter>(JBoss4xAdapter.class) {
+    @Extension
+	public static final class DescriptorImpl extends ContainerAdapterDescriptor {
         public String getDisplayName() {
             return "JBoss 4.x";
         }
-    };
+    }
 }

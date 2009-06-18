@@ -35,7 +35,9 @@ public abstract class DefaultCargoContainerAdapterImpl extends CargoContainerAda
             if(p==null)     continue;
 
             try {
-                config.setProperty(p.value(), ConvertUtils.convert(f.get(this)));
+                String v = ConvertUtils.convert(f.get(this));
+                if(v!=null)
+                    config.setProperty(p.value(), v);
             } catch (IllegalAccessException e) {
                 IllegalAccessError x = new IllegalAccessError();
                 x.initCause(e);

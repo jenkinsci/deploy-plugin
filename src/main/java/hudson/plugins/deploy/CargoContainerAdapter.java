@@ -32,7 +32,7 @@ import org.codehaus.cargo.generic.deployer.DeployerFactory;
  *
  * @author Kohsuke Kawaguchi
  */
-public abstract class CargoContainerAdapter implements ContainerAdapter, Serializable {
+public abstract class CargoContainerAdapter extends ContainerAdapter implements Serializable {
     /**
      * Returns the container ID used by Cargo. 
      */
@@ -63,10 +63,11 @@ public abstract class CargoContainerAdapter implements ContainerAdapter, Seriali
                 if(!f.exists()) {
                     listener.error(Messages.DeployPublisher_NoSuchFile(f));
                     return true;
-                }                
-                final ConfigurationFactory configFactory = new DefaultConfigurationFactory();
-                final ContainerFactory containerFactory = new DefaultContainerFactory();
-                final DeployerFactory deployerFactory = new DefaultDeployerFactory();
+                }
+                ClassLoader cl = getClass().getClassLoader();
+                final ConfigurationFactory configFactory = new DefaultConfigurationFactory(cl);
+                final ContainerFactory containerFactory = new DefaultContainerFactory(cl);
+                final DeployerFactory deployerFactory = new DefaultDeployerFactory(cl);
 
                 Container container = getContainer(configFactory, containerFactory, getContainerId());
                 
