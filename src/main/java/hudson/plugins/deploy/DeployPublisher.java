@@ -3,38 +3,30 @@ package hudson.plugins.deploy;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Extension;
-import hudson.DescriptorExtensionList;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
 import hudson.model.Result;
-import hudson.model.Descriptor;
 import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
-import hudson.util.DescriptorList;
-import hudson.util.FormValidation;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.URL;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import javax.servlet.ServletException;
-
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
-import org.kohsuke.stapler.QueryParameter;
 
 /**
  * Deploys WAR to a continer.
  * 
  * @author Kohsuke Kawaguchi
  */
-public class DeployPublisher extends Publisher implements Serializable {
+public class DeployPublisher extends Notifier implements Serializable {
     public final ContainerAdapter adapter;
 
     public final String war;
@@ -49,12 +41,16 @@ public class DeployPublisher extends Publisher implements Serializable {
 
     public boolean perform(AbstractBuild<?,?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
     	if (build.getResult().equals(Result.SUCCESS) || onFailure) {
-	        FilePath warFile = build.getParent().getWorkspace().child(this.war);
+	        FilePath warFile = build.getWorkspace().child(this.war);
 	        if(!adapter.redeploy(warFile,build,launcher,listener))
 	            build.setResult(Result.FAILURE);
     	}
 
         return true;
+    }
+
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.BUILD;
     }
 
     @Extension
