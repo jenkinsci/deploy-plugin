@@ -15,6 +15,7 @@ import org.codehaus.cargo.container.Container;
 import org.codehaus.cargo.container.ContainerType;
 import org.codehaus.cargo.container.configuration.Configuration;
 import org.codehaus.cargo.container.configuration.ConfigurationType;
+import org.codehaus.cargo.container.deployable.Deployable;
 import org.codehaus.cargo.container.deployable.WAR;
 import org.codehaus.cargo.container.deployer.Deployer;
 import org.codehaus.cargo.generic.ContainerFactory;
@@ -54,7 +55,17 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
 
         listener.getLogger().println("Deploying "+f);
         deployer.setLogger(new LoggerImpl(listener.getLogger()));
-        deployer.redeploy(new WAR(f.getAbsolutePath()));
+        deployer.redeploy(createDeployable(f));
+        
+    }
+
+    /**
+     * Creates a Deployable object from the given file object.
+     * @param deployableFile The deployable file to create the Deployable from.
+     * @return A Deployable object.
+     */
+    protected Deployable createDeployable(File deployableFile) {
+        return new WAR(deployableFile.getAbsolutePath());
     }
 
     public boolean redeploy(FilePath war, AbstractBuild<?, ?> build, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException {
