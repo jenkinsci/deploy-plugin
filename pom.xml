@@ -13,6 +13,12 @@
   <packaging>hpi</packaging>
   <name>Deploy to container Plugin</name>
   <url>http://wiki.hudson-ci.org/display/HUDSON/Deploy+Plugin</url>
+  <developers>
+    <developer>
+      <id>kohsuke</id>
+      <name>Kohsuke Kawaguchi</name>
+    </developer>
+  </developers>
 
   <build>
     <plugins>
