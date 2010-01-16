@@ -89,7 +89,7 @@
     <dependency>
       <groupId>org.codehaus.cargo</groupId>
       <artifactId>cargo-core-container-glassfish</artifactId>
-      <version>${cargo.version}</version>
+      <version>1.0-alpha-6</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.cargo</groupId>
