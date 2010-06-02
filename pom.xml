@@ -40,20 +40,18 @@
   		<version>1.5</version>
 	</dependency>
   
-  	<dependency>         
+  <dependency>         
   		<groupId>com.ibm.ws.webservices.thinclient_6.1.0</groupId>
   		<artifactId>com.ibm.ws.webservices.thinclient_6.1.0</artifactId>
   	  	<version>1.0</version>
-  	  	<scope>system</scope>  	  	   
-    	<systemPath>${basedir}/was/com.ibm.ws.webservices.thinclient_6.1.0.jar</systemPath>
+  	  	<scope>provided</scope>  	   
 	</dependency>
 	
 		<dependency>         
   	<groupId>com.ibm.ws.admin.client_6.1.0</groupId>
   	<artifactId>com.ibm.ws.admin.client_6.1.0</artifactId>
   	  	<version>1.0</version>
-  	  	<scope>system</scope>  	  	   
-    	<systemPath>${basedir}/was/com.ibm.ws.admin.client_6.1.0.jar</systemPath>
+  	  	<scope>provided</scope>
 	</dependency>  
   </dependencies>
 
@@ -63,6 +61,10 @@
       <id>m.g.o-public</id>
       <url>http://maven.glassfish.org/content/groups/public/</url>
     </repository>
+     <repository>
+        <id>was-lib</id>
+        <url>file:${project.basedir}/lib/</url>
+     </repository>
   </repositories>
 
   <pluginRepositories>
