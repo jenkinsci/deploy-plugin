@@ -21,7 +21,7 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Deploys WAR to a continer.
+ * Deploys WAR to a container.
  * 
  * @author Kohsuke Kawaguchi
  */
@@ -38,6 +38,7 @@ public class DeployPublisher extends Notifier implements Serializable {
         this.onFailure = onFailure;
     }
 
+    @Override
     public boolean perform(AbstractBuild<?,?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
         if (build.getResult().equals(Result.SUCCESS) || onFailure) {
                 for (FilePath warFile : build.getWorkspace().list(this.war)) {

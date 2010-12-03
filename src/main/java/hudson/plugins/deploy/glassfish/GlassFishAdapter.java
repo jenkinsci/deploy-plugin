@@ -11,7 +11,7 @@ import org.codehaus.cargo.generic.ContainerFactory;
 import org.codehaus.cargo.generic.configuration.ConfigurationFactory;
 
 /**
- * GlassFishAdapterTest, configures the cargo GlassFish container.
+ * GlassFishAdapter, configures the cargo GlassFish container.
  */
 public abstract class GlassFishAdapter extends PasswordProtectedAdapterCargo {
 
@@ -23,7 +23,7 @@ public abstract class GlassFishAdapter extends PasswordProtectedAdapterCargo {
     public final Integer adminPort;
 
     /**
-     * GlassFishAdapterTest, supports local glassfish deployments.
+     * GlassFishAdapter, supports local glassfish deployments.
      *
      * @param home location of the GlassFish installation
      * @param password admin password
@@ -47,9 +47,7 @@ public abstract class GlassFishAdapter extends PasswordProtectedAdapterCargo {
 
         AbstractInstalledLocalContainer container = (AbstractInstalledLocalContainer)containerFactory.createContainer(id, ContainerType.INSTALLED, config);
 
-        /**
-         * Explicitly sets the home on the LocalContainer.
-         */
+        // Explicitly sets the home on the LocalContainer:
         container.setHome(home);
 
         return container;
