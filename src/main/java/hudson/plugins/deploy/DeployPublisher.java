@@ -39,12 +39,12 @@ public class DeployPublisher extends Notifier implements Serializable {
     }
 
     public boolean perform(AbstractBuild<?,?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
-    	if (build.getResult().equals(Result.SUCCESS) || onFailure) {
-	        for (FilePath warFile : build.getWorkspace().list(this.war)) {
+        if (build.getResult().equals(Result.SUCCESS) || onFailure) {
+                for (FilePath warFile : build.getWorkspace().list(this.war)) {
                 if(!adapter.redeploy(warFile,build,launcher,listener))
                     build.setResult(Result.FAILURE);
             }
-    	}
+        }
 
         return true;
     }

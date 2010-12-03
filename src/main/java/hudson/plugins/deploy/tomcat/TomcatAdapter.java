@@ -29,7 +29,7 @@ public abstract class TomcatAdapter extends PasswordProtectedAdapterCargo {
     public void configure(Configuration config) {
         super.configure(config);
         try {
-        	URL _url = new URL(url + "/manager");
+            URL _url = new URL(url + "/manager");
             config.setProperty(TomcatPropertySet.MANAGER_URL,_url.toExternalForm());
         } catch (MalformedURLException e) {
             throw new AssertionError(e);

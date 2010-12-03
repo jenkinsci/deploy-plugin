@@ -52,7 +52,7 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
     }
     
     protected void deploy(DeployerFactory deployerFactory, final BuildListener listener, Container container, File f) {
-    	Deployer deployer = deployerFactory.createDeployer(container);
+        Deployer deployer = deployerFactory.createDeployer(container);
 
         listener.getLogger().println("Deploying "+f);
         listener.getLogger().println("Container "+ container.getName() );

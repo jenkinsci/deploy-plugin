@@ -21,7 +21,7 @@ public class Tomcat5xAdapter extends TomcatAdapter {
     }
 
     @Extension
-	public static final class DescriptorImpl extends ContainerAdapterDescriptor {
+    public static final class DescriptorImpl extends ContainerAdapterDescriptor {
         public String getDisplayName() {
             return "Tomcat 5.x";
         }

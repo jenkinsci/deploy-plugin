@@ -24,7 +24,7 @@
   </f:dropdownList>
 
   <f:entry title="${%Deploy on failure}" field="onFailure">
-  	<f:checkbox />
+    <f:checkbox />
   </f:entry>
 
 </j:jelly>

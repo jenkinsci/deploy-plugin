@@ -19,7 +19,7 @@ public class JBoss5xAdapter extends JBossAdapter {
 
 
     @Extension
-	public static final class DescriptorImpl extends ContainerAdapterDescriptor {
+    public static final class DescriptorImpl extends ContainerAdapterDescriptor {
         public String getDisplayName() {
             return "JBoss 5.x";
         }

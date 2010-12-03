@@ -20,7 +20,7 @@ public class WebLogic10_3_xAdapter extends WebLogicAdapter {
     // WebLogic support is limited to local only, so it's not very useful.
     // take it off until we figure out the remote support
     // @Extension
-	public static final class DescriptorImpl extends WebLogicAdapterDescriptor {
+    public static final class DescriptorImpl extends WebLogicAdapterDescriptor {
         public String getDisplayName() {
             return "WebLogic 10.3.x";
         }

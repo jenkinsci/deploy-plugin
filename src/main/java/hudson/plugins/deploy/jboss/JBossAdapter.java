@@ -16,7 +16,7 @@ import java.net.URL;
 public abstract class JBossAdapter extends PasswordProtectedAdapterCargo {
     public final String url;
 
-    protected JBossAdapter(String url, String password, String userName) {    	
+    protected JBossAdapter(String url, String password, String userName) {
         super(userName, password);        
         this.url = url;
     }
@@ -25,14 +25,14 @@ public abstract class JBossAdapter extends PasswordProtectedAdapterCargo {
     public void configure(Configuration config) {
         super.configure(config);
         try {
-	        URL _url = new URL(url);
-	        config.setProperty(GeneralPropertySet.PROTOCOL,_url.getProtocol());
-	        config.setProperty(GeneralPropertySet.HOSTNAME,_url.getHost());
-	        int p = _url.getPort();
-	        if(p<0) p=80;
-	        config.setProperty(ServletPropertySet.PORT,String.valueOf(p));
+            URL _url = new URL(url);
+            config.setProperty(GeneralPropertySet.PROTOCOL,_url.getProtocol());
+            config.setProperty(GeneralPropertySet.HOSTNAME,_url.getHost());
+            int p = _url.getPort();
+            if(p<0) p=80;
+            config.setProperty(ServletPropertySet.PORT,String.valueOf(p));
         } catch (MalformedURLException ex) {
-        	throw new AssertionError(ex);
+            throw new AssertionError(ex);
         }
     }
 }

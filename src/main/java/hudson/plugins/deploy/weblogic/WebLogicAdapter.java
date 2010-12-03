@@ -50,7 +50,7 @@ public abstract class WebLogicAdapter extends DefaultCargoContainerAdapterImpl {
         return containerFactory.createContainer(id, ContainerType.INSTALLED, config);
     }
 
-	public static abstract class WebLogicAdapterDescriptor extends ContainerAdapterDescriptor {
+    public static abstract class WebLogicAdapterDescriptor extends ContainerAdapterDescriptor {
         public FormValidation doCheckHome(@QueryParameter String value) {
             if(new File(new File(value),"autodeploy").isDirectory())
                 return FormValidation.ok();
