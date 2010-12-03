@@ -7,7 +7,6 @@ import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.model.Describable;
-import hudson.model.Descriptor;
 import hudson.model.Hudson;
 
 import java.io.IOException;
@@ -35,6 +34,6 @@ public abstract class ContainerAdapter implements Describable<ContainerAdapter>,
     }
 
     public static DescriptorExtensionList<ContainerAdapter,ContainerAdapterDescriptor> all() {
-        return Hudson.getInstance().getDescriptorList(ContainerAdapter.class);
+        return Hudson.getInstance().<ContainerAdapter,ContainerAdapterDescriptor>getDescriptorList(ContainerAdapter.class);
     }
 }
