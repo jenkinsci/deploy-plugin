@@ -1,13 +1,12 @@
 package hudson.plugins.deploy.jboss;
 
 import hudson.plugins.deploy.PasswordProtectedAdapterCargo;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import org.codehaus.cargo.container.configuration.Configuration;
 import org.codehaus.cargo.container.property.GeneralPropertySet;
 import org.codehaus.cargo.container.property.ServletPropertySet;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Base class for JBoss adapters.

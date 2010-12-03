@@ -1,7 +1,5 @@
 package hudson.plugins.deploy.weblogic;
 
-import hudson.Extension;
-import hudson.plugins.deploy.ContainerAdapterDescriptor;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**

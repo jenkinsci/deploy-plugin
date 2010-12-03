@@ -1,16 +1,11 @@
 package hudson.plugins.deploy;
 
 import hudson.FilePath;
-import hudson.Launcher;
 import hudson.FilePath.FileCallable;
+import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.remoting.VirtualChannel;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
-
 import org.codehaus.cargo.container.Container;
 import org.codehaus.cargo.container.ContainerType;
 import org.codehaus.cargo.container.configuration.Configuration;
@@ -25,6 +20,10 @@ import org.codehaus.cargo.generic.configuration.DefaultConfigurationFactory;
 import org.codehaus.cargo.generic.deployer.DefaultDeployerFactory;
 import org.codehaus.cargo.generic.deployer.DeployerFactory;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
+
 /**
  * Provides container-specific glue code.
  *
@@ -35,16 +34,18 @@ import org.codehaus.cargo.generic.deployer.DeployerFactory;
  */
 public abstract class CargoContainerAdapter extends ContainerAdapter implements Serializable {
     /**
-     * Returns the container ID used by Cargo. 
+     * Returns the container ID used by Cargo.
+     * @return
      */
     protected abstract String getContainerId();
 
     /**
      * Fills in the {@link Configuration} object.
+     * @param config
      */
     protected abstract void configure(Configuration config);
-    
-    protected Container getContainer(ConfigurationFactory configFactory, ContainerFactory containerFactory, String id) {    	
+
+    protected Container getContainer(ConfigurationFactory configFactory, ContainerFactory containerFactory, String id) {
         Configuration config = configFactory.createConfiguration(id, ContainerType.REMOTE, ConfigurationType.RUNTIME);
         configure(config);
         return containerFactory.createContainer(id, ContainerType.REMOTE, config);
@@ -54,9 +55,10 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
     	Deployer deployer = deployerFactory.createDeployer(container);
 
         listener.getLogger().println("Deploying "+f);
+        listener.getLogger().println("Container "+ container.getName() );
+        
         deployer.setLogger(new LoggerImpl(listener.getLogger()));
         deployer.redeploy(createDeployable(f));
-        
     }
 
     /**

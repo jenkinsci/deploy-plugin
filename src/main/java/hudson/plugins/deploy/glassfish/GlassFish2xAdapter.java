@@ -1,12 +1,12 @@
 package hudson.plugins.deploy.glassfish;
 
-import hudson.model.Descriptor;
-import hudson.plugins.deploy.ContainerAdapter;
-import hudson.plugins.deploy.ContainerAdapterDescriptor;
 import hudson.Extension;
-
+import hudson.plugins.deploy.ContainerAdapterDescriptor;
 import org.kohsuke.stapler.DataBoundConstructor;
 
+/**
+ * GlassFish 2.x support.
+ */
 public class GlassFish2xAdapter extends GlassFishAdapter {
 	@DataBoundConstructor
 	public GlassFish2xAdapter(String home, String password, String userName, Integer adminPort) {
@@ -15,7 +15,7 @@ public class GlassFish2xAdapter extends GlassFishAdapter {
 
 	@Override
 	protected String getContainerId() {
-		return "glassfish2";
+		return "glassfish2x";
 	}
 
     @Extension
@@ -24,6 +24,4 @@ public class GlassFish2xAdapter extends GlassFishAdapter {
             return "GlassFish 2.x";
         }
     }
-        
-    private static final long serialVersionUID = 2872067827725333149L;
 }

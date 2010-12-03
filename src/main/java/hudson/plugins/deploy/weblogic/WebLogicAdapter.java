@@ -1,15 +1,12 @@
 package hudson.plugins.deploy.weblogic;
 
-import hudson.plugins.deploy.DefaultCargoContainerAdapterImpl;
 import hudson.plugins.deploy.ContainerAdapterDescriptor;
-import hudson.Extension;
+import hudson.plugins.deploy.DefaultCargoContainerAdapterImpl;
 import hudson.util.FormValidation;
 import org.codehaus.cargo.container.Container;
 import org.codehaus.cargo.container.ContainerType;
 import org.codehaus.cargo.container.configuration.Configuration;
 import org.codehaus.cargo.container.configuration.ConfigurationType;
-import org.codehaus.cargo.container.property.ServletPropertySet;
-import org.codehaus.cargo.container.weblogic.WebLogicPropertySet;
 import org.codehaus.cargo.generic.ContainerFactory;
 import org.codehaus.cargo.generic.configuration.ConfigurationFactory;
 import org.kohsuke.stapler.DataBoundConstructor;
