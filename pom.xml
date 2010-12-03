@@ -110,6 +110,6 @@
   </repositories-->
 
   <properties>
-    <cargo.version>1.0.3</cargo.version>
+    <cargo.version>1.0.4</cargo.version>
   </properties>
 </project>
