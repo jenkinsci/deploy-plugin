@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>deploy</artifactId>
-  <version>1.6</version>
+  <version>1.7-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <name>Deploy to container Plugin</name>
   <url>http://wiki.hudson-ci.org/display/HUDSON/Deploy+Plugin</url>
@@ -112,10 +112,4 @@
   <properties>
     <cargo.version>1.0.4</cargo.version>
   </properties>
-
-  <scm>
-    <connection>scm:svn:https://guest@svn.java.net/svn/hudson~svn/tags/deploy-1.6</connection>
-    <developerConnection>scm:svn:https://svn.java.net/svn/hudson~svn/tags/deploy-1.6</developerConnection>
-    <url>http://java.net/projects/hudson/sources/svn/show/tags/deploy-1.6</url>
-  </scm>
 </project>
