@@ -19,17 +19,6 @@
       <name>Kohsuke Kawaguchi</name>
     </developer>
   </developers>
-
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-release-plugin</artifactId>
-        <configuration>
-          <allowTimestampedSnapshots>true</allowTimestampedSnapshots>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
   
   <dependencies>
     <dependency>
