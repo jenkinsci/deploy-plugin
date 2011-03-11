@@ -2,7 +2,12 @@ package hudson.plugins.deploy.tomcat;
 
 import hudson.Extension;
 import hudson.plugins.deploy.ContainerAdapterDescriptor;
+import org.codehaus.cargo.container.tomcat.TomcatPropertySet;
+import org.codehaus.cargo.container.configuration.Configuration;
 import org.kohsuke.stapler.DataBoundConstructor;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Tomcat 7.x
@@ -21,6 +26,16 @@ public class Tomcat7xAdapter extends TomcatAdapter {
     @DataBoundConstructor
     public Tomcat7xAdapter(String url, String password, String userName) {
         super(url, password, userName);
+    }
+    
+		public void configure(Configuration config) {
+        super.configure(config);
+        try {
+            URL _url = new URL(url + "/manager/text");
+            config.setProperty(TomcatPropertySet.MANAGER_URL,_url.toExternalForm());
+        } catch (MalformedURLException e) {
+            throw new AssertionError(e);
+        }
     }
 
     /**
