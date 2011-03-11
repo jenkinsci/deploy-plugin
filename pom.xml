@@ -8,7 +8,7 @@
   </parent>
 
   <artifactId>deploy</artifactId>
-  <version>1.7-SNAPSHOT</version>
+  <version>1.7</version>
   <packaging>hpi</packaging>
   <name>Deploy to container Plugin</name>
   <url>http://wiki.jenkins-ci.org/display/JENKINS/HUDSON/Deploy+Plugin</url>
