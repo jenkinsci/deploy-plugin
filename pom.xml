@@ -12,6 +12,13 @@
   <packaging>hpi</packaging>
   <name>Deploy to container Plugin</name>
   <url>http://wiki.jenkins-ci.org/display/JENKINS/HUDSON/Deploy+Plugin</url>
+  
+  <scm>
+   <connection>scm:git:git://github.com/jenkinsci/deploy-plugin.git</connection>
+   <developerConnection>scm:git:git@github.com:jenkinsci/deploy-plugin.git</developerConnection>
+   <url>https://github.com/jenkinsci/deploy-plugin</url>
+  </scm>  
+  
   <developers>
     <developer>
       <id>kohsuke</id>
