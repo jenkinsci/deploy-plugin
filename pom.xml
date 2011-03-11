@@ -12,7 +12,7 @@
   <version>1.7-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <name>Deploy to container Plugin</name>
-  <url>http://wiki.hudson-ci.org/display/HUDSON/Deploy+Plugin</url>
+  <url>http://wiki.jenkins-ci.org/display/JENKINS/HUDSON/Deploy+Plugin</url>
   <developers>
     <developer>
       <id>kohsuke</id>
