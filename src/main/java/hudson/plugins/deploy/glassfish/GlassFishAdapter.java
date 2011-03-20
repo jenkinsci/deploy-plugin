@@ -18,38 +18,23 @@ public abstract class GlassFishAdapter extends PasswordProtectedAdapterCargo {
     /**
      * Property home is required for GlassFish local containers.
      */
-    public final String home;
+@   Property(GeneralPropertySet.HOSTNAME) 
+    public final String hostname;
+	
     @Property(GlassFishPropertySet.ADMIN_PORT)
     public final Integer adminPort;
 
     /**
      * GlassFishAdapter, supports local glassfish deployments.
      *
-     * @param home location of the GlassFish installation
+     * @param hostname hostname of the GlassFish installation
      * @param password admin password
      * @param userName admin username
      * @param adminPort admin server port
      */
-    protected GlassFishAdapter(String home, String password, String userName, Integer adminPort) {
-        super(userName, password);        
-        this.home = home;
+    protected GlassFishAdapter(String hostname, String password, String userName, Integer adminPort) {
+        super(userName, password);
+        this.hostname = hostname;
         this.adminPort = adminPort;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected Container getContainer(ConfigurationFactory configFactory, ContainerFactory containerFactory, String id) {
-
-        AbstractStandaloneLocalConfiguration config = (AbstractStandaloneLocalConfiguration)configFactory.createConfiguration(id, ContainerType.INSTALLED, ConfigurationType.STANDALONE, home);
-        configure(config);
-
-        AbstractInstalledLocalContainer container = (AbstractInstalledLocalContainer)containerFactory.createContainer(id, ContainerType.INSTALLED, config);
-
-        // Explicitly sets the home on the LocalContainer:
-        container.setHome(home);
-
-        return container;
     }
 }
