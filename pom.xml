@@ -11,7 +11,7 @@
   <version>1.8-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <name>Deploy to container Plugin</name>
-  <url>http://wiki.jenkins-ci.org/display/JENKINS/HUDSON/Deploy+Plugin</url>
+  <url>http://wiki.jenkins-ci.org/display/JENKINS/Deploy+Plugin</url>
   
   <scm>
    <connection>scm:git:git://github.com/jenkinsci/deploy-plugin.git</connection>
