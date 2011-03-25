@@ -6,7 +6,7 @@
   <f:entry title="Manager password" field="password">
     <f:password />
   </f:entry>
-  <f:entry title="GlassFish hostname" field="hostname">
+  <f:entry title="GlassFish home" field="home">
     <f:textbox />
   </f:entry>
   <f:advanced>
