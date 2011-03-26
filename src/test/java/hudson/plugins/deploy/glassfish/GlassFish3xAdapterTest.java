@@ -21,14 +21,15 @@ import java.io.IOException;
 public class GlassFish3xAdapterTest {
 
     private GlassFish3xAdapter adapter;
-    private static final String home = "D:/development/server/glassfishv3";
+    private static final String hostname = "localhost";
+    private static final String home = "/dev/null";
     private static final String username = "adminadmin";
     private static final String password = "adminadmin";
     private static int port = 1234;
 
     @Before
     public void setup() {
-        adapter = new GlassFish3xAdapter(home, password, username, port);
+        adapter = new GlassFish3xAdapter(hostname, home, password, username, port);
     }
 
     @Test
@@ -38,6 +39,7 @@ public class GlassFish3xAdapterTest {
 
     @Test
     public void testConfigure() {
+    	Assert.assertEquals(adapter.hostname, hostname);
         Assert.assertEquals(adapter.home, home);
         Assert.assertEquals(adapter.adminPort, port);
         Assert.assertEquals(adapter.userName, username);
@@ -48,15 +50,5 @@ public class GlassFish3xAdapterTest {
 
         Container container = adapter.getContainer(configFactory, containerFactory, adapter.getContainerId());
         Assert.assertNotNull(container);
-    }
-
-    /**
-     * This test only runs in your local environment
-     * @throws IOException
-     * @throws InterruptedException
-     */
-    //@Test
-    public void testDeploy() throws IOException, InterruptedException {
-        adapter.redeploy(new FilePath(new File("D:/workspace/hudson/deploy-plugin/src/test/simple.war")), null, null, new StreamBuildListener(System.out));
     }
 }

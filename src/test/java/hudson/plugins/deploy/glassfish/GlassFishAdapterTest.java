@@ -15,6 +15,7 @@ import org.junit.Test;
 public class GlassFishAdapterTest {
 
     private GlassFish3xAdapter glassFish3xAdapter;
+    private static final String hostname = "localhost";
     private static final String home = "/dev/null";
     private static final String username = "username";
     private static final String password = "password";
@@ -22,7 +23,7 @@ public class GlassFishAdapterTest {
 
     @Before
     public void setup() {
-        glassFish3xAdapter = new GlassFish3xAdapter(home, password, username, port);
+        glassFish3xAdapter = new GlassFish3xAdapter(hostname, home, password, username, port);
     }
 
     @Test

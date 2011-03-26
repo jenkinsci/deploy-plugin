@@ -15,14 +15,15 @@ public class GlassFish3xAdapter extends GlassFishAdapter {
     /**
      * GlassFish 3.x
      *
-     * @param home GlassFish home directory
-     * @param password glassfish admin password
-     * @param userName glassfish admin username
+     * @param hostname hostname of the GlassFish installation
+     * @param home location of the GlassFish installation
+     * @param password admin password
+     * @param userName admin username
+     * @param adminPort admin server port
      */
     @DataBoundConstructor
-    public GlassFish3xAdapter(String home, String password, String userName, Integer adminPort) {
-        super(home, password, userName, adminPort);
-        GlassFishStandaloneLocalConfiguration conf;
+    public GlassFish3xAdapter(String hostname, String home, String password, String userName, Integer adminPort) {
+        super(hostname, home, password, userName, adminPort);
     }
 
     /**

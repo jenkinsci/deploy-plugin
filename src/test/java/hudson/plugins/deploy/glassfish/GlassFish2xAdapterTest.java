@@ -16,6 +16,7 @@ import org.junit.Test;
 public class GlassFish2xAdapterTest {
 
     private GlassFish2xAdapter adapter;
+    private static final String hostname = "localhost";
     private static final String home = "/dev/null";
     private static final String username = "username";
     private static final String password = "password";
@@ -23,7 +24,7 @@ public class GlassFish2xAdapterTest {
 
     @Before
     public void setup() {
-        adapter = new GlassFish2xAdapter(home, password, username, port);
+        adapter = new GlassFish2xAdapter(hostname, home, password, username, port);
     }
 
     @Test
@@ -33,6 +34,7 @@ public class GlassFish2xAdapterTest {
 
     @Test
     public void testConfigure() {
+    	Assert.assertEquals(adapter.hostname, hostname);
         Assert.assertEquals(adapter.home, home);
         Assert.assertEquals(adapter.adminPort, port);
         Assert.assertEquals(adapter.userName, username);
