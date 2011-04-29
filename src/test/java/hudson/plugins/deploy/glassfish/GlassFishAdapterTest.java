@@ -22,7 +22,7 @@ public class GlassFishAdapterTest {
 
     @Before
     public void setup() {
-        glassFish3xAdapter = new GlassFish3xAdapter(home, password, username, port);
+        glassFish3xAdapter = new GlassFish3xAdapter(home, password, username, port, null);
     }
 
     @Test
