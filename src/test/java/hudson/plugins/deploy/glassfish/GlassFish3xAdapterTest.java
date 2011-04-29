@@ -2,6 +2,9 @@ package hudson.plugins.deploy.glassfish;
 
 import hudson.FilePath;
 import hudson.model.StreamBuildListener;
+import java.net.URISyntaxException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.codehaus.cargo.container.Container;
 import org.codehaus.cargo.container.glassfish.GlassFish3xInstalledLocalContainer;
 import org.codehaus.cargo.generic.ContainerFactory;
@@ -14,6 +17,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 
 /**
  * @author soudmaijer
@@ -21,14 +25,18 @@ import java.io.IOException;
 public class GlassFish3xAdapterTest {
 
     private GlassFish3xAdapter adapter;
+    private GlassFish3xAdapter remoteAdapter;
     private static final String home = "D:/development/server/glassfishv3";
-    private static final String username = "adminadmin";
-    private static final String password = "adminadmin";
+    private static final String username = "admin";
+    private static final String password = "";
     private static int port = 1234;
+    private static final String hostname = "localhost";
+    private static final int adminPort = 4848;
 
     @Before
     public void setup() {
-        adapter = new GlassFish3xAdapter(home, password, username, port);
+        adapter = new GlassFish3xAdapter(home, password, username, port, null);
+        remoteAdapter = new GlassFish3xAdapter(null, password, username, adminPort, hostname);
     }
 
     @Test
@@ -50,6 +58,21 @@ public class GlassFish3xAdapterTest {
         Assert.assertNotNull(container);
     }
 
+    @Test
+    public void testConfigureRemote() {
+        Assert.assertNull("Expexted adapter.home to be null", remoteAdapter.home);
+        Assert.assertEquals(remoteAdapter.adminPort, adminPort);
+        Assert.assertEquals(remoteAdapter.userName, username);
+        Assert.assertEquals(remoteAdapter.password, password);
+        Assert.assertEquals(remoteAdapter.hostname, hostname);
+
+        ConfigurationFactory configFactory = new DefaultConfigurationFactory();
+        ContainerFactory containerFactory = new DefaultContainerFactory();
+
+        Container container = remoteAdapter.getContainer(configFactory, containerFactory, remoteAdapter.getContainerId());
+        Assert.assertNotNull(container);
+    }
+
     /**
      * This test only runs in your local environment
      * @throws IOException
@@ -57,6 +80,14 @@ public class GlassFish3xAdapterTest {
      */
     //@Test
     public void testDeploy() throws IOException, InterruptedException {
+        
         adapter.redeploy(new FilePath(new File("D:/workspace/hudson/deploy-plugin/src/test/simple.war")), null, null, new StreamBuildListener(System.out));
+    }
+    
+    //@Test
+    public void testRemoteDeploy() throws IOException, InterruptedException {
+       
+
+        remoteAdapter.redeploy(new FilePath(new File("/Users/meikelbode/NetBeansProjects/gitprojects/deploy-plugin/src/test/simple.war")), null, null, new StreamBuildListener(System.out));
     }
 }
