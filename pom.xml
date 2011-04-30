@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>1.400</version>
+    <version>1.409</version>
   </parent>
 
   <artifactId>deploygf</artifactId>
@@ -23,6 +23,10 @@
     <developer>
       <id>kohsuke</id>
       <name>Kohsuke Kawaguchi</name>
+    </developer>
+    <developer>
+      <id>edobm</id>
+      <name>Meikel Bode</name>
     </developer>
   </developers>
   
