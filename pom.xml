@@ -7,7 +7,7 @@
     <version>1.409</version>
   </parent>
 
-  <artifactId>deploygf</artifactId>
+  <artifactId>deploy</artifactId>
   <version>1.8-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <name>Deploy to container Plugin</name>
