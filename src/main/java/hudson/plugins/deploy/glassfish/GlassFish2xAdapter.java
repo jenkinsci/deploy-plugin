@@ -10,7 +10,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 public class GlassFish2xAdapter extends GlassFishAdapter {
     @DataBoundConstructor
     public GlassFish2xAdapter(String home, String password, String userName, Integer adminPort) {
-        super(home, password, userName, adminPort);
+        super(home, password, userName, adminPort, null);
     }
 
     @Override

@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Created-By: Apache Maven
+Built-By: kohsuke
+Build-Jdk: 1.6.0_24
+Extension-Name: ui-samples-plugin
+Specification-Title: The module that constitutes the main jenkins.war
+Implementation-Title: ui-samples-plugin
+Implementation-Version: 1.400
+Group-Id: org.jenkins-ci.main
+Short-Name: ui-samples-plugin
+Long-Name: Jenkins UI sample plugin
+Url: http://jenkins-ci.org/pom/ui-samples-plugin/
+Plugin-Version: 1.400
+Hudson-Version: 1.400
+Plugin-Developers: 
+

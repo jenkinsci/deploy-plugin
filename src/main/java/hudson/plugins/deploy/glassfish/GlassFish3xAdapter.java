@@ -18,10 +18,12 @@ public class GlassFish3xAdapter extends GlassFishAdapter {
      * @param home GlassFish home directory
      * @param password glassfish admin password
      * @param userName glassfish admin username
+     * @param adminPort glassfish admin port
+     * @param hostname glassfish hostname
      */
     @DataBoundConstructor
-    public GlassFish3xAdapter(String home, String password, String userName, Integer adminPort) {
-        super(home, password, userName, adminPort);
+    public GlassFish3xAdapter(String home, String password, String userName, Integer adminPort, String hostname) {
+        super(home, password, userName, adminPort, hostname);
         GlassFishStandaloneLocalConfiguration conf;
     }
 

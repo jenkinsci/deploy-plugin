@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Created-By: Apache Maven
+Built-By: kohsuke
+Build-Jdk: 1.6.0_20
+Extension-Name: ssh-slaves
+Implementation-Title: ssh-slaves
+Implementation-Version: 0.14
+Plugin-Class: hudson.plugins.sshslaves.PluginImpl
+Group-Id: org.jvnet.hudson.plugins
+Short-Name: ssh-slaves
+Long-Name: Hudson SSH Slaves plugin
+Url: http://wiki.hudson-ci.org/display/HUDSON/SSH+Slaves+plugin
+Plugin-Version: 0.14
+Hudson-Version: 1.383
+Plugin-Developers: Kohsuke Kawaguchi:kohsuke:
+
