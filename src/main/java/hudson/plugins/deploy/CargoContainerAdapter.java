@@ -6,11 +6,11 @@ import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.remoting.VirtualChannel;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.cargo.container.Container;
 import org.codehaus.cargo.container.ContainerType;
 import org.codehaus.cargo.container.configuration.Configuration;
 import org.codehaus.cargo.container.configuration.ConfigurationType;
-import org.codehaus.cargo.container.deployable.Deployable;
 import org.codehaus.cargo.container.deployable.WAR;
 import org.codehaus.cargo.container.deployer.Deployer;
 import org.codehaus.cargo.generic.ContainerFactory;
@@ -51,13 +51,17 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
         return containerFactory.createContainer(id, ContainerType.REMOTE, config);
     }
     
-    protected void deploy(DeployerFactory deployerFactory, final BuildListener listener, Container container, File f) {
+    protected void deploy( DeployerFactory deployerFactory, final BuildListener listener, Container container, File f, String contextPath ) {
         Deployer deployer = deployerFactory.createDeployer(container);
 
         listener.getLogger().println("Deploying "+f+" to container "+container.getName());
 
         deployer.setLogger(new LoggerImpl(listener.getLogger()));
-        deployer.redeploy(createDeployable(f));
+        WAR war = createWAR( f );
+        if ( !StringUtils.isEmpty(contextPath)) {
+            war.setContext( contextPath );
+        }
+        deployer.redeploy(war);
     }
 
     /**
@@ -65,11 +69,11 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
      * @param deployableFile The deployable file to create the Deployable from.
      * @return A Deployable object.
      */
-    protected Deployable createDeployable(File deployableFile) {
+    protected WAR createWAR(File deployableFile) {
         return new WAR(deployableFile.getAbsolutePath());
     }
 
-    public boolean redeploy(FilePath war, AbstractBuild<?, ?> build, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException {
+    public boolean redeploy(FilePath war, final String contextPath, AbstractBuild<?, ?> build, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException {
         return war.act(new FileCallable<Boolean>() {
             public Boolean invoke(File f, VirtualChannel channel) throws IOException {
                 if(!f.exists()) {
@@ -83,7 +87,7 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
 
                 Container container = getContainer(configFactory, containerFactory, getContainerId());
                 
-                deploy(deployerFactory, listener, container, f);
+                deploy(deployerFactory, listener, container, f, contextPath);
                 return true;
             }
         });

@@ -3,6 +3,9 @@
   <f:entry title="${%WAR/EAR files}" field="war">
     <f:textbox />
   </f:entry>
+  <f:entry title="${%Context path}" field="contextPath">
+    <f:textbox />
+  </f:entry>
 
   <f:dropdownList name="adapter" title="${%Container}">
     <j:forEach var="d" items="${descriptor.containerAdapters}" varStatus="loop">

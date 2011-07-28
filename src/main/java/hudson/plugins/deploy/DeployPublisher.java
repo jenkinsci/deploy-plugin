@@ -27,22 +27,24 @@ import java.util.List;
  */
 public class DeployPublisher extends Notifier implements Serializable {
     public final ContainerAdapter adapter;
+    public final String contextPath;
 
     public final String war;
     public final boolean onFailure;
 
     @DataBoundConstructor
-    public DeployPublisher(ContainerAdapter adapter, String war, boolean onFailure) {
+    public DeployPublisher(ContainerAdapter adapter, String war, String contextPath, boolean onFailure) {
         this.adapter = adapter;
         this.war = war;
         this.onFailure = onFailure;
+        this.contextPath = contextPath;
     }
 
     @Override
     public boolean perform(AbstractBuild<?,?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
         if (build.getResult().equals(Result.SUCCESS) || onFailure) {
                 for (FilePath warFile : build.getWorkspace().list(this.war)) {
-                if(!adapter.redeploy(warFile,build,launcher,listener))
+                if(!adapter.redeploy(warFile,contextPath,build,launcher,listener))
                     build.setResult(Result.FAILURE);
             }
         }
