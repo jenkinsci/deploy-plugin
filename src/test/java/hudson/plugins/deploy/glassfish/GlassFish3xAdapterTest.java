@@ -84,6 +84,6 @@ public class GlassFish3xAdapterTest {
     public void testRemoteDeploy() throws IOException, InterruptedException {
        
 
-        remoteAdapter.redeploy(new FilePath(new File("/src/test/simple.war")), "contextPath", null, null, new StreamBuildListener(System.out));
+        remoteAdapter.redeploy(new FilePath(new File("src/test/simple.war")), "contextPath", null, null, new StreamBuildListener(System.out));
     }
 }
