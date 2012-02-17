@@ -2,6 +2,7 @@ package hudson.plugins.deploy.tomcat;
 
 import hudson.plugins.deploy.PasswordProtectedAdapterCargo;
 import org.codehaus.cargo.container.configuration.Configuration;
+import org.codehaus.cargo.container.deployable.Deployable;
 import org.codehaus.cargo.container.deployable.WAR;
 import org.codehaus.cargo.container.tomcat.TomcatPropertySet;
 import org.codehaus.cargo.container.tomcat.TomcatWAR;
@@ -40,10 +41,10 @@ public abstract class TomcatAdapter extends PasswordProtectedAdapterCargo {
      * Create a Tomcat-specific Deployable object from the given file object.
      * @param deployableFile The file to deploy.
      * @return A Tomcat-specific Deployable object.
-     * @see hudson.plugins.deploy.CargoContainerAdapter#createWAR(java.io.File)
+     * @see hudson.plugins.deploy.CargoContainerAdapter#createDeployable(java.io.File)
      */
     @Override
-    protected WAR createWAR(File deployableFile) {
+    protected Deployable createDeployable(File deployableFile, String containerId) {
         return new TomcatWAR(deployableFile.getAbsolutePath());
     }
 }
