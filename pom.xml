@@ -93,4 +93,12 @@
   <properties>
     <cargo.version>1.0.6</cargo.version>
   </properties>
-</project>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>repo.jenkins-ci.org</id>
+            <url>http://repo.jenkins-ci.org/public/</url>
+        </pluginRepository>
+    </pluginRepositories>
+</project>  
+
