@@ -1,5 +1,6 @@
 package hudson.plugins.deploy;
 
+import hudson.util.Scrambler;
 import org.codehaus.cargo.container.property.RemotePropertySet;
 
 /**
@@ -8,15 +9,27 @@ import org.codehaus.cargo.container.property.RemotePropertySet;
 public abstract class PasswordProtectedAdapterCargo extends DefaultCargoContainerAdapterImpl {
     @Property(RemotePropertySet.USERNAME)
     public final String userName;
-    private final String password;
+    @Deprecated // backward compatibility
+    private String password;
+    private String passwordScrambled;
 
     public PasswordProtectedAdapterCargo(String userName, String password) {
-        this.password = password;
+        this.password = null;
+        this.passwordScrambled = Scrambler.scramble(password);
         this.userName = userName;
     }
 
     @Property(RemotePropertySet.PASSWORD)
     public String getPassword() {
-        return password;
+        return Scrambler.descramble(passwordScrambled);
+    }
+    
+    private Object readResolve() {
+        // backward compatibility
+        if(passwordScrambled == null && password != null){
+            passwordScrambled = Scrambler.scramble(password);
+            password = null;
+        }
+        return this;
     }
 }
