@@ -61,7 +61,7 @@ public abstract class GlassFishAdapter extends PasswordProtectedAdapterCargo {
             AbstractRuntimeConfiguration config = (AbstractRuntimeConfiguration) configFactory.createConfiguration(id, ContainerType.REMOTE, ConfigurationType.RUNTIME);
             configure(config);
             config.setProperty(RemotePropertySet.USERNAME, userName);
-            config.setProperty(RemotePropertySet.PASSWORD, password);
+            config.setProperty(RemotePropertySet.PASSWORD, getPassword());
             config.setProperty(GeneralPropertySet.HOSTNAME, hostname);
 
             AbstractRemoteContainer container = (AbstractRemoteContainer) containerFactory.createContainer(id, ContainerType.REMOTE, config);

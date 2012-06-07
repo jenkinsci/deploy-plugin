@@ -29,6 +29,6 @@ public class Tomcat7xAdapterTest {
     public void testConfigure() {
         Assert.assertEquals(adapter.url,url);
         Assert.assertEquals(adapter.userName,username);
-        Assert.assertEquals(adapter.password,password);
+        Assert.assertEquals(adapter.getPassword(),password);
     }
 }

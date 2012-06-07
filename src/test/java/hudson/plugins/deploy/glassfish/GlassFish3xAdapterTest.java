@@ -45,7 +45,7 @@ public class GlassFish3xAdapterTest {
         Assert.assertEquals(adapter.home, home);
     //    Assert.assertEquals(adapter.adminPort, port);
         Assert.assertEquals(adapter.userName, username);
-        Assert.assertEquals(adapter.password, password);
+        Assert.assertEquals(adapter.getPassword(), password);
 
         ConfigurationFactory configFactory = new DefaultConfigurationFactory();
         ContainerFactory containerFactory = new DefaultContainerFactory();
@@ -59,7 +59,7 @@ public class GlassFish3xAdapterTest {
         Assert.assertNull("Expexted adapter.home to be null", remoteAdapter.home);
    //     Assert.assertEquals(remoteAdapter.adminPort, adminPort);
         Assert.assertEquals(remoteAdapter.userName, username);
-        Assert.assertEquals(remoteAdapter.password, password);
+        Assert.assertEquals(remoteAdapter.getPassword(), password);
         Assert.assertEquals(remoteAdapter.hostname, hostname);
 
         ConfigurationFactory configFactory = new DefaultConfigurationFactory();
