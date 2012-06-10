@@ -36,7 +36,7 @@ public class GlassFish2xAdapterTest {
         Assert.assertEquals(adapter.home, home);
      //   Assert.assertEquals(adapter.adminPort, port);
         Assert.assertEquals(adapter.userName, username);
-        Assert.assertEquals(adapter.password, password);
+        Assert.assertEquals(adapter.getPassword(), password);
 
         ConfigurationFactory configFactory = new DefaultConfigurationFactory();
         ContainerFactory containerFactory = new DefaultContainerFactory();
