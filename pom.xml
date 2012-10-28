@@ -1,104 +1,102 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  
-  <parent>
-    <groupId>org.jenkins-ci.plugins</groupId>
-    <artifactId>plugin</artifactId>
-    <version>1.409</version>
-  </parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-  <artifactId>deploy</artifactId>
-  <version>1.10-SNAPSHOT</version>
-  <packaging>hpi</packaging>
-  <name>Deploy to container Plugin</name>
-  <url>http://wiki.jenkins-ci.org/display/JENKINS/Deploy+Plugin</url>
-  
-  <scm>
-   <connection>scm:git:git://github.com/jenkinsci/deploy-plugin.git</connection>
-   <developerConnection>scm:git:git@github.com:jenkinsci/deploy-plugin.git</developerConnection>
-   <url>https://github.com/jenkinsci/deploy-plugin</url>
-  </scm>  
-  
-  <developers>
-    <developer>
-      <id>kohsuke</id>
-      <name>Kohsuke Kawaguchi</name>
-    </developer>
-    <developer>
-      <id>edobm</id>
-      <name>Meikel Bode</name>
-    </developer>
-  </developers>
-  
-  <dependencies>
-    <dependency>
-      <groupId>org.codehaus.cargo</groupId>
-      <artifactId>cargo-core-api-generic</artifactId>
-      <version>${cargo.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>dom4j</groupId>
-          <artifactId>dom4j</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>jaxen</groupId>
-          <artifactId>jaxen</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>ant</groupId>
-          <artifactId>ant</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-  
-    <dependency>
-      <groupId>org.codehaus.cargo</groupId>
-      <artifactId>cargo-core-container-jboss</artifactId>
-      <version>${cargo.version}</version>
-    </dependency>
-  
-    <dependency>
-      <groupId>org.codehaus.cargo</groupId>
-      <artifactId>cargo-core-container-tomcat</artifactId>
-      <version>${cargo.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.cargo</groupId>
-      <artifactId>cargo-core-container-glassfish</artifactId>
-      <version>${cargo.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.cargo</groupId>
-      <artifactId>cargo-core-container-weblogic</artifactId>
-      <version>${cargo.version}</version>
-    </dependency>
-   
-    <dependency>
-      <groupId>org.glassfish.deployment</groupId>
-      <artifactId>deployment-client</artifactId>
-      <version>3.1</version>
-    </dependency>
- 
-     
-  </dependencies>
+	<parent>
+		<groupId>org.jenkins-ci.plugins</groupId>
+		<artifactId>plugin</artifactId>
+		<version>1.409</version>
+	</parent>
 
-  <repositories>
-   <repository>
-     <id>glassfish</id>
-     <url>http://download.java.net/maven/glassfish</url>
-  </repository>
-   
-  </repositories>
+	<artifactId>deploy</artifactId>
+	<version>1.10-SNAPSHOT</version>
+	<packaging>hpi</packaging>
+	<name>Deploy to container Plugin</name>
+	<url>http://wiki.jenkins-ci.org/display/JENKINS/Deploy+Plugin</url>
 
-  <properties>
-    <cargo.version>1.2.3</cargo.version>
-  </properties>
+	<scm>
+		<connection>scm:git:git://github.com/jenkinsci/deploy-plugin.git</connection>
+		<developerConnection>scm:git:git@github.com:jenkinsci/deploy-plugin.git</developerConnection>
+		<url>https://github.com/jenkinsci/deploy-plugin</url>
+	</scm>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>repo.jenkins-ci.org</id>
-            <url>http://repo.jenkins-ci.org/public/</url>
-        </pluginRepository>
-    </pluginRepositories>
+	<developers>
+		<developer>
+			<id>kohsuke</id>
+			<name>Kohsuke Kawaguchi</name>
+		</developer>
+		<developer>
+			<id>edobm</id>
+			<name>Meikel Bode</name>
+		</developer>
+		<developer>
+			<id>devkiela</id>
+			<name>Daniel Barth</name>
+		</developer>
+	</developers>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<cargo.version>1.2.3</cargo.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.codehaus.cargo</groupId>
+			<artifactId>cargo-core-api-generic</artifactId>
+			<version>${cargo.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>dom4j</groupId>
+					<artifactId>dom4j</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>jaxen</groupId>
+					<artifactId>jaxen</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>ant</groupId>
+					<artifactId>ant</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.codehaus.cargo</groupId>
+			<artifactId>cargo-core-container-jboss</artifactId>
+			<version>${cargo.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.codehaus.cargo</groupId>
+			<artifactId>cargo-core-container-tomcat</artifactId>
+			<version>${cargo.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.cargo</groupId>
+			<artifactId>cargo-core-container-glassfish</artifactId>
+			<version>${cargo.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.cargo</groupId>
+			<artifactId>cargo-core-container-weblogic</artifactId>
+			<version>${cargo.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.glassfish.deployment</groupId>
+			<artifactId>deployment-client</artifactId>
+			<version>3.1</version>
+		</dependency>
+
+	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>glassfish</id>
+			<url>http://download.java.net/maven/glassfish</url>
+		</repository>
+	</repositories>
+
 </project>  
 
