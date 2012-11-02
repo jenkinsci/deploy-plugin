@@ -26,15 +26,17 @@ import java.util.List;
  * @author Kohsuke Kawaguchi
  */
 public class DeployPublisher extends Notifier implements Serializable {
-    public final ContainerAdapter adapter;
+    private List<ContainerAdapterWrapper> adapterWrappers;
     public final String contextPath;
 
     public final String war;
     public final boolean onFailure;
-
+    
+    public final ContainerAdapter adapter = null;
+    
     @DataBoundConstructor
-    public DeployPublisher(ContainerAdapter adapter, String war, String contextPath, boolean onFailure) {
-        this.adapter = adapter;
+    public DeployPublisher(List<ContainerAdapterWrapper> adapterWrappers, String war, String contextPath, boolean onFailure, ContainerAdapter adapter) {
+   		this.adapterWrappers = adapterWrappers;
         this.war = war;
         this.onFailure = onFailure;
         this.contextPath = contextPath;
@@ -44,8 +46,9 @@ public class DeployPublisher extends Notifier implements Serializable {
     public boolean perform(AbstractBuild<?,?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
         if (build.getResult().equals(Result.SUCCESS) || onFailure) {
                 for (FilePath warFile : build.getWorkspace().list(this.war)) {
-                if(!adapter.redeploy(warFile,contextPath,build,launcher,listener))
-                    build.setResult(Result.FAILURE);
+                	for(ContainerAdapterWrapper wrapper : adapterWrappers)
+                        if(!wrapper.adapter.redeploy(warFile,contextPath,build,launcher,listener))
+                            build.setResult(Result.FAILURE);
             }
         }
 
@@ -55,8 +58,27 @@ public class DeployPublisher extends Notifier implements Serializable {
     public BuildStepMonitor getRequiredMonitorService() {
         return BuildStepMonitor.BUILD;
     }
+    
+    public Object readResolve() {
+    	if(adapter != null) {
+    		if(adapterWrappers == null) {
+    			adapterWrappers = new ArrayList<ContainerAdapterWrapper>();
+    		}
+    		adapterWrappers.add(new ContainerAdapterWrapper(adapter));
+    	}
+    	return this;
+    }
 
-    @Extension
+    /**
+	 * Get the value of the adapterWrappers property
+	 *
+	 * @return The value of adapterWrappers
+	 */
+	public List<ContainerAdapterWrapper> getAdapterWrappers() {
+		return adapterWrappers;
+	}
+
+	@Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
         public boolean isApplicable(Class<? extends AbstractProject> jobType) {
             return true;
