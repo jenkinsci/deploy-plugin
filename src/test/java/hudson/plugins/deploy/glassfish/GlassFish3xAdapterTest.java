@@ -22,7 +22,7 @@ public class GlassFish3xAdapterTest {
 
     private GlassFish3xAdapter adapter;
     private GlassFish3xAdapter remoteAdapter;
-    private static final String home = "D:/development/server/glassfishv3";
+    private static final String home = "c:/bin/glassfish_os_3.1.1";
     private static final String username = "admin";
     private static final String password = "";
     private static int port = 1234;
@@ -77,13 +77,13 @@ public class GlassFish3xAdapterTest {
     //@Test
     public void testDeploy() throws IOException, InterruptedException {
         
-        adapter.redeploy(new FilePath(new File("src/test/simple.war")), "contextPath", null, null, new StreamBuildListener(System.out));
+        remoteAdapter.redeploy(new FilePath(new File("src/test/simple.war")), "contextPath", null, null, new StreamBuildListener(System.out));
     }
     
-    //@Test
+    @Test
     public void testRemoteDeploy() throws IOException, InterruptedException {
        
 
-        remoteAdapter.redeploy(new FilePath(new File("src/test/simple.war")), "contextPath", null, null, new StreamBuildListener(System.out));
+        remoteAdapter.redeploy(new FilePath(new File("src/test/simple.ear")), null, null, null, new StreamBuildListener(System.out));
     }
 }
