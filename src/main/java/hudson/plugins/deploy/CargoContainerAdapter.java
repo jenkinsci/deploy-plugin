@@ -23,24 +23,30 @@ import org.codehaus.cargo.generic.deployer.DeployerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import org.apache.commons.io.FilenameUtils;
+import org.codehaus.cargo.container.deployable.EAR;
 
 /**
  * Provides container-specific glue code.
  *
  * <p>
- * To support remote operations as an inner class, marking the class as serializable.
+ * To support remote operations as an inner class, marking the class as
+ * serializable.
  *
  * @author Kohsuke Kawaguchi
  */
 public abstract class CargoContainerAdapter extends ContainerAdapter implements Serializable {
+
     /**
      * Returns the container ID used by Cargo.
+     *
      * @return
      */
     protected abstract String getContainerId();
 
     /**
      * Fills in the {@link Configuration} object.
+     *
      * @param config
      */
     protected abstract void configure(Configuration config);
@@ -50,22 +56,32 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
         configure(config);
         return containerFactory.createContainer(id, ContainerType.REMOTE, config);
     }
-    
-    protected void deploy( DeployerFactory deployerFactory, final BuildListener listener, Container container, File f, String contextPath ) {
+
+    protected void deploy(DeployerFactory deployerFactory, final BuildListener listener, Container container, File f, String contextPath) {
         Deployer deployer = deployerFactory.createDeployer(container);
 
-        listener.getLogger().println("Deploying "+f+" to container "+container.getName());
-
+        listener.getLogger().println("Deploying " + f + " to container " + container.getName());
         deployer.setLogger(new LoggerImpl(listener.getLogger()));
-        WAR war = createWAR( f );
-        if ( !StringUtils.isEmpty(contextPath)) {
-            war.setContext( contextPath );
+
+
+        String extension = FilenameUtils.getExtension(f.getAbsolutePath());
+        if ("WAR".equalsIgnoreCase(extension)) {
+            WAR war = createWAR(f);
+            if (!StringUtils.isEmpty(contextPath)) {
+                war.setContext(contextPath);
+            }
+            deployer.redeploy(war);
+        } else if ("EAR".equalsIgnoreCase(extension)) {
+            EAR ear = createEAR(f);
+            deployer.redeploy(ear);
+        } else {
+            throw new RuntimeException("Extension File Error.");
         }
-        deployer.redeploy(war);
     }
 
     /**
-     * Creates a Deployable object from the given file object.
+     * Creates a Deployable object WAR from the given file object.
+     *
      * @param deployableFile The deployable file to create the Deployable from.
      * @return A Deployable object.
      */
@@ -73,10 +89,20 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
         return new WAR(deployableFile.getAbsolutePath());
     }
 
+    /**
+     * Creates a Deployable object EAR from the given file object.
+     *
+     * @param deployableFile The deployable file to create the Deployable from.
+     * @return A Deployable object.
+     */
+    protected EAR createEAR(File deployableFile) {
+        return new EAR(deployableFile.getAbsolutePath());
+    }
+
     public boolean redeploy(FilePath war, final String contextPath, AbstractBuild<?, ?> build, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException {
         return war.act(new FileCallable<Boolean>() {
             public Boolean invoke(File f, VirtualChannel channel) throws IOException {
-                if(!f.exists()) {
+                if (!f.exists()) {
                     listener.error(Messages.DeployPublisher_NoSuchFile(f));
                     return true;
                 }
@@ -86,7 +112,7 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
                 final DeployerFactory deployerFactory = new DefaultDeployerFactory(cl);
 
                 Container container = getContainer(configFactory, containerFactory, getContainerId());
-                
+
                 deploy(deployerFactory, listener, container, f, contextPath);
                 return true;
             }
