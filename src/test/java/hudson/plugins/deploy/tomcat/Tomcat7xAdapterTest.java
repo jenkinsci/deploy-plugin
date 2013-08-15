@@ -22,7 +22,7 @@ public class Tomcat7xAdapterTest {
 
     @Test
     public void testContainerId() {
-        Assert.assertEquals(adapter.getContainerId(), Tomcat7xRemoteContainer.ID);            
+        Assert.assertEquals(adapter.getContainerId(), new Tomcat7xRemoteContainer(null).getId());            
     }
 
     @Test
