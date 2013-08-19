@@ -21,7 +21,7 @@ public class JBoss7xAdapter extends JBossAdapter {
     public static final class DescriptorImpl extends ContainerAdapterDescriptor {
         @Override
         public String getDisplayName() {
-            return "JBoss 7.x";
+            return "JBoss AS 7.x";
         }
     }
 }

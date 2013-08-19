@@ -2,6 +2,7 @@ package hudson.plugins.deploy.jboss;
 
 import hudson.Extension;
 import hudson.plugins.deploy.ContainerAdapterDescriptor;
+
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -13,6 +14,7 @@ public class JBoss5xAdapter extends JBossAdapter {
         super(url, password, userName);
     }
 
+    @Override
     public String getContainerId() {
         return "jboss5x";
     }
@@ -20,8 +22,9 @@ public class JBoss5xAdapter extends JBossAdapter {
 
     @Extension
     public static final class DescriptorImpl extends ContainerAdapterDescriptor {
+        @Override
         public String getDisplayName() {
-            return "JBoss 5.x";
+            return "JBoss AS 5.x";
         }
     }
 }
