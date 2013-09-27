@@ -3,14 +3,16 @@ package hudson.plugins.deploy;
 import hudson.FilePath;
 import hudson.FilePath.FileCallable;
 import hudson.Launcher;
-import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.remoting.VirtualChannel;
+import hudson.util.VariableResolver;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.cargo.container.Container;
 import org.codehaus.cargo.container.ContainerType;
 import org.codehaus.cargo.container.configuration.Configuration;
 import org.codehaus.cargo.container.configuration.ConfigurationType;
+import org.codehaus.cargo.container.deployable.EAR;
 import org.codehaus.cargo.container.deployable.WAR;
 import org.codehaus.cargo.container.deployer.Deployer;
 import org.codehaus.cargo.generic.ContainerFactory;
@@ -23,8 +25,6 @@ import org.codehaus.cargo.generic.deployer.DeployerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import org.apache.commons.io.FilenameUtils;
-import org.codehaus.cargo.container.deployable.EAR;
 
 /**
  * Provides container-specific glue code.
@@ -49,11 +49,11 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
      *
      * @param config
      */
-    protected abstract void configure(Configuration config);
+    protected abstract void configure(Configuration config, VariableResolver<String> variableResolver);
 
-    protected Container getContainer(ConfigurationFactory configFactory, ContainerFactory containerFactory, String id) {
+    protected Container getContainer(VariableResolver<String> variableResolver, ConfigurationFactory configFactory, ContainerFactory containerFactory, String id) {
         Configuration config = configFactory.createConfiguration(id, ContainerType.REMOTE, ConfigurationType.RUNTIME);
-        configure(config);
+        configure(config, variableResolver);
         return containerFactory.createContainer(id, ContainerType.REMOTE, config);
     }
 
@@ -99,7 +99,7 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
         return new EAR(deployableFile.getAbsolutePath());
     }
 
-    public boolean redeploy(FilePath war, final String contextPath, AbstractBuild<?, ?> build, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException {
+    public boolean redeploy(FilePath war, final String contextPath, final VariableResolver<String> variableResolver, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException {
         return war.act(new FileCallable<Boolean>() {
             public Boolean invoke(File f, VirtualChannel channel) throws IOException {
                 if (!f.exists()) {
@@ -111,7 +111,7 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
                 final ContainerFactory containerFactory = new DefaultContainerFactory(cl);
                 final DeployerFactory deployerFactory = new DefaultDeployerFactory(cl);
 
-                Container container = getContainer(configFactory, containerFactory, getContainerId());
+                Container container = getContainer(variableResolver, configFactory, containerFactory, getContainerId());
 
                 deploy(deployerFactory, listener, container, f, contextPath);
                 return true;

@@ -1,5 +1,7 @@
 package hudson.plugins.deploy;
 
+import hudson.Util;
+import hudson.util.VariableResolver;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.codehaus.cargo.container.configuration.Configuration;
 
@@ -32,21 +34,21 @@ public abstract class DefaultCargoContainerAdapterImpl extends CargoContainerAda
      * Default implementation that fills the configuration by using
      * fields and getters annotated with {@link Property}.
      */
-    public void configure(Configuration config) {
+    public void configure(Configuration config, VariableResolver<String> variableResolver) {
         for(Field f : getClass().getFields()) {
-            setConfiguration(f, config);
+            setConfiguration(f, config, variableResolver);
         }
         for (Method m : getClass().getMethods()) {
-            setConfiguration(m, config);
+            setConfiguration(m, config, variableResolver);
         }
     }
     
-    private void setConfiguration(AccessibleObject ao, Configuration config) {
+    private void setConfiguration(AccessibleObject ao, Configuration config, VariableResolver<String> variableResolver) {
         Property p = ao.getAnnotation(Property.class);
         if(p==null) return;
         
         try {
-            String v = ConvertUtils.convert(getPropertyValue(ao));
+            String v = Util.replaceMacro(ConvertUtils.convert(getPropertyValue(ao)), variableResolver);
             if(v!=null)
                 config.setProperty(p.value(), v);
         } catch (Exception e) {
