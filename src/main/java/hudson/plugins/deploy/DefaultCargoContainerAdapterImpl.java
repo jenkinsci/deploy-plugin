@@ -1,5 +1,6 @@
 package hudson.plugins.deploy;
 
+import hudson.EnvVars;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.codehaus.cargo.container.configuration.Configuration;
 
@@ -31,8 +32,10 @@ public abstract class DefaultCargoContainerAdapterImpl extends CargoContainerAda
     /**
      * Default implementation that fills the configuration by using
      * fields and getters annotated with {@link Property}.
+     * @param config
      */
-    public void configure(Configuration config) {
+    @Override
+    public void configure(Configuration config, EnvVars envVars) {
         for(Field f : getClass().getFields()) {
             setConfiguration(f, config);
         }

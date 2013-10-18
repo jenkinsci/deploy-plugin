@@ -1,5 +1,6 @@
 package hudson.plugins.deploy.glassfish;
 
+import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.model.StreamBuildListener;
 import org.codehaus.cargo.container.Container;
@@ -50,7 +51,7 @@ public class GlassFish3xAdapterTest {
         ConfigurationFactory configFactory = new DefaultConfigurationFactory();
         ContainerFactory containerFactory = new DefaultContainerFactory();
 
-        Container container = adapter.getContainer(configFactory, containerFactory, adapter.getContainerId());
+        Container container = adapter.getContainer(configFactory, containerFactory, adapter.getContainerId(), new EnvVars());
         Assert.assertNotNull(container);
     }
 
@@ -65,7 +66,7 @@ public class GlassFish3xAdapterTest {
         ConfigurationFactory configFactory = new DefaultConfigurationFactory();
         ContainerFactory containerFactory = new DefaultContainerFactory();
 
-        Container container = remoteAdapter.getContainer(configFactory, containerFactory, remoteAdapter.getContainerId());
+        Container container = remoteAdapter.getContainer(configFactory, containerFactory, remoteAdapter.getContainerId(), new EnvVars());
         Assert.assertNotNull(container);
     }
 

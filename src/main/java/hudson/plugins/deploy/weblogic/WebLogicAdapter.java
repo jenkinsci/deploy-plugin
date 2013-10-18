@@ -1,5 +1,6 @@
 package hudson.plugins.deploy.weblogic;
 
+import hudson.EnvVars;
 import hudson.plugins.deploy.ContainerAdapterDescriptor;
 import hudson.plugins.deploy.DefaultCargoContainerAdapterImpl;
 import hudson.util.FormValidation;
@@ -44,9 +45,9 @@ public abstract class WebLogicAdapter extends DefaultCargoContainerAdapterImpl {
     }
 
     @Override
-    protected Container getContainer(ConfigurationFactory configFactory, ContainerFactory containerFactory, String id) {
+    protected Container getContainer(ConfigurationFactory configFactory, ContainerFactory containerFactory, String id, EnvVars envVars) {
         Configuration config = configFactory.createConfiguration(id, ContainerType.INSTALLED, ConfigurationType.EXISTING, home);
-        configure(config);
+        configure(config, envVars);
         return containerFactory.createContainer(id, ContainerType.INSTALLED, config);
     }
 
