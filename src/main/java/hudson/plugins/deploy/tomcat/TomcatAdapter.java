@@ -1,5 +1,7 @@
 package hudson.plugins.deploy.tomcat;
 
+import hudson.EnvVars;
+import hudson.Util;
 import hudson.plugins.deploy.PasswordProtectedAdapterCargo;
 import org.codehaus.cargo.container.property.RemotePropertySet;
 import org.codehaus.cargo.container.configuration.Configuration;
@@ -26,10 +28,11 @@ public abstract class TomcatAdapter extends PasswordProtectedAdapterCargo {
         this.url = url;
     }
 
-    public void configure(Configuration config) {
-        super.configure(config);
+    @Override
+    public void configure(Configuration config, EnvVars envVars) {
+        super.configure(config, envVars);
         try {
-            URL _url = new URL(url + "/manager");
+            URL _url = new URL(Util.replaceMacro(url, envVars) + "/manager");
             config.setProperty(RemotePropertySet.URI,_url.toExternalForm());
         } catch (MalformedURLException e) {
             throw new AssertionError(e);

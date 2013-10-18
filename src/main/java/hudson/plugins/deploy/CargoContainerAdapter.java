@@ -1,5 +1,6 @@
 package hudson.plugins.deploy;
 
+import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.FilePath.FileCallable;
 import hudson.Launcher;
@@ -48,12 +49,13 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
      * Fills in the {@link Configuration} object.
      *
      * @param config
+     * @param envVars 
      */
-    protected abstract void configure(Configuration config);
+    protected abstract void configure(Configuration config, EnvVars envVars);
 
-    protected Container getContainer(ConfigurationFactory configFactory, ContainerFactory containerFactory, String id) {
+    protected Container getContainer(ConfigurationFactory configFactory, ContainerFactory containerFactory, String id, EnvVars envVars) {
         Configuration config = configFactory.createConfiguration(id, ContainerType.REMOTE, ConfigurationType.RUNTIME);
-        configure(config);
+        configure(config, envVars);
         return containerFactory.createContainer(id, ContainerType.REMOTE, config);
     }
 
@@ -99,7 +101,7 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
         return new EAR(deployableFile.getAbsolutePath());
     }
 
-    public boolean redeploy(FilePath war, final String contextPath, AbstractBuild<?, ?> build, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException {
+    public boolean redeploy(FilePath war, final String contextPath, final AbstractBuild<?, ?> build, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException {
         return war.act(new FileCallable<Boolean>() {
             public Boolean invoke(File f, VirtualChannel channel) throws IOException {
                 if (!f.exists()) {
@@ -110,8 +112,16 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
                 final ConfigurationFactory configFactory = new DefaultConfigurationFactory(cl);
                 final ContainerFactory containerFactory = new DefaultContainerFactory(cl);
                 final DeployerFactory deployerFactory = new DefaultDeployerFactory(cl);
-
-                Container container = getContainer(configFactory, containerFactory, getContainerId());
+                
+                EnvVars variables = new EnvVars();
+                try {
+                    variables.putAll(build.getEnvironment(listener));
+                } catch (InterruptedException ex) {
+                    listener.getLogger().println(ex.getMessage());
+                }
+                //variables.putAll(build.getBuildVariables());
+                
+                Container container = getContainer(configFactory, containerFactory, getContainerId(), variables);
 
                 deploy(deployerFactory, listener, container, f, contextPath);
                 return true;

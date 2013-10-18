@@ -1,5 +1,6 @@
 package hudson.plugins.deploy.jboss;
 
+import hudson.EnvVars;
 import hudson.plugins.deploy.PasswordProtectedAdapterCargo;
 import org.codehaus.cargo.container.configuration.Configuration;
 import org.codehaus.cargo.container.property.GeneralPropertySet;
@@ -22,8 +23,8 @@ public abstract class JBossAdapter extends PasswordProtectedAdapterCargo {
     }
 
     @Override
-    public void configure(Configuration config) {
-        super.configure(config);
+    public void configure(Configuration config, EnvVars envVars) {
+        super.configure(config, envVars);
         try {
             URL _url = new URL(url);
             config.setProperty(GeneralPropertySet.PROTOCOL,_url.getProtocol());

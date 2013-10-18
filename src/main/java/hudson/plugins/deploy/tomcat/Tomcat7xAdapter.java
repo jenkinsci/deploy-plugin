@@ -1,6 +1,8 @@
 package hudson.plugins.deploy.tomcat;
 
+import hudson.EnvVars;
 import hudson.Extension;
+import hudson.Util;
 import hudson.plugins.deploy.ContainerAdapterDescriptor;
 import org.codehaus.cargo.container.property.RemotePropertySet;
 import org.codehaus.cargo.container.configuration.Configuration;
@@ -28,11 +30,12 @@ public class Tomcat7xAdapter extends TomcatAdapter {
         super(url, password, userName);
     }
     
-		public void configure(Configuration config) {
-        super.configure(config);
+    @Override
+    public void configure(Configuration config, EnvVars envVars) {
+        super.configure(config, envVars);
         try {
-            URL _url = new URL(url + "/manager/text");
-            config.setProperty(RemotePropertySet.URI,_url.toExternalForm());
+            URL _url = new URL(Util.replaceMacro(url, envVars) + "/manager/text");
+            config.setProperty(RemotePropertySet.URI, _url.toExternalForm());
         } catch (MalformedURLException e) {
             throw new AssertionError(e);
         }
