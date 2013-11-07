@@ -95,12 +95,11 @@
 
 	</dependencies>
 
-	<repositories>
-		<repository>
-			<id>glassfish</id>
-			<url>http://download.java.net/maven/glassfish</url>
-		</repository>
-	</repositories>
-
+    <licenses>
+      <license>
+        <name>MIT license</name>
+        <comments>All source code is under the MIT license.</comments>
+      </license>
+    </licenses>
 </project>  
 
