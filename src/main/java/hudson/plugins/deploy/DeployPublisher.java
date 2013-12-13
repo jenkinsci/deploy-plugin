@@ -46,14 +46,12 @@ public class DeployPublisher extends Notifier implements Serializable {
 
     @Override
     public boolean perform(AbstractBuild<?,?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
-        // expand context path using build env variables
-        String contextPath = expandVariable(build.getBuildVariableResolver(),
-                                build.getEnvironment(listener), this.contextPath);
-        if (build.getResult().equals(Result.SUCCESS) || onFailure) {
-                for (FilePath warFile : build.getWorkspace().list(this.war)) {
-                if(!adapter.redeploy(warFile,contextPath,build,launcher,listener))
-                    build.setResult(Result.FAILURE);
-            }
+        for (FilePath warFile : build.getWorkspace().list(this.war)) {
+            // expand context path using build env variables
+            String contextPath = expandVariable(build.getBuildVariableResolver(),
+                                    build.getEnvironment(listener), this.contextPath);
+            if(!adapter.redeploy(warFile,contextPath,build,launcher,listener))
+                build.setResult(Result.FAILURE);
         }
 
         return true;
