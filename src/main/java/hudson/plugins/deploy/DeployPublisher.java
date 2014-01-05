@@ -1,5 +1,6 @@
 package hudson.plugins.deploy;
 
+import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -11,6 +12,7 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
+
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.IOException;
@@ -42,15 +44,26 @@ public class DeployPublisher extends Notifier implements Serializable {
 
     @Override
     public boolean perform(AbstractBuild<?,?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
-        if (build.getResult().equals(Result.SUCCESS) || onFailure) {
-                for (FilePath warFile : build.getWorkspace().list(this.war)) {
-                if(!adapter.redeploy(warFile,contextPath,build,launcher,listener))
+    	EnvVars envVars = new EnvVars();
+    	envVars = build.getEnvironment(listener);
+    	String warFiles = envVars.expand(this.war);
+    	String containerContextPath = envVars.expand(this.contextPath);
+    	
+    	if (build.getResult().equals(Result.SUCCESS) || onFailure) {
+                for (FilePath warFile : build.getWorkspace().list(warFiles)) {
+                if(!adapter.redeploy(warFile,containerContextPath,build,launcher,listener))
                     build.setResult(Result.FAILURE);
             }
         }
 
         return true;
     }
+
+	private void resolveVariables(AbstractBuild<?, ?> build,
+			BuildListener listener) throws IOException, InterruptedException {
+		
+
+	}
 
     public BuildStepMonitor getRequiredMonitorService() {
         return BuildStepMonitor.BUILD;
