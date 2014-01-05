@@ -17,7 +17,7 @@ public class Tomcat7xAdapterTest {
 
     @Before
     public void setup() {
-        adapter = new  Tomcat7xAdapter(url, password, username);
+        adapter = new  Tomcat7xAdapter(url, password, username,"");
     }
 
     @Test

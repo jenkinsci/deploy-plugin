@@ -23,9 +23,13 @@ public abstract class TomcatAdapter extends PasswordProtectedAdapterCargo {
 	 */
 	public final String url;
 
-	public TomcatAdapter(String url, String password, String userName) {
+	protected String managerContext;
+
+	public TomcatAdapter(String url, String password, String userName,
+			String managerContext) {
 		super(userName, password);
 		this.url = url;
+		this.managerContext = managerContext;
 	}
 
 	public void configure(Configuration config, EnvVars env) {
@@ -40,6 +44,9 @@ public abstract class TomcatAdapter extends PasswordProtectedAdapterCargo {
 	}
 
 	protected String getTomcatManagerSuffix() {
+		if (managerContext.length() != 0) {
+			return managerContext;
+		}
 		return "/manager";
 	}
 

@@ -1,20 +1,15 @@
 package hudson.plugins.deploy.tomcat;
 
-import hudson.EnvVars;
 import hudson.Extension;
 import hudson.plugins.deploy.ContainerAdapterDescriptor;
-
-import org.codehaus.cargo.container.property.RemotePropertySet;
-import org.codehaus.cargo.container.configuration.Configuration;
 import org.kohsuke.stapler.DataBoundConstructor;
-
-import java.net.MalformedURLException;
-import java.net.URL;
 
 /**
  * Tomcat 7.x
  */
 public class Tomcat7xAdapter extends TomcatAdapter {
+
+	
 
 	/**
 	 * Tomcat 7 support
@@ -27,12 +22,16 @@ public class Tomcat7xAdapter extends TomcatAdapter {
 	 *            tomcat manager username
 	 */
 	@DataBoundConstructor
-	public Tomcat7xAdapter(String url, String password, String userName) {
-		super(url, password, userName);
+	public Tomcat7xAdapter(String url, String password, String userName,
+			String managerContext) {
+		super(url, password, userName,managerContext);
 	}
 
 	@Override
 	protected String getTomcatManagerSuffix() {
+		if (managerContext.length() != 0) {
+			return managerContext;
+		}
 		return "/manager/text";
 	}
 
