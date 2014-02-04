@@ -1,5 +1,6 @@
 package hudson.plugins.deploy.glassfish;
 
+import hudson.util.VariableResolver;
 import org.codehaus.cargo.container.Container;
 import org.codehaus.cargo.container.glassfish.GlassFish2xInstalledLocalContainer;
 import org.codehaus.cargo.generic.ContainerFactory;
@@ -41,7 +42,7 @@ public class GlassFish2xAdapterTest {
         ConfigurationFactory configFactory = new DefaultConfigurationFactory();
         ContainerFactory containerFactory = new DefaultContainerFactory();
 
-        Container container = adapter.getContainer(configFactory, containerFactory, adapter.getContainerId());
+        Container container = adapter.getContainer(VariableResolver.NONE, configFactory, containerFactory, adapter.getContainerId());
         Assert.assertNotNull(container);
     }
 }

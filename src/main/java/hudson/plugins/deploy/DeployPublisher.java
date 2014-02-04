@@ -3,14 +3,17 @@ package hudson.plugins.deploy;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
+import hudson.Util;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
+import hudson.model.ParametersAction;
 import hudson.model.Result;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
+import hudson.util.VariableResolver;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.IOException;
@@ -43,8 +46,13 @@ public class DeployPublisher extends Notifier implements Serializable {
     @Override
     public boolean perform(AbstractBuild<?,?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
         if (build.getResult().equals(Result.SUCCESS) || onFailure) {
-                for (FilePath warFile : build.getWorkspace().list(this.war)) {
-                if(!adapter.redeploy(warFile,contextPath,build,launcher,listener))
+            VariableResolver<String> variableResolver = VariableResolver.NONE;
+            ParametersAction paramsAction = build.getAction(ParametersAction.class);
+            if (paramsAction!=null)
+                variableResolver = paramsAction.createVariableResolver(build);
+
+            for (FilePath warFile : build.getWorkspace().list(Util.replaceMacro(this.war, variableResolver))) {
+                if(!adapter.redeploy(warFile,Util.replaceMacro(contextPath, variableResolver),variableResolver,launcher,listener))
                     build.setResult(Result.FAILURE);
             }
         }
