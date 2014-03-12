@@ -41,4 +41,25 @@ public class Tomcat7xAdapterTest {
         Assert.assertEquals(username, config.getPropertyValue(RemotePropertySet.USERNAME));
         Assert.assertEquals(password, config.getPropertyValue(RemotePropertySet.PASSWORD));
     }
+
+    @Test
+    public void testEnvVars() {
+        final String urlvar = "url";
+        final String urlval = "https://localhost:8443";
+        final String managervar = "man";
+        final String managerval = "/super-manager";
+        final String uservar = "user";
+        final String userval = "secret";
+        final String passvar = "pass";
+        final String passval = "agent man";
+
+        final Tomcat7xAdapter envadapter = new Tomcat7xAdapter("$" + urlvar, "$" + passvar, "$" + uservar, "$" + managervar);
+        final DefaultConfigurationFactory configFactory = new DefaultConfigurationFactory();
+        Configuration config = configFactory.createConfiguration(envadapter.getContainerId(), ContainerType.REMOTE, ConfigurationType.RUNTIME);
+        envadapter.configure(config, new EnvVars(urlvar, urlval, managervar, managerval, uservar, userval, passvar, passval));
+
+        Assert.assertEquals(urlval + managerval, config.getPropertyValue(RemotePropertySet.URI));
+        Assert.assertEquals(userval, config.getPropertyValue(RemotePropertySet.USERNAME));
+        Assert.assertEquals(passval, config.getPropertyValue(RemotePropertySet.PASSWORD));
+    }
 }
