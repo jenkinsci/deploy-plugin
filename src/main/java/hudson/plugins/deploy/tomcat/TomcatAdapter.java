@@ -52,7 +52,7 @@ public abstract class TomcatAdapter extends PasswordProtectedAdapterCargo {
 	}
 
 	protected String getTomcatManagerSuffix() {
-		if (managerContext.length() != 0) {
+		if ((managerContext != null) && (managerContext.length() != 0)) {
 			return managerContext;
 		}
 		return "/manager";

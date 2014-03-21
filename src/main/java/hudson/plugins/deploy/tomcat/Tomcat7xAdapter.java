@@ -29,7 +29,7 @@ public class Tomcat7xAdapter extends TomcatAdapter {
 
 	@Override
 	protected String getTomcatManagerSuffix() {
-		if (managerContext.length() != 0) {
+		if ((managerContext != null) && (managerContext.length() != 0)) {
 			return managerContext;
 		}
 		return "/manager/text";
