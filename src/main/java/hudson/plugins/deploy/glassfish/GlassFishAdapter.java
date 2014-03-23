@@ -1,6 +1,8 @@
 package hudson.plugins.deploy.glassfish;
 
+import hudson.EnvVars;
 import hudson.plugins.deploy.PasswordProtectedAdapterCargo;
+
 import org.codehaus.cargo.container.Container;
 import org.codehaus.cargo.container.ContainerType;
 import org.codehaus.cargo.container.configuration.Configuration;
@@ -53,16 +55,16 @@ public abstract class GlassFishAdapter extends PasswordProtectedAdapterCargo {
      * {@inheritDoc}
      */
     @Override
-    protected Container getContainer(ConfigurationFactory configFactory, ContainerFactory containerFactory, String id) {
+    protected Container getContainer(ConfigurationFactory configFactory, ContainerFactory containerFactory, String id, EnvVars environment) {
 
         if (hostname != null) {
 
 
             AbstractRuntimeConfiguration config = (AbstractRuntimeConfiguration) configFactory.createConfiguration(id, ContainerType.REMOTE, ConfigurationType.RUNTIME);
-            configure(config);
-            config.setProperty(RemotePropertySet.USERNAME, userName);
-            config.setProperty(RemotePropertySet.PASSWORD, getPassword());
-            config.setProperty(GeneralPropertySet.HOSTNAME, hostname);
+            configure(config,environment);
+            config.setProperty(RemotePropertySet.USERNAME, environment.expand(userName));
+            config.setProperty(RemotePropertySet.PASSWORD, environment.expand(getPassword()));
+            config.setProperty(GeneralPropertySet.HOSTNAME, environment.expand(hostname));
 
             AbstractRemoteContainer container = (AbstractRemoteContainer) containerFactory.createContainer(id, ContainerType.REMOTE, config);
 
@@ -70,13 +72,13 @@ public abstract class GlassFishAdapter extends PasswordProtectedAdapterCargo {
 
 
         } else {
-            AbstractStandaloneLocalConfiguration config = (AbstractStandaloneLocalConfiguration) configFactory.createConfiguration(id, ContainerType.INSTALLED, ConfigurationType.STANDALONE, home);
-            configure(config);
+            AbstractStandaloneLocalConfiguration config = (AbstractStandaloneLocalConfiguration) configFactory.createConfiguration(id, ContainerType.INSTALLED, ConfigurationType.STANDALONE, environment.expand(home));
+            configure(config,environment);
 
             AbstractInstalledLocalContainer container = (AbstractInstalledLocalContainer) containerFactory.createContainer(id, ContainerType.INSTALLED, config);
 
             // Explicitly sets the home on the LocalContainer:
-            container.setHome(home);
+            container.setHome(environment.expand(home));
 
             return container;
         }

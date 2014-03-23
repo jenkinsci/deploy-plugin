@@ -9,9 +9,9 @@
 	</parent>
 
 	<artifactId>deploy</artifactId>
-	<version>1.10-SNAPSHOT</version>
+	<version>2.0.0-SNAPSHOT</version>
 	<packaging>hpi</packaging>
-	<name>Deploy to container Plugin</name>
+	<name>Deploy to container Plugin Custom</name>
 	<url>http://wiki.jenkins-ci.org/display/JENKINS/Deploy+Plugin</url>
 
 	<scm>
