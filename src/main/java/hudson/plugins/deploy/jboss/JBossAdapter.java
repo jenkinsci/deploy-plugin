@@ -5,6 +5,7 @@ import hudson.plugins.deploy.PasswordProtectedAdapterCargo;
 
 import org.codehaus.cargo.container.configuration.Configuration;
 import org.codehaus.cargo.container.property.GeneralPropertySet;
+import org.codehaus.cargo.container.property.RemotePropertySet;
 import org.codehaus.cargo.container.property.ServletPropertySet;
 
 import java.net.MalformedURLException;
@@ -37,6 +38,14 @@ public abstract class JBossAdapter extends PasswordProtectedAdapterCargo {
 			config.setProperty(ServletPropertySet.PORT, String.valueOf(p));
 		} catch (MalformedURLException ex) {
 			throw new AssertionError(ex);
+		}
+		String username = env.expand(userName);
+		if(username != null) {
+			config.setProperty(RemotePropertySet.USERNAME, username);
+		}
+		String password = env.expand(getPassword());
+		if(password != null) {
+			config.setProperty(RemotePropertySet.PASSWORD, password);
 		}
 	}
 }
