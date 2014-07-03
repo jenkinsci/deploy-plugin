@@ -66,7 +66,7 @@ public class DeployPublisher extends Notifier implements Serializable {
         return true;
     }
     
-    public String expandVariable(VariableResolver<String> variableResolver, EnvVars envVars, String variable) {
+    protected String expandVariable(VariableResolver<String> variableResolver, EnvVars envVars, String variable) {
         return Util.replaceMacro(envVars.expand(variable), variableResolver);
     }
 
