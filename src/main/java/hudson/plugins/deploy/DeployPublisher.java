@@ -26,17 +26,21 @@ import java.util.List;
  * @author Kohsuke Kawaguchi
  */
 public class DeployPublisher extends Notifier implements Serializable {
-    private List<ContainerAdapterWrapper> adapterWrappers;
+    private List<ContainerAdapter> adapters;
     public final String contextPath;
 
     public final String war;
     public final boolean onFailure;
-    
+
+    /**
+     * @deprecated
+     *      Use {@link #getAdapters()}
+     */
     public final ContainerAdapter adapter = null;
     
     @DataBoundConstructor
-    public DeployPublisher(List<ContainerAdapterWrapper> adapterWrappers, String war, String contextPath, boolean onFailure, ContainerAdapter adapter) {
-   		this.adapterWrappers = adapterWrappers;
+    public DeployPublisher(List<ContainerAdapter> adapters, String war, String contextPath, boolean onFailure) {
+   		this.adapters = adapters;
         this.war = war;
         this.onFailure = onFailure;
         this.contextPath = contextPath;
@@ -46,8 +50,8 @@ public class DeployPublisher extends Notifier implements Serializable {
     public boolean perform(AbstractBuild<?,?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
         if (build.getResult().equals(Result.SUCCESS) || onFailure) {
                 for (FilePath warFile : build.getWorkspace().list(this.war)) {
-                	for(ContainerAdapterWrapper wrapper : adapterWrappers)
-                        if(!wrapper.adapter.redeploy(warFile,contextPath,build,launcher,listener))
+                	for(ContainerAdapter adapter : adapters)
+                        if(!adapter.redeploy(warFile,contextPath,build,launcher,listener))
                             build.setResult(Result.FAILURE);
             }
         }
@@ -61,10 +65,10 @@ public class DeployPublisher extends Notifier implements Serializable {
     
     public Object readResolve() {
     	if(adapter != null) {
-    		if(adapterWrappers == null) {
-    			adapterWrappers = new ArrayList<ContainerAdapterWrapper>();
+    		if(adapters == null) {
+    			adapters = new ArrayList<ContainerAdapter>();
     		}
-    		adapterWrappers.add(new ContainerAdapterWrapper(adapter));
+    		adapters.add(adapter);
     	}
     	return this;
     }
@@ -74,8 +78,8 @@ public class DeployPublisher extends Notifier implements Serializable {
 	 *
 	 * @return The value of adapterWrappers
 	 */
-	public List<ContainerAdapterWrapper> getAdapterWrappers() {
-		return adapterWrappers;
+	public List<ContainerAdapter> getAdapters() {
+		return adapters;
 	}
 
 	@Extension
@@ -91,7 +95,7 @@ public class DeployPublisher extends Notifier implements Serializable {
         /**
          * Sort the descriptors so that the order they are displayed is more predictable
          */
-        public List<ContainerAdapterDescriptor> getContainerAdapters() {
+        public List<ContainerAdapterDescriptor> getAdaptersDescriptors() {
             List<ContainerAdapterDescriptor> r = new ArrayList<ContainerAdapterDescriptor>(ContainerAdapter.all());
             Collections.sort(r,new Comparator<ContainerAdapterDescriptor>() {
                 public int compare(ContainerAdapterDescriptor o1, ContainerAdapterDescriptor o2) {
