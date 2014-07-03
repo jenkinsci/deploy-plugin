@@ -2,6 +2,7 @@ package hudson.plugins.deploy.jboss;
 
 import hudson.Extension;
 import hudson.plugins.deploy.ContainerAdapterDescriptor;
+
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -15,14 +16,16 @@ public class JBoss3xAdapter extends JBossAdapter {
         super(url, password, userName);
     }
 
+    @Override
     public String getContainerId() {
         return "jboss3x";
     }
 
     @Extension
     public static final class DescriptorImpl extends ContainerAdapterDescriptor {
+        @Override
         public String getDisplayName() {
-            return "JBoss 3.x";
+            return "JBoss AS 3.x";
         }
     }
 }

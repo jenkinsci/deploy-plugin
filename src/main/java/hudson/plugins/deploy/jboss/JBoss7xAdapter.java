@@ -5,27 +5,23 @@ import hudson.plugins.deploy.ContainerAdapterDescriptor;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
-/**
- * JBoss 4.x.
- * 
- * @author Kohsuke Kawaguchi
- */
-public class JBoss4xAdapter extends JBossAdapter {
+public class JBoss7xAdapter extends JBossAdapter {
     @DataBoundConstructor
-    public JBoss4xAdapter(String url, String password, String userName) {
+    public JBoss7xAdapter(String url, String password, String userName) {
         super(url, password, userName);
     }
 
     @Override
     public String getContainerId() {
-        return "jboss4x";
+        return "jboss7x";
     }
+
 
     @Extension
     public static final class DescriptorImpl extends ContainerAdapterDescriptor {
         @Override
         public String getDisplayName() {
-            return "JBoss AS 4.x";
+            return "JBoss AS 7.x";
         }
     }
 }
