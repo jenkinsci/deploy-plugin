@@ -1,9 +1,11 @@
 package hudson.plugins.deploy.glassfish;
 
 import hudson.plugins.deploy.PasswordProtectedAdapterCargo;
+import hudson.util.VariableResolver;
+import hudson.Util;
+
 import org.codehaus.cargo.container.Container;
 import org.codehaus.cargo.container.ContainerType;
-import org.codehaus.cargo.container.configuration.Configuration;
 import org.codehaus.cargo.container.configuration.ConfigurationType;
 import org.codehaus.cargo.container.glassfish.GlassFishPropertySet;
 import org.codehaus.cargo.container.property.GeneralPropertySet;
@@ -53,16 +55,16 @@ public abstract class GlassFishAdapter extends PasswordProtectedAdapterCargo {
      * {@inheritDoc}
      */
     @Override
-    protected Container getContainer(ConfigurationFactory configFactory, ContainerFactory containerFactory, String id) {
+    protected Container getContainer(ConfigurationFactory configFactory, ContainerFactory containerFactory, String id, VariableResolver<String> variableResolver) {
 
         if (hostname != null) {
 
 
             AbstractRuntimeConfiguration config = (AbstractRuntimeConfiguration) configFactory.createConfiguration(id, ContainerType.REMOTE, ConfigurationType.RUNTIME);
-            configure(config);
-            config.setProperty(RemotePropertySet.USERNAME, userName);
-            config.setProperty(RemotePropertySet.PASSWORD, getPassword());
-            config.setProperty(GeneralPropertySet.HOSTNAME, hostname);
+            configure(config, variableResolver);
+            config.setProperty(RemotePropertySet.USERNAME, Util.replaceMacro(userName, variableResolver));
+            config.setProperty(RemotePropertySet.PASSWORD, Util.replaceMacro(getPassword(), variableResolver));
+            config.setProperty(GeneralPropertySet.HOSTNAME, Util.replaceMacro(hostname, variableResolver));
 
             AbstractRemoteContainer container = (AbstractRemoteContainer) containerFactory.createContainer(id, ContainerType.REMOTE, config);
 
@@ -71,7 +73,7 @@ public abstract class GlassFishAdapter extends PasswordProtectedAdapterCargo {
 
         } else {
             AbstractStandaloneLocalConfiguration config = (AbstractStandaloneLocalConfiguration) configFactory.createConfiguration(id, ContainerType.INSTALLED, ConfigurationType.STANDALONE, home);
-            configure(config);
+            configure(config, variableResolver);
 
             AbstractInstalledLocalContainer container = (AbstractInstalledLocalContainer) containerFactory.createContainer(id, ContainerType.INSTALLED, config);
 

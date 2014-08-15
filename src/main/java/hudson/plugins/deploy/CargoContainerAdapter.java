@@ -6,6 +6,7 @@ import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.remoting.VirtualChannel;
+import hudson.util.VariableResolver;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.cargo.container.Container;
 import org.codehaus.cargo.container.ContainerType;
@@ -48,12 +49,13 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
      * Fills in the {@link Configuration} object.
      *
      * @param config
+     * @param variableResolver
      */
-    protected abstract void configure(Configuration config);
+    protected abstract void configure(Configuration config, VariableResolver<String> variableResolver);
 
-    protected Container getContainer(ConfigurationFactory configFactory, ContainerFactory containerFactory, String id) {
+    protected Container getContainer(ConfigurationFactory configFactory, ContainerFactory containerFactory, String id, VariableResolver<String> variableResolver) {
         Configuration config = configFactory.createConfiguration(id, ContainerType.REMOTE, ConfigurationType.RUNTIME);
-        configure(config);
+        configure(config, variableResolver);
         return containerFactory.createContainer(id, ContainerType.REMOTE, config);
     }
 
@@ -99,7 +101,7 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
         return new EAR(deployableFile.getAbsolutePath());
     }
 
-    public boolean redeploy(FilePath war, final String contextPath, AbstractBuild<?, ?> build, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException {
+    public boolean redeploy(FilePath war, final String contextPath, final AbstractBuild<?, ?> build, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException {
         return war.act(new FileCallable<Boolean>() {
             public Boolean invoke(File f, VirtualChannel channel) throws IOException {
                 if (!f.exists()) {
@@ -111,7 +113,7 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
                 final ContainerFactory containerFactory = new DefaultContainerFactory(cl);
                 final DeployerFactory deployerFactory = new DefaultDeployerFactory(cl);
 
-                Container container = getContainer(configFactory, containerFactory, getContainerId());
+                Container container = getContainer(configFactory, containerFactory, getContainerId(), build.getBuildVariableResolver());
 
                 deploy(deployerFactory, listener, container, f, contextPath);
                 return true;
