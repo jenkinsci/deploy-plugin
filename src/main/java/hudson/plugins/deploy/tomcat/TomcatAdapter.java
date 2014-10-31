@@ -1,25 +1,18 @@
 package hudson.plugins.deploy.tomcat;
 
 import hudson.EnvVars;
-import hudson.Extension;
 import hudson.Util;
-import hudson.plugins.deploy.ContainerAdapterDescriptor;
-import hudson.plugins.deploy.Messages;
 import hudson.plugins.deploy.PasswordProtectedAdapterCargo;
-import hudson.util.FormValidation;
 import hudson.util.VariableResolver;
 
-import org.codehaus.cargo.container.property.RemotePropertySet;
-import org.codehaus.cargo.container.configuration.Configuration;
-import org.codehaus.cargo.container.deployable.WAR;
-import org.codehaus.cargo.container.tomcat.TomcatWAR;
-
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.servlet.ServletException;
+import org.codehaus.cargo.container.configuration.Configuration;
+import org.codehaus.cargo.container.deployable.WAR;
+import org.codehaus.cargo.container.property.RemotePropertySet;
+import org.codehaus.cargo.container.tomcat.TomcatWAR;
 
 /**
  * Base class for Tomcat adapters.
@@ -31,6 +24,8 @@ public abstract class TomcatAdapter extends PasswordProtectedAdapterCargo {
      * Top URL of Tomcat.
      */
     public final String url;
+    private static final String EXPANDED_URL_PROPERTY = "expandedUrl";
+    private static final String MANAGER_URL = "/manager";
 
     public TomcatAdapter(String url, String password, String userName) {
         super(userName, password);
@@ -40,7 +35,7 @@ public abstract class TomcatAdapter extends PasswordProtectedAdapterCargo {
     public void configure(Configuration config) {
         super.configure(config);
         try {
-            URL _url = new URL(config.getPropertyValue("expandedUrl") + "/manager");
+            URL _url = new URL(config.getPropertyValue(EXPANDED_URL_PROPERTY) + MANAGER_URL);
             config.setProperty(RemotePropertySet.URI,_url.toExternalForm());
         } catch (MalformedURLException e) {
             throw new AssertionError(e);
@@ -51,7 +46,7 @@ public abstract class TomcatAdapter extends PasswordProtectedAdapterCargo {
 	protected void configure(Configuration config,
 			VariableResolver<String> variableResolver, EnvVars envVars) {
     	String expandedUrl = Util.replaceMacro(envVars.expand(this.url), variableResolver);
-		config.setProperty("expandedUrl", expandedUrl);
+		config.setProperty(EXPANDED_URL_PROPERTY, expandedUrl);
 		configure(config);
 	}
 
