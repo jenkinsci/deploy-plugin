@@ -2,6 +2,7 @@ package hudson.plugins.deploy.glassfish;
 
 import hudson.Extension;
 import hudson.plugins.deploy.ContainerAdapterDescriptor;
+
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -9,7 +10,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
  */
 public class GlassFish2xAdapter extends GlassFishAdapter {
     @DataBoundConstructor
-    public GlassFish2xAdapter(String home, String password, String userName, Integer adminPort) {
+    public GlassFish2xAdapter(String home, String password, String userName, String adminPort) {
         super(home, password, userName, adminPort, null);
     }
 
