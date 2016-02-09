@@ -8,7 +8,7 @@
 	</parent>
 
 	<artifactId>deploy</artifactId>
-	<version>1.11-SNAPSHOT</version>
+	<version>1.12-SNAPSHOT</version>
 	<packaging>hpi</packaging>
 	<name>Deploy to container Plugin</name>
 	<url>http://wiki.jenkins-ci.org/display/JENKINS/Deploy+Plugin</url>
@@ -40,7 +40,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<cargo.version>1.4.3</cargo.version>
+		<cargo.version>1.4.8</cargo.version>
 	</properties>
 
 	<dependencies>
