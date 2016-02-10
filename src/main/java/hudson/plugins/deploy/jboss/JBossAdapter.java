@@ -1,6 +1,9 @@
 package hudson.plugins.deploy.jboss;
 
+import hudson.EnvVars;
 import hudson.plugins.deploy.PasswordProtectedAdapterCargo;
+import hudson.util.VariableResolver;
+
 import org.codehaus.cargo.container.configuration.Configuration;
 import org.codehaus.cargo.container.property.GeneralPropertySet;
 import org.codehaus.cargo.container.property.ServletPropertySet;
@@ -35,4 +38,10 @@ public abstract class JBossAdapter extends PasswordProtectedAdapterCargo {
             throw new AssertionError(ex);
         }
     }
+
+	@Override
+	protected void configure(Configuration config,
+			VariableResolver<String> variableResolver, EnvVars envVars) {
+		configure(config);
+	}
 }

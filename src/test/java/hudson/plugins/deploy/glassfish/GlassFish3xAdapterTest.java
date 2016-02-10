@@ -50,7 +50,7 @@ public class GlassFish3xAdapterTest {
         ConfigurationFactory configFactory = new DefaultConfigurationFactory();
         ContainerFactory containerFactory = new DefaultContainerFactory();
 
-        Container container = adapter.getContainer(configFactory, containerFactory, adapter.getContainerId());
+        Container container = adapter.getContainer(configFactory, containerFactory, adapter.getContainerId(), null, null);
         Assert.assertNotNull(container);
     }
 
@@ -65,7 +65,7 @@ public class GlassFish3xAdapterTest {
         ConfigurationFactory configFactory = new DefaultConfigurationFactory();
         ContainerFactory containerFactory = new DefaultContainerFactory();
 
-        Container container = remoteAdapter.getContainer(configFactory, containerFactory, remoteAdapter.getContainerId());
+        Container container = remoteAdapter.getContainer(configFactory, containerFactory, remoteAdapter.getContainerId(), null, null);
         Assert.assertNotNull(container);
     }
 

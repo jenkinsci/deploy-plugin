@@ -41,7 +41,7 @@ public class GlassFish2xAdapterTest {
         ConfigurationFactory configFactory = new DefaultConfigurationFactory();
         ContainerFactory containerFactory = new DefaultContainerFactory();
 
-        Container container = adapter.getContainer(configFactory, containerFactory, adapter.getContainerId());
+        Container container = adapter.getContainer(configFactory, containerFactory, adapter.getContainerId(), null, null);
         Assert.assertNotNull(container);
     }
 }

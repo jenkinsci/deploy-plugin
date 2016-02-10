@@ -21,12 +21,25 @@ public abstract class ContainerAdapterDescriptor extends Descriptor<ContainerAda
     protected ContainerAdapterDescriptor() {
     }
 
+    /**
+     * Performs validation against the given value.
+     * If the value starts with the "$" character, it's considered a variable
+     * and therefore no validation is performed.
+     * @param value
+     * @return
+     * @throws IOException
+     * @throws ServletException
+     */
     public FormValidation doCheckUrl(@QueryParameter String value) throws IOException, ServletException {
         if (value != null && value.length() > 0) {
             try {
                 new URL(value);
             } catch (Exception e) {
-                return FormValidation.error(Messages.DeployPublisher_BadFormedUrl());
+            	if (value.startsWith("$")) {
+            		return FormValidation.ok();
+            	} else {
+            		return FormValidation.error(Messages.DeployPublisher_BadFormedUrl());
+            	}
             }
         }
 

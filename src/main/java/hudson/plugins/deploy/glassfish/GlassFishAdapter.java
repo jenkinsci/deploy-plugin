@@ -1,6 +1,9 @@
 package hudson.plugins.deploy.glassfish;
 
+import hudson.EnvVars;
 import hudson.plugins.deploy.PasswordProtectedAdapterCargo;
+import hudson.util.VariableResolver;
+
 import org.codehaus.cargo.container.Container;
 import org.codehaus.cargo.container.ContainerType;
 import org.codehaus.cargo.container.configuration.Configuration;
@@ -20,7 +23,7 @@ import org.codehaus.cargo.generic.configuration.ConfigurationFactory;
  */
 public abstract class GlassFishAdapter extends PasswordProtectedAdapterCargo {
 
-    /**
+	/**
      * Property home is required for GlassFish local containers.
      */
     public final String home;
@@ -53,7 +56,9 @@ public abstract class GlassFishAdapter extends PasswordProtectedAdapterCargo {
      * {@inheritDoc}
      */
     @Override
-    protected Container getContainer(ConfigurationFactory configFactory, ContainerFactory containerFactory, String id) {
+	protected Container getContainer(ConfigurationFactory configFactory,
+									 ContainerFactory containerFactory, String id,
+									 VariableResolver<String> variableResolver, EnvVars envVars) {
 
         if (hostname != null) {
 
@@ -83,4 +88,10 @@ public abstract class GlassFishAdapter extends PasswordProtectedAdapterCargo {
 
 
     }
+    
+    @Override
+	protected void configure(Configuration config,
+			VariableResolver<String> variableResolver, EnvVars envVars) {
+		configure(config);
+	}
 }
