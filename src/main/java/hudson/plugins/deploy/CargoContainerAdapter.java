@@ -94,7 +94,6 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
     }
 
     protected String expandVariable(EnvVars envVars, VariableResolver<String> resolver, String variable) {
-        String temp = envVars.expand(variable);
         return Util.replaceMacro(envVars.expand(variable), resolver);
     }
 
