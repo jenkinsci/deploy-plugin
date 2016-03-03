@@ -1,5 +1,14 @@
 package hudson.plugins.deploy;
 
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import org.kohsuke.stapler.DataBoundConstructor;
+
 import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
@@ -14,15 +23,6 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
 import hudson.util.VariableResolver;
-
-import org.kohsuke.stapler.DataBoundConstructor;
-
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * Deploys WAR to a container.
@@ -53,10 +53,12 @@ public class DeployPublisher extends Notifier implements Serializable {
     @Override
     public boolean perform(AbstractBuild<?,?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
         if (build.getResult().equals(Result.SUCCESS) || onFailure) {
-            // expand context path using build env variables
-            String contextPath = expandVariable(build.getBuildVariableResolver(),
-                    build.getEnvironment(listener), this.contextPath);
-            for (FilePath warFile : build.getWorkspace().list(this.war)) {
+        	// resolve env variables
+        	EnvVars envVars = build.getEnvironment(listener);
+        	VariableResolver<String> resolver = build.getBuildVariableResolver();
+        	String warName = expandVariable(envVars, resolver, this.war);
+
+        	for (FilePath warFile : build.getWorkspace().list(warName)) {
                 for (ContainerAdapter adapter : adapters)
                     if (!adapter.redeploy(warFile, contextPath, build, launcher, listener))
                         build.setResult(Result.FAILURE);
@@ -64,10 +66,6 @@ public class DeployPublisher extends Notifier implements Serializable {
         }
 
         return true;
-    }
-    
-    protected String expandVariable(VariableResolver<String> variableResolver, EnvVars envVars, String variable) {
-        return Util.replaceMacro(envVars.expand(variable), variableResolver);
     }
 
     public BuildStepMonitor getRequiredMonitorService() {
@@ -116,6 +114,10 @@ public class DeployPublisher extends Notifier implements Serializable {
             return r;
         }
     }
+	
+	protected String expandVariable(EnvVars envVars, VariableResolver<String> resolver, String variable) {
+		return Util.replaceMacro(envVars.expand(variable), resolver);
+	}
 
     private static final long serialVersionUID = 1L;
 }

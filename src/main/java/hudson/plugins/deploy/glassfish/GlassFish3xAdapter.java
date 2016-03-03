@@ -2,6 +2,7 @@ package hudson.plugins.deploy.glassfish;
 
 import hudson.Extension;
 import hudson.plugins.deploy.ContainerAdapterDescriptor;
+
 import org.codehaus.cargo.container.glassfish.GlassFish3xStandaloneLocalConfiguration;
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -22,7 +23,7 @@ public class GlassFish3xAdapter extends GlassFishAdapter {
      * @param hostname glassfish hostname
      */
     @DataBoundConstructor
-    public GlassFish3xAdapter(String home, String password, String userName, Integer adminPort, String hostname) {
+    public GlassFish3xAdapter(String home, String password, String userName, String adminPort, String hostname) {
         super(home, password, userName, adminPort, hostname);
         GlassFish3xStandaloneLocalConfiguration conf;
     }

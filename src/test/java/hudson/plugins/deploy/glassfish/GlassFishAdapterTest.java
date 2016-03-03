@@ -18,7 +18,7 @@ public class GlassFishAdapterTest {
     private static final String home = "/dev/null";
     private static final String username = "username";
     private static final String password = "password";
-    private static int port = 1234;
+    private static final String port = "1234";
 
     @Before
     public void setup() {
