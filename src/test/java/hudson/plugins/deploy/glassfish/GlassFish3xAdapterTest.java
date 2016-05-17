@@ -77,13 +77,13 @@ public class GlassFish3xAdapterTest {
     //@Test
     public void testDeploy() throws IOException, InterruptedException {
         
-        adapter.redeploy(new FilePath(new File("src/test/simple.war")), "contextPath", null, null, new StreamBuildListener(System.out));
+        adapter.redeploy(new FilePath(new File("src/test/simple.war")), "contextPath", 1, null, null, new StreamBuildListener(System.out));
     }
     
     //@Test
     public void testRemoteDeploy() throws IOException, InterruptedException {
        
 
-        remoteAdapter.redeploy(new FilePath(new File("src/test/simple.war")), "contextPath", null, null, new StreamBuildListener(System.out));
+        remoteAdapter.redeploy(new FilePath(new File("src/test/simple.war")), "contextPath", 1, null, null, new StreamBuildListener(System.out));
     }
 }
