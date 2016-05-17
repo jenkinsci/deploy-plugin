@@ -13,9 +13,11 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
+import hudson.util.FormValidation;
 import hudson.util.VariableResolver;
 
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -32,6 +34,7 @@ import java.util.List;
 public class DeployPublisher extends Notifier implements Serializable {
     private List<ContainerAdapter> adapters;
     public final String contextPath;
+    public final String attempts;
 
     public final String war;
     public final boolean onFailure;
@@ -43,11 +46,12 @@ public class DeployPublisher extends Notifier implements Serializable {
     public final ContainerAdapter adapter = null;
     
     @DataBoundConstructor
-    public DeployPublisher(List<ContainerAdapter> adapters, String war, String contextPath, boolean onFailure) {
+    public DeployPublisher(List<ContainerAdapter> adapters, String war, String contextPath, String attempts, boolean onFailure) {
    		this.adapters = adapters;
         this.war = war;
         this.onFailure = onFailure;
         this.contextPath = contextPath;
+        this.attempts = attempts;
     }
 
     @Override
@@ -56,9 +60,11 @@ public class DeployPublisher extends Notifier implements Serializable {
             // expand context path using build env variables
             String contextPath = expandVariable(build.getBuildVariableResolver(),
                     build.getEnvironment(listener), this.contextPath);
+            String retries = expandVariable(build.getBuildVariableResolver(), build.getEnvironment(listener), this.attempts);
+            System.err.println("Retries: " + retries);
             for (FilePath warFile : build.getWorkspace().list(this.war)) {
                 for (ContainerAdapter adapter : adapters)
-                    if (!adapter.redeploy(warFile, contextPath, build, launcher, listener))
+                    if (!adapter.redeploy(warFile, contextPath, retries != null ? Integer.parseInt(retries):1, build, launcher, listener))
                         build.setResult(Result.FAILURE);
             }
         }
@@ -114,6 +120,17 @@ public class DeployPublisher extends Notifier implements Serializable {
                 }
             });
             return r;
+        }
+
+
+        public FormValidation doCheckAttempts(@QueryParameter String value) {
+            try {
+                Integer.parseInt(value);
+            } catch (Exception e) {
+                return FormValidation.error("Not an integer.");
+            }
+
+            return FormValidation.ok();
         }
     }
 

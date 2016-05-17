@@ -8,9 +8,11 @@ import hudson.model.BuildListener;
 import hudson.remoting.VirtualChannel;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.cargo.container.Container;
+import org.codehaus.cargo.container.ContainerException;
 import org.codehaus.cargo.container.ContainerType;
 import org.codehaus.cargo.container.configuration.Configuration;
 import org.codehaus.cargo.container.configuration.ConfigurationType;
+import org.codehaus.cargo.container.deployable.Deployable;
 import org.codehaus.cargo.container.deployable.WAR;
 import org.codehaus.cargo.container.deployer.Deployer;
 import org.codehaus.cargo.generic.ContainerFactory;
@@ -57,7 +59,7 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
         return containerFactory.createContainer(id, ContainerType.REMOTE, config);
     }
 
-    protected void deploy(DeployerFactory deployerFactory, final BuildListener listener, Container container, File f, String contextPath) {
+    protected void deploy(DeployerFactory deployerFactory, final BuildListener listener, Container container, File f, String contextPath, int attempts) {
         Deployer deployer = deployerFactory.createDeployer(container);
 
         listener.getLogger().println("Deploying " + f + " to container " + container.getName());
@@ -70,12 +72,33 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
             if (!StringUtils.isEmpty(contextPath)) {
                 war.setContext(contextPath);
             }
-            deployer.redeploy(war);
+            deployWithRetries(deployer, listener, war, attempts);
         } else if ("EAR".equalsIgnoreCase(extension)) {
             EAR ear = createEAR(f);
-            deployer.redeploy(ear);
+            deployWithRetries(deployer, listener, ear, attempts);
         } else {
             throw new RuntimeException("Extension File Error.");
+        }
+    }
+
+    protected void deployWithRetries(Deployer deployer, BuildListener listener, Deployable war, int attempts) {
+        for (int tries = 1; tries <= attempts; tries++) {
+            try {
+                deployer.redeploy(war);
+                return;
+            } catch (ContainerException ce) {
+                listener.getLogger().println("Deploy Problem [attempt " + tries + " of " + attempts + "] - " + ce.getMessage());
+                if (tries >= attempts) {
+                    throw ce;
+                } else {
+                    try {
+                        // Wait a little bit, the tomcat could be restarting, then try it again.
+                        Thread.sleep(15 * 1000);
+                    } catch (InterruptedException ex) {
+                        break;
+                    }
+                }
+            }
         }
     }
 
@@ -99,7 +122,7 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
         return new EAR(deployableFile.getAbsolutePath());
     }
 
-    public boolean redeploy(FilePath war, final String contextPath, AbstractBuild<?, ?> build, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException {
+    public boolean redeploy(FilePath war, final String contextPath, final int attempts, AbstractBuild<?, ?> build, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException {
         return war.act(new FileCallable<Boolean>() {
             public Boolean invoke(File f, VirtualChannel channel) throws IOException {
                 if (!f.exists()) {
@@ -113,7 +136,7 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
 
                 Container container = getContainer(configFactory, containerFactory, getContainerId());
 
-                deploy(deployerFactory, listener, container, f, contextPath);
+                deploy(deployerFactory, listener, container, f, contextPath, attempts);
                 return true;
             }
         });
