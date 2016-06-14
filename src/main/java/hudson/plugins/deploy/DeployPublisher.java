@@ -1,21 +1,16 @@
 package hudson.plugins.deploy;
 
-import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.Util;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
 import hudson.model.Result;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
-import hudson.util.VariableResolver;
-
-import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -23,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * Deploys WAR to a container.
@@ -53,9 +50,6 @@ public class DeployPublisher extends Notifier implements Serializable {
     @Override
     public boolean perform(AbstractBuild<?,?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
         if (build.getResult().equals(Result.SUCCESS) || onFailure) {
-            // expand context path using build env variables
-            String contextPath = expandVariable(build.getBuildVariableResolver(),
-                    build.getEnvironment(listener), this.contextPath);
             for (FilePath warFile : build.getWorkspace().list(this.war)) {
                 for (ContainerAdapter adapter : adapters)
                     if (!adapter.redeploy(warFile, contextPath, build, launcher, listener))
@@ -64,10 +58,6 @@ public class DeployPublisher extends Notifier implements Serializable {
         }
 
         return true;
-    }
-    
-    protected String expandVariable(VariableResolver<String> variableResolver, EnvVars envVars, String variable) {
-        return Util.replaceMacro(envVars.expand(variable), variableResolver);
     }
 
     public BuildStepMonitor getRequiredMonitorService() {

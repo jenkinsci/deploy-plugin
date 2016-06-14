@@ -2,11 +2,13 @@ package hudson.plugins.deploy;
 
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
-import org.kohsuke.stapler.QueryParameter;
 
-import javax.servlet.ServletException;
 import java.io.IOException;
 import java.net.URL;
+
+import javax.servlet.ServletException;
+
+import org.kohsuke.stapler.QueryParameter;
 
 /**
  * Base class for {@link ContainerAdapter} descriptors.
@@ -26,7 +28,7 @@ public abstract class ContainerAdapterDescriptor extends Descriptor<ContainerAda
             try {
                 new URL(value);
             } catch (Exception e) {
-                return FormValidation.error(Messages.DeployPublisher_BadFormedUrl());
+                return FormValidation.warning(Messages.DeployPublisher_BadFormedUrl());
             }
         }
 
