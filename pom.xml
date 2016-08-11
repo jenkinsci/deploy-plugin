@@ -32,7 +32,7 @@
 			<id>devkiela</id>
 			<name>Daniel Barth</name>
 		</developer>
-                <developer>
+				<developer>
 			<id>leandro-freitas-softdevelop</id>
 			<name>Leandro Kersting de Freitas</name>
 		</developer>
@@ -40,7 +40,9 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<cargo.version>1.4.8</cargo.version>
+		<cargo.version>1.5.0</cargo.version>
+		<jboss.version>7.2.0.Final</jboss.version>
+		<jboss.remoting.version>3.3.8.Final</jboss.remoting.version>
 	</properties>
 
 	<dependencies>
@@ -92,13 +94,30 @@
 			<version>3.1</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.jboss.as</groupId>
+			<artifactId>jboss-as-controller-client</artifactId>
+			<version>${jboss.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.remoting3</groupId>
+			<artifactId>jboss-remoting</artifactId>
+			<version>${jboss.remoting.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.jboss.xnio</groupId>
+					<artifactId>xnio-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
 	</dependencies>
 
-    <licenses>
-      <license>
-        <name>MIT license</name>
-        <comments>All source code is under the MIT license.</comments>
-      </license>
-    </licenses>
+	<licenses>
+	  <license>
+		<name>MIT license</name>
+		<comments>All source code is under the MIT license.</comments>
+	  </license>
+	</licenses>
 </project>  
 

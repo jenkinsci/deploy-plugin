@@ -6,9 +6,10 @@ import hudson.plugins.deploy.ContainerAdapterDescriptor;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 public class JBoss7xAdapter extends JBossAdapter {
+
     @DataBoundConstructor
-    public JBoss7xAdapter(String url, String password, String userName) {
-        super(url, password, userName);
+    public JBoss7xAdapter(String url, String password, String userName, String portOffset) {
+        super(url, password, userName, portOffset);
     }
 
     @Override
@@ -16,9 +17,9 @@ public class JBoss7xAdapter extends JBossAdapter {
         return "jboss7x";
     }
 
-
     @Extension
     public static final class DescriptorImpl extends ContainerAdapterDescriptor {
+
         @Override
         public String getDisplayName() {
             return "JBoss AS 7.x";
