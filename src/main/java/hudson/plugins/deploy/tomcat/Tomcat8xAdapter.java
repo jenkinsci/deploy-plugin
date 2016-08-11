@@ -1,7 +1,9 @@
 package hudson.plugins.deploy.tomcat;
 
+import hudson.EnvVars;
 import hudson.Extension;
 import hudson.plugins.deploy.ContainerAdapterDescriptor;
+import hudson.util.VariableResolver;
 import org.codehaus.cargo.container.property.RemotePropertySet;
 import org.codehaus.cargo.container.configuration.Configuration;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -18,7 +20,7 @@ public class Tomcat8xAdapter extends TomcatAdapter {
 
     /**
      * Tomcat 8 support
-     * 
+     *
      * @param url Tomcat server location (for example: http://localhost:8080)
      * @param password tomcat manager password
      * @param userName tomcat manager username
@@ -27,12 +29,13 @@ public class Tomcat8xAdapter extends TomcatAdapter {
     public Tomcat8xAdapter(String url, String password, String userName) {
         super(url, password, userName);
     }
-    
-		public void configure(Configuration config) {
-        super.configure(config);
+
+    @Override
+    public void configure(Configuration config, EnvVars envVars, VariableResolver<String> resolver) {
+        super.configure(config, envVars, resolver);
         try {
             URL _url = new URL(url + "/manager/text");
-            config.setProperty(RemotePropertySet.URI,_url.toExternalForm());
+            config.setProperty(RemotePropertySet.URI, _url.toExternalForm());
         } catch (MalformedURLException e) {
             throw new AssertionError(e);
         }
@@ -40,17 +43,18 @@ public class Tomcat8xAdapter extends TomcatAdapter {
 
     /**
      * Tomcat Cargo containerId
+     *
      * @return tomcat8x
      */
     public String getContainerId() {
         return "tomcat8x";
     }
-    
+
     @Extension
     public static final class DescriptorImpl extends ContainerAdapterDescriptor {
+
         public String getDisplayName() {
             return "Tomcat 8.x";
         }
     }
 }
-
