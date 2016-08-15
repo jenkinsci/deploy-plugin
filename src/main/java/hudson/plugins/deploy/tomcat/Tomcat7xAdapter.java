@@ -21,7 +21,7 @@ public class Tomcat7xAdapter extends TomcatAdapter {
 
     /**
      * Tomcat 7 support
-     * 
+     *
      * @param url Tomcat server location (for example: http://localhost:8080)
      * @param password tomcat manager password
      * @param userName tomcat manager username
@@ -30,12 +30,12 @@ public class Tomcat7xAdapter extends TomcatAdapter {
     public Tomcat7xAdapter(String url, String password, String userName) {
         super(url, password, userName);
     }
-    
-        public void configure(Configuration config, EnvVars envVars, VariableResolver<String> resolver) {
+
+    public void configure(Configuration config, EnvVars envVars, VariableResolver<String> resolver) {
         super.configure(config, envVars, resolver);
         try {
             URL _url = new URL(expandVariable(envVars, resolver, url) + "/manager/text");
-            config.setProperty(RemotePropertySet.URI,_url.toExternalForm());
+            config.setProperty(RemotePropertySet.URI, _url.toExternalForm());
         } catch (MalformedURLException e) {
             throw new AssertionError(e);
         }
@@ -48,7 +48,7 @@ public class Tomcat7xAdapter extends TomcatAdapter {
     public String getContainerId() {
         return "tomcat7x";
     }
-    
+
     @Extension
     public static final class DescriptorImpl extends ContainerAdapterDescriptor {
         public String getDisplayName() {
@@ -56,4 +56,3 @@ public class Tomcat7xAdapter extends TomcatAdapter {
         }
     }
 }
-

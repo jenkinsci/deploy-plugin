@@ -37,7 +37,7 @@ public abstract class WebLogicAdapter extends DefaultCargoContainerAdapterImpl {
 
     public final String home;
 
-    @DataBoundConstructor
+    //@DataBoundConstructor
     public WebLogicAdapter(String home, String userName, String password, String server, Integer port) {
         this.home = home;
         this.userName = userName;
