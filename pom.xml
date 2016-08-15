@@ -109,11 +109,28 @@
 
 	</dependencies>
 
-    <licenses>
-      <license>
-        <name>MIT license</name>
-        <comments>All source code is under the MIT license.</comments>
-      </license>
-    </licenses>
+  <repositories>
+    <repository>
+      <id>repo.jenkins-ci.org</id>
+      <url>https://repo.jenkins-ci.org/public/</url>
+    </repository>
+  </repositories>
+
+  <licenses>
+    <license>
+      <name>The MIT license</name>
+      <comments>All source code is under the MIT license.</comments>
+      <url>https://opensource.org/licenses/mit-license.php</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>repo.jenkins-ci.org</id>
+      <url>https://repo.jenkins-ci.org/public/</url>
+    </pluginRepository>
+  </pluginRepositories>
+    
 </project>  
 
