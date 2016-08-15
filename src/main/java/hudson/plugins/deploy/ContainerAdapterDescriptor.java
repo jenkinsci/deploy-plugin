@@ -12,10 +12,11 @@ import org.kohsuke.stapler.QueryParameter;
 
 /**
  * Base class for {@link ContainerAdapter} descriptors.
- * 
+ *
  * @author Kohsuke Kawaguchi
  */
 public abstract class ContainerAdapterDescriptor extends Descriptor<ContainerAdapter> {
+
     protected ContainerAdapterDescriptor(Class<? extends ContainerAdapter> clazz) {
         super(clazz);
     }
@@ -30,6 +31,16 @@ public abstract class ContainerAdapterDescriptor extends Descriptor<ContainerAda
             } catch (Exception e) {
                 return FormValidation.warning(Messages.DeployPublisher_BadFormedUrl());
             }
+        }
+
+        return FormValidation.ok();
+    }
+
+    public FormValidation doCheckAttempts(@QueryParameter String value) {
+        try {
+            Integer.parseInt(value);
+        } catch (Exception e) {
+            return FormValidation.error("Not an integer.");
         }
 
         return FormValidation.ok();
