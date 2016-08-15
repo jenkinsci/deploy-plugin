@@ -1,13 +1,16 @@
 package hudson.plugins.deploy.tomcat;
 
+import hudson.EnvVars;
 import hudson.Extension;
 import hudson.plugins.deploy.ContainerAdapterDescriptor;
-import org.codehaus.cargo.container.property.RemotePropertySet;
-import org.codehaus.cargo.container.configuration.Configuration;
-import org.kohsuke.stapler.DataBoundConstructor;
+import hudson.util.VariableResolver;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import org.codehaus.cargo.container.configuration.Configuration;
+import org.codehaus.cargo.container.property.RemotePropertySet;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * Tomcat 8.x
@@ -28,10 +31,10 @@ public class Tomcat8xAdapter extends TomcatAdapter {
         super(url, password, userName);
     }
     
-		public void configure(Configuration config) {
-        super.configure(config);
+        public void configure(Configuration config, EnvVars envVars, VariableResolver<String> resolver) {
+        super.configure(config, envVars, resolver);
         try {
-            URL _url = new URL(url + "/manager/text");
+            URL _url = new URL(expandVariable(envVars, resolver, url) + "/manager/text");
             config.setProperty(RemotePropertySet.URI,_url.toExternalForm());
         } catch (MalformedURLException e) {
             throw new AssertionError(e);
@@ -53,4 +56,3 @@ public class Tomcat8xAdapter extends TomcatAdapter {
         }
     }
 }
-
