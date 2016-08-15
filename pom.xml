@@ -17,6 +17,7 @@
 		<connection>scm:git:git://github.com/jenkinsci/deploy-plugin.git</connection>
 		<developerConnection>scm:git:git@github.com:jenkinsci/deploy-plugin.git</developerConnection>
 		<url>https://github.com/jenkinsci/deploy-plugin</url>
+		<tag>HEAD</tag>
 	</scm>
 
 	<developers>
