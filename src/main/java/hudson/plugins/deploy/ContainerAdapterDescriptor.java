@@ -35,14 +35,4 @@ public abstract class ContainerAdapterDescriptor extends Descriptor<ContainerAda
 
         return FormValidation.ok();
     }
-
-    public FormValidation doCheckAttempts(@QueryParameter String value) {
-        try {
-            Integer.parseInt(value);
-        } catch (Exception e) {
-            return FormValidation.error("Not an integer.");
-        }
-
-        return FormValidation.ok();
-    }
 }

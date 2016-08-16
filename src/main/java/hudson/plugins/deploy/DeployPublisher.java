@@ -32,7 +32,7 @@ import org.kohsuke.stapler.QueryParameter;
  *
  * @author Kohsuke Kawaguchi
  */
-public class DeployPublisher extends Notifier implements Serializable {
+public class DeployPublisher extends Builder implements Serializable {
 
     private List<ContainerAdapter> adapters;
     public final String contextPath;
@@ -40,6 +40,7 @@ public class DeployPublisher extends Notifier implements Serializable {
 
     public final String war;
     public final boolean onFailure;
+    public final String action;
 
     /**
      * @deprecated Use {@link #getAdapters()}
@@ -47,24 +48,25 @@ public class DeployPublisher extends Notifier implements Serializable {
     public final ContainerAdapter adapter = null;
 
     @DataBoundConstructor
-    public DeployPublisher(List<ContainerAdapter> adapters, String war, String contextPath, String attempts, boolean onFailure) {
+    public DeployPublisher(List<ContainerAdapter> adapters, String war, String contextPath, String attempts, boolean onFailure, String action) {
         this.adapters = adapters;
         this.war = war;
         this.onFailure = onFailure;
         this.contextPath = contextPath;
         this.attempts = attempts;
+        this.action = action;
     }
 
     @Override
     public boolean perform(final AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
-        if (build.getResult().equals(Result.SUCCESS) || onFailure) {
+        if ((build.getResult() != null && build.getResult().equals(Result.SUCCESS)) || build.getResult() == null || onFailure) {
             // expand context path using build env variables
             String contextPath = expandVariable(build.getEnvironment(listener), build.getBuildVariableResolver(), this.contextPath);
             String retries = expandVariable(build.getEnvironment(listener), build.getBuildVariableResolver(), this.attempts);
             System.err.println("Retries: " + retries);
             for (FilePath warFile : build.getWorkspace().list(this.war)) {
                 for (ContainerAdapter adapter : adapters) {
-                    if (!adapter.redeploy(warFile, contextPath, retries != null ? Integer.parseInt(retries) : 1, build, launcher, listener)) {
+                    if (!adapter.execute(warFile, contextPath, retries != null ? Integer.parseInt(retries) : 1, action, build, launcher, listener)) {
 
                         build.setResult(Result.FAILURE);
                     }
@@ -81,6 +83,7 @@ public class DeployPublisher extends Notifier implements Serializable {
         return Util.replaceMacro(envVars.expand(variable), resolver);
     }
 
+    @Override
     public BuildStepMonitor getRequiredMonitorService() {
         return BuildStepMonitor.BUILD;
     }
@@ -105,7 +108,7 @@ public class DeployPublisher extends Notifier implements Serializable {
     }
 
     @Extension
-    public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
+    public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
 
         public boolean isApplicable(Class<? extends AbstractProject> jobType) {
             return true;
@@ -128,6 +131,16 @@ public class DeployPublisher extends Notifier implements Serializable {
             });
             return r;
         }
+    }
+
+    public FormValidation doCheckAttempts(@QueryParameter String value) {
+        try {
+            Integer.parseInt(value);
+        } catch (Exception e) {
+            return FormValidation.error("Not an integer.");
+        }
+
+        return FormValidation.ok();
     }
 
     private static final long serialVersionUID = 1L;

@@ -31,6 +31,7 @@ import org.codehaus.cargo.generic.configuration.ConfigurationFactory;
 import org.codehaus.cargo.generic.configuration.DefaultConfigurationFactory;
 import org.codehaus.cargo.generic.deployer.DefaultDeployerFactory;
 import org.codehaus.cargo.generic.deployer.DeployerFactory;
+import org.codehaus.cargo.util.CargoException;
 
 /**
  * Provides container-specific glue code.
@@ -63,33 +64,42 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
         return containerFactory.createContainer(id, ContainerType.REMOTE, config);
     }
 
-    protected void deploy(DeployerFactory deployerFactory, final BuildListener listener, Container container, File f, String contextPath, int attempts) {
+    protected void deploy(DeployerFactory deployerFactory, final BuildListener listener, Container container, File f, String contextPath, int attempts, String action) {
         Deployer deployer = deployerFactory.createDeployer(container);
 
         listener.getLogger().println("Deploying " + f + " to container " + container.getName() + " with context " + contextPath);
         deployer.setLogger(new LoggerImpl(listener.getLogger()));
 
+        Deployable deployable = null;
         String extension = FilenameUtils.getExtension(f.getAbsolutePath());
         if ("WAR".equalsIgnoreCase(extension)) {
             WAR war = createWAR(f);
             if (!StringUtils.isEmpty(contextPath)) {
                 war.setContext(contextPath);
             }
-            deployWithRetries(deployer, listener, war, attempts);
+            deployable = war;
         } else if ("EAR".equalsIgnoreCase(extension)) {
-            EAR ear = createEAR(f);
-            deployWithRetries(deployer, listener, ear, attempts);
+            deployable = createEAR(f);
         } else {
             throw new RuntimeException("Extension File Error.");
         }
+        deployWithRetries(deployer, listener, deployable, attempts, action);
     }
 
-    protected void deployWithRetries(Deployer deployer, BuildListener listener, Deployable war, int attempts) {
+    protected void deployWithRetries(Deployer deployer, BuildListener listener, Deployable war, int attempts, String action) {
         for (int tries = 1; tries <= attempts; tries++) {
             try {
-                deployer.redeploy(war);
+                if (action.equalsIgnoreCase("redeploy")) {
+                    deployer.redeploy(war);
+                } else if (action.equalsIgnoreCase("deploy")) {
+                    deployer.deploy(war);
+                } else if (action.equalsIgnoreCase("undeploy")) {
+                    deployer.undeploy(war);
+                } else {
+                    throw new RuntimeException("Unexpected action: " + action);
+                }
                 return;
-            } catch (ContainerException ce) {
+            } catch (CargoException ce) {
                 listener.getLogger().println("Deploy Problem [attempt " + tries + " of " + attempts + "] - " + ce.getMessage());
                 if (tries >= attempts) {
                     throw ce;
@@ -130,7 +140,7 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
         return new EAR(deployableFile.getAbsolutePath());
     }
 
-    public boolean redeploy(FilePath war, final String contextPath, final int attempts, final AbstractBuild<?, ?> build, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException {
+    public boolean execute(FilePath war, final String contextPath, final int attempts, final String action, final AbstractBuild<?, ?> build, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException {
         return war.act(new FileCallable<Boolean>() {
             public Boolean invoke(File f, VirtualChannel channel) throws IOException {
                 if (!f.exists()) {
@@ -146,7 +156,7 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
                     final EnvVars envVars = build.getEnvironment(listener);
                     final VariableResolver<String> resolver = build.getBuildVariableResolver();
                     Container container = getContainer(configFactory, containerFactory, getContainerId(), envVars, resolver);
-                    deploy(deployerFactory, listener, container, f, expandVariable(envVars, resolver, contextPath), attempts);
+                    deploy(deployerFactory, listener, container, f, expandVariable(envVars, resolver, contextPath), attempts, action);
                 } catch (InterruptedException e) {
                     throw new RuntimeException("Failed to get build environment", e);
                 }
