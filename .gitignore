@@ -2,6 +2,7 @@ build
 target
 .classpath
 .project
+.idea
 .settings
 *.iml
 work

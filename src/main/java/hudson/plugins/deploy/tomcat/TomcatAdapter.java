@@ -15,7 +15,7 @@ import org.codehaus.cargo.container.tomcat.TomcatWAR;
 
 /**
  * Base class for Tomcat adapters.
- * 
+ *
  * @author Kohsuke Kawaguchi
  */
 public abstract class TomcatAdapter extends PasswordProtectedAdapterCargo {
@@ -33,12 +33,12 @@ public abstract class TomcatAdapter extends PasswordProtectedAdapterCargo {
         super.configure(config, envVars, resolver);
         try {
             URL _url = new URL(expandVariable(envVars, resolver, this.url) + "/manager");
-            config.setProperty(RemotePropertySet.URI,_url.toExternalForm());
+            config.setProperty(RemotePropertySet.URI, _url.toExternalForm());
         } catch (MalformedURLException e) {
             throw new AssertionError(e);
         }
     }
-    
+
     /**
      * Create a Tomcat-specific Deployable object from the given file object.
      * @param deployableFile The file to deploy.
