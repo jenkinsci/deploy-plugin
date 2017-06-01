@@ -96,6 +96,8 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
     protected String expandVariable(EnvVars envVars, VariableResolver<String> resolver, String variable) {
         String temp = envVars.expand(variable);
         return Util.replaceMacro(envVars.expand(variable), resolver);
+
+        // 95% sure we have a better way to do this
     }
 
 
@@ -111,6 +113,8 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
 
     public boolean redeploy(FilePath war, final String contextPath, final AbstractBuild<?, ?> build, Launcher launcher,
                             final BuildListener listener) throws IOException, InterruptedException {
+        final EnvVars envVars = build.getEnvironment(listener);
+        // FIXME need to evaluate the concrete environment variables here
         return war.act(new DeployCallable(this, getContainerId(), build.getEnvironment(listener), listener, contextPath));
     }
 

@@ -14,7 +14,6 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -28,6 +27,7 @@ import jenkins.model.Jenkins;
 import jenkins.util.io.FileBoolean;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -93,8 +93,10 @@ public class DeployPublisher extends Notifier implements Serializable {
 	}
 
 	@Extension
+    @Symbol("deploy")
     public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
-        public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+	    @Override
+	    public boolean isApplicable(Class jobType) {
             return true;
         }
 
