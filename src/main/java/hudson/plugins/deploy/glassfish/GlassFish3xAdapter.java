@@ -4,6 +4,7 @@ import hudson.Extension;
 import hudson.plugins.deploy.ContainerAdapterDescriptor;
 
 import org.codehaus.cargo.container.glassfish.GlassFish3xStandaloneLocalConfiguration;
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -41,6 +42,7 @@ public class GlassFish3xAdapter extends GlassFishAdapter {
      * {@inheritDoc}
      */
     @Extension
+    @Symbol("glassfish3")
     public static final class DescriptorImpl extends ContainerAdapterDescriptor {
         public String getDisplayName() {
             return "GlassFish 3.x";

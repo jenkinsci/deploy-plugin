@@ -7,6 +7,7 @@ import hudson.Launcher;
 import hudson.Util;
 import hudson.model.BuildListener;
 import hudson.model.AbstractBuild;
+import hudson.model.Run;
 import hudson.remoting.VirtualChannel;
 import hudson.util.VariableResolver;
 
@@ -14,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 
+import jenkins.security.Roles;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.cargo.container.Container;
@@ -29,6 +31,7 @@ import org.codehaus.cargo.generic.configuration.ConfigurationFactory;
 import org.codehaus.cargo.generic.configuration.DefaultConfigurationFactory;
 import org.codehaus.cargo.generic.deployer.DefaultDeployerFactory;
 import org.codehaus.cargo.generic.deployer.DeployerFactory;
+import org.jenkinsci.remoting.RoleChecker;
 
 /**
  * Provides container-specific glue code.
@@ -96,6 +99,8 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
     protected String expandVariable(EnvVars envVars, VariableResolver<String> resolver, String variable) {
         String temp = envVars.expand(variable);
         return Util.replaceMacro(envVars.expand(variable), resolver);
+
+        // 95% sure we have a better way to do this
     }
 
 
@@ -110,7 +115,16 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
     }
 
     public boolean redeploy(FilePath war, final String contextPath, final AbstractBuild<?, ?> build, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException {
+        return redeploy(war, contextPath, (Run)build, launcher, listener);
+    }
+
+    public boolean redeploy(FilePath war, final String contextPath, final Run<?, ?> build, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException {
         return war.act(new FileCallable<Boolean>() {
+            @Override
+            public void checkRoles(RoleChecker checker) throws SecurityException {
+                // CHECKME see if needs to be on master vs. slave
+            }
+
             public Boolean invoke(File f, VirtualChannel channel) throws IOException {
                 if (!f.exists()) {
                     listener.error(Messages.DeployPublisher_NoSuchFile(f));
@@ -124,6 +138,7 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
                 try {
                     final EnvVars envVars = build.getEnvironment(listener);
                     final VariableResolver<String> resolver = build.getBuildVariableResolver();
+                    // FIXME need to evaluate the concrete environment variables here
                     Container container = getContainer(configFactory, containerFactory, getContainerId(), envVars, resolver);
                     deploy(deployerFactory, listener, container, f, expandVariable(envVars, resolver, contextPath));
                 } catch (InterruptedException e) {
