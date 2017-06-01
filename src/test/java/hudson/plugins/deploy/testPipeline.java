@@ -16,9 +16,9 @@ public class testPipeline {
     @Test
     public void testSimpleCase() throws Exception {
         WorkflowJob p = rule.jenkins.createProject(WorkflowJob.class, "p");
-        p.setDefinition(new CpsFlowDefinition("" +
-                //TODO Add a MockCargoContainer use
-                ""));
+        p.setDefinition(new CpsFlowDefinition("node {" +
+                    "deploy(mockDeploy('bob')) \n"+
+                "}"));
         rule.assertBuildStatusSuccess(p.scheduleBuild2(0));
     }
 }
