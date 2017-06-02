@@ -18,6 +18,6 @@ public class PasswordProtectedAdapterCargoTest {
         Assert.assertEquals(plainPassword, adapter.getPassword());
         
         String newXml = xs.toXML(adapter);
-        Assert.assertThat("Password should be scrambled", newXml, CoreMatchers.not(JUnitMatchers.containsString(plainPassword)));
+        Assert.assertThat("Password should be scrambled", newXml, CoreMatchers.not(CoreMatchers.containsString(plainPassword)));
     }
 }

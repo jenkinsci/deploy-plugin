@@ -8,13 +8,18 @@ import hudson.Util;
 import hudson.model.BuildListener;
 import hudson.model.AbstractBuild;
 import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import hudson.util.VariableResolver;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Map;
 
+import javafx.concurrent.Task;
+import jenkins.MasterToSlaveFileCallable;
+import jenkins.security.MasterToSlaveCallable;
 import jenkins.security.Roles;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
@@ -64,7 +69,7 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
         return containerFactory.createContainer(id, ContainerType.REMOTE, config);
     }
 
-    protected void deploy(DeployerFactory deployerFactory, final BuildListener listener, Container container, File f, String contextPath) {
+    protected void deploy(DeployerFactory deployerFactory, final TaskListener listener, Container container, File f, String contextPath) {
         Deployer deployer = deployerFactory.createDeployer(container);
 
         listener.getLogger().println("Deploying " + f + " to container " + container.getName() + " with context " + contextPath);
@@ -82,7 +87,7 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
             EAR ear = createEAR(f);
             deployer.redeploy(ear);
         } else {
-            throw new RuntimeException("Extension File Error.");
+            throw new RuntimeException("Extension File Error. Unsupported: .\"" + extension + "\"");
         }
     }
 
@@ -97,8 +102,7 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
     }
 
     protected String expandVariable(EnvVars envVars, VariableResolver<String> resolver, String variable) {
-        String temp = envVars.expand(variable);
-        return Util.replaceMacro(envVars.expand(variable), resolver);
+        return resolver.resolve(envVars.expand(variable));
 
         // 95% sure we have a better way to do this
     }
@@ -118,18 +122,10 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
         return redeploy(war, contextPath, (Run)build, launcher, listener);
     }
 
-    public boolean redeploy(FilePath war, final String contextPath, final Run<?, ?> build, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException {
-        return war.act(new FileCallable<Boolean>() {
+    public boolean redeploy(FilePath war, final String contextPath, final Run<?, ?> build, final Launcher launcher, final TaskListener listener) throws IOException, InterruptedException {
+        return war.act(new MasterToSlaveFileCallable<Boolean>() {
             @Override
-            public void checkRoles(RoleChecker checker) throws SecurityException {
-                // CHECKME see if needs to be on master vs. slave
-            }
-
-            public Boolean invoke(File f, VirtualChannel channel) throws IOException {
-                if (!f.exists()) {
-                    listener.error(Messages.DeployPublisher_NoSuchFile(f));
-                    return true;
-                }
+            public Boolean invoke(File f, VirtualChannel channel) throws IOException, InterruptedException {
                 ClassLoader cl = getClass().getClassLoader();
                 final ConfigurationFactory configFactory = new DefaultConfigurationFactory(cl);
                 final ContainerFactory containerFactory = new DefaultContainerFactory(cl);
@@ -137,13 +133,15 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
 
                 try {
                     final EnvVars envVars = build.getEnvironment(listener);
-                    final VariableResolver<String> resolver = build.getBuildVariableResolver();
+                    // Not the way they want it done
+                    final VariableResolver<String> resolver = new VariableResolver.ByMap<String>(envVars.descendingMap());
+
                     // FIXME need to evaluate the concrete environment variables here
                     Container container = getContainer(configFactory, containerFactory, getContainerId(), envVars, resolver);
                     deploy(deployerFactory, listener, container, f, expandVariable(envVars, resolver, contextPath));
                 } catch (InterruptedException e) {
                     throw new RuntimeException("Failed to get build environment", e);
-            	}
+                }
 
                 return true;
             }
