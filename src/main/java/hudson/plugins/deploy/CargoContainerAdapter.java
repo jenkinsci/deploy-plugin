@@ -3,11 +3,10 @@ package hudson.plugins.deploy;
 import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.Util;
 import hudson.model.BuildListener;
 import hudson.model.AbstractBuild;
+import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
-import hudson.util.VariableResolver;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,15 +52,15 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
      *
      * @param config
      */
-    protected abstract void configure(Configuration config, EnvVars envVars, VariableResolver<String> resolver);
+    protected abstract void configure(Configuration config, EnvVars envVars);
 
-    protected Container getContainer(ConfigurationFactory configFactory, ContainerFactory containerFactory, String id, EnvVars envVars, VariableResolver<String> resolver) {
+    protected Container getContainer(ConfigurationFactory configFactory, ContainerFactory containerFactory, String id, EnvVars envVars) {
         Configuration config = configFactory.createConfiguration(id, ContainerType.REMOTE, ConfigurationType.RUNTIME);
-        configure(config, envVars, resolver);
+        configure(config, envVars);
         return containerFactory.createContainer(id, ContainerType.REMOTE, config);
     }
 
-    protected void deploy(DeployerFactory deployerFactory, final BuildListener listener, Container container, File f, String contextPath) {
+    protected void deploy(DeployerFactory deployerFactory, final TaskListener listener, Container container, File f, String contextPath) {
         Deployer deployer = deployerFactory.createDeployer(container);
 
         listener.getLogger().println("Deploying " + f + " to container " + container.getName() + " with context " + contextPath);
@@ -79,7 +78,7 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
             EAR ear = createEAR(f);
             deployer.redeploy(ear);
         } else {
-            throw new RuntimeException("Extension File Error.");
+            throw new RuntimeException("Extension File Error. Unsupported: .\"" + extension + "\"");
         }
     }
 
@@ -93,11 +92,8 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
         return new WAR(deployableFile.getAbsolutePath());
     }
 
-    protected String expandVariable(EnvVars envVars, VariableResolver<String> resolver, String variable) {
-        String temp = envVars.expand(variable);
-        return Util.replaceMacro(envVars.expand(variable), resolver);
-
-        // 95% sure we have a better way to do this
+    protected String expandVariable(EnvVars envVars, String variable) {
+        return envVars.expand(variable);
     }
 
 
@@ -146,9 +142,8 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
             ConfigurationFactory configFactory = new DefaultConfigurationFactory(cl);
             ContainerFactory containerFactory = new DefaultContainerFactory(cl);
 
-            VariableResolver<String> resolver = new VariableResolver.ByMap<String>(envVars);
-            Container container = adapter.getContainer(configFactory, containerFactory, containerId, envVars, resolver);
-            adapter.deploy(deployerFactory, listener, container, f, Util.replaceMacro(envVars.expand(contextPath), resolver));
+            Container container = adapter.getContainer(configFactory, containerFactory, containerId, envVars);
+            adapter.deploy(deployerFactory, listener, container, f, envVars.expand(contextPath));
 
             return true;
         }

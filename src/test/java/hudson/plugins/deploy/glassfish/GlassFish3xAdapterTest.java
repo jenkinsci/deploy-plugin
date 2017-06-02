@@ -85,11 +85,11 @@ public class GlassFish3xAdapterTest {
 
         ConfigurationFactory configFactory = new DefaultConfigurationFactory();
         ContainerFactory containerFactory = new DefaultContainerFactory();
-        FreeStyleProject project = jenkinsRule.createFreeStyleProject();
+        FreeStyleProject project = jenkinsRule.getInstance().createProject(FreeStyleProject.class, "fsp");
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         BuildListener listener = new StreamBuildListener(new ByteArrayOutputStream());
 
-        Container container = adapter.getContainer(configFactory, containerFactory, adapter.getContainerId(), build.getEnvironment(listener), build.getBuildVariableResolver());
+        Container container = adapter.getContainer(configFactory, containerFactory, adapter.getContainerId(), build.getEnvironment(listener));
         Assert.assertNotNull(container);
     }
 
@@ -103,11 +103,11 @@ public class GlassFish3xAdapterTest {
 
         ConfigurationFactory configFactory = new DefaultConfigurationFactory();
         ContainerFactory containerFactory = new DefaultContainerFactory();
-        FreeStyleProject project = jenkinsRule.createFreeStyleProject();
+        FreeStyleProject project = jenkinsRule.getInstance().createProject(FreeStyleProject.class, "fsp");
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         BuildListener listener = new StreamBuildListener(new ByteArrayOutputStream());
 
-        Container container = remoteAdapter.getContainer(configFactory, containerFactory, remoteAdapter.getContainerId(), build.getEnvironment(listener), build.getBuildVariableResolver());
+        Container container = remoteAdapter.getContainer(configFactory, containerFactory, remoteAdapter.getContainerId(), build.getEnvironment(listener));
         Assert.assertNotNull(container);
     }
 
@@ -154,7 +154,7 @@ public class GlassFish3xAdapterTest {
         Configuration config = new DefaultConfigurationFactory().createConfiguration(adapter.getContainerId(), ContainerType.REMOTE, ConfigurationType.RUNTIME);
         adapter.migrateCredentials(Collections.EMPTY_LIST);
         adapter.loadCredentials(project);
-        adapter.configure(config, project.getEnvironment(n, listener), build.getBuildVariableResolver());
+        adapter.configure(config, project.getEnvironment(n, listener));
 
         Assert.assertEquals(username, config.getPropertyValue(RemotePropertySet.USERNAME));
         Assert.assertEquals(adminPort, config.getPropertyValue(GlassFishPropertySet.ADMIN_PORT));
@@ -163,7 +163,7 @@ public class GlassFish3xAdapterTest {
         config = new DefaultConfigurationFactory().createConfiguration(adapter.getContainerId(), ContainerType.REMOTE, ConfigurationType.RUNTIME);
         remoteAdapter.migrateCredentials(Collections.EMPTY_LIST);
         remoteAdapter.loadCredentials(project);
-        remoteAdapter.configure(config, project.getEnvironment(n, listener), build.getBuildVariableResolver());
+        remoteAdapter.configure(config, project.getEnvironment(n, listener));
 
         Assert.assertEquals(username, config.getPropertyValue(RemotePropertySet.USERNAME));
         Assert.assertEquals(adminPort, config.getPropertyValue(GlassFishPropertySet.ADMIN_PORT));

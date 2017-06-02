@@ -34,7 +34,7 @@ public class MockAdapter extends ContainerAdapter {
 
     @Extension
     @Symbol("mock")
-    static class DescriptorImpl extends ContainerAdapterDescriptor {
+    public static class DescriptorImpl extends ContainerAdapterDescriptor {
         public String getDisplayName() {
             return "Mock Container";
         }

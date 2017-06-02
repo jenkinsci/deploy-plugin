@@ -5,11 +5,10 @@ import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.domains.Domain;
 import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
 import hudson.EnvVars;
-import hudson.model.BuildListener;
-import hudson.model.FreeStyleBuild;
 import hudson.model.StreamBuildListener;
 import hudson.model.FreeStyleProject;
 import hudson.model.Node;
+import hudson.model.TaskListener;
 import hudson.slaves.EnvironmentVariablesNodeProperty;
 
 import java.io.ByteArrayOutputStream;
@@ -37,7 +36,7 @@ public class Tomcat8xAdapterTest {
     private static final String configuredUrl = "http://localhost:8080/manager/text";
     private static final String urlVariable = "URL";
     private static final String username = "usernm";
-    private static final String usernameVariable = "user";
+    private static final String usernameVariable = "USER";
     private static final String password = "password";
     private static final String variableStart = "${";
     private static final String variableEnd = "}";
@@ -76,8 +75,7 @@ public class Tomcat8xAdapterTest {
 
         FreeStyleProject project = jenkinsRule.createFreeStyleProject();
         project.setAssignedNode(n);
-        FreeStyleBuild build = project.scheduleBuild2(0).get();
-        BuildListener listener = new StreamBuildListener(new ByteArrayOutputStream());
+        TaskListener listener = new StreamBuildListener(new ByteArrayOutputStream());
 
         UsernamePasswordCredentialsImpl c = new UsernamePasswordCredentialsImpl(CredentialsScope.GLOBAL, null,
                 "", getVariable(usernameVariable), password);
@@ -87,7 +85,7 @@ public class Tomcat8xAdapterTest {
         Configuration config = new DefaultConfigurationFactory().createConfiguration(adapter.getContainerId(), ContainerType.REMOTE, ConfigurationType.RUNTIME);
         adapter.migrateCredentials(Collections.EMPTY_LIST);
         adapter.loadCredentials(project);
-        adapter.configure(config, project.getEnvironment(n, listener), build.getBuildVariableResolver());
+        adapter.configure(config, project.getEnvironment(n, listener));
 
         Assert.assertEquals(configuredUrl, config.getPropertyValue(RemotePropertySet.URI));
         Assert.assertEquals(username, config.getPropertyValue(RemotePropertySet.USERNAME));

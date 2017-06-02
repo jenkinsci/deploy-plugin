@@ -2,7 +2,6 @@ package hudson.plugins.deploy.glassfish;
 
 import hudson.EnvVars;
 import hudson.plugins.deploy.PasswordProtectedAdapterCargo;
-import hudson.util.VariableResolver;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.cargo.container.Container;
@@ -61,13 +60,13 @@ public abstract class GlassFishAdapter extends PasswordProtectedAdapterCargo {
      * {@inheritDoc}
      */
     @Override
-    protected Container getContainer(ConfigurationFactory configFactory, ContainerFactory containerFactory, String id, EnvVars envVars, VariableResolver<String> resolver) {
+    protected Container getContainer(ConfigurationFactory configFactory, ContainerFactory containerFactory, String id, EnvVars envVars) {
 
         if (hostname != null) {
 
 
             AbstractRuntimeConfiguration config = (AbstractRuntimeConfiguration) configFactory.createConfiguration(id, ContainerType.REMOTE, ConfigurationType.RUNTIME);
-            configure(config, envVars, resolver);
+            configure(config, envVars);
             config.setProperty(RemotePropertySet.PASSWORD, getPassword());
 
             AbstractRemoteContainer container = (AbstractRemoteContainer) containerFactory.createContainer(id, ContainerType.REMOTE, config);
@@ -77,12 +76,12 @@ public abstract class GlassFishAdapter extends PasswordProtectedAdapterCargo {
 
         } else {
             AbstractStandaloneLocalConfiguration config = (AbstractStandaloneLocalConfiguration) configFactory.createConfiguration(id, ContainerType.INSTALLED, ConfigurationType.STANDALONE, home);
-            configure(config, envVars, resolver);
+            configure(config, envVars);
 
             AbstractInstalledLocalContainer container = (AbstractInstalledLocalContainer) containerFactory.createContainer(id, ContainerType.INSTALLED, config);
 
             // Explicitly sets the home on the LocalContainer:
-            container.setHome(expandVariable(envVars, resolver, home));
+            container.setHome(expandVariable(envVars, home));
 
             return container;
         }
