@@ -4,7 +4,6 @@ import hudson.util.XStream2;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.matchers.JUnitMatchers;
 
 public class PasswordProtectedAdapterCargoTest {
     @Test

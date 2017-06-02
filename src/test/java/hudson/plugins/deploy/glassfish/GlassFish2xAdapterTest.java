@@ -48,7 +48,7 @@ public class GlassFish2xAdapterTest {
     @Test
     public void testConfigure() throws IOException, InterruptedException, ExecutionException {
         Assert.assertEquals(adapter.home, home);
-     //   Assert.assertEquals(adapter.adminPort, port);
+        Assert.assertEquals(adapter.adminPort, port);
         Assert.assertEquals(adapter.userName, username);
         Assert.assertEquals(adapter.getPassword(), password);
 
@@ -59,7 +59,7 @@ public class GlassFish2xAdapterTest {
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         BuildListener listener = new StreamBuildListener(new ByteArrayOutputStream());
 
-        Container container = adapter.getContainer(configFactory, containerFactory, adapter.getContainerId(), build.getEnvironment(listener), build.getBuildVariableResolver());
+        Container container = adapter.getContainer(configFactory, containerFactory, adapter.getContainerId(), build.getEnvironment(listener));
         Assert.assertNotNull(container);
     }
 }

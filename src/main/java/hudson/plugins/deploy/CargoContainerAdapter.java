@@ -2,7 +2,6 @@ package hudson.plugins.deploy;
 
 import hudson.EnvVars;
 import hudson.FilePath;
-import hudson.FilePath.FileCallable;
 import hudson.Launcher;
 import hudson.Util;
 import hudson.model.BuildListener;
@@ -10,17 +9,12 @@ import hudson.model.AbstractBuild;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
-import hudson.util.VariableResolver;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Map;
 
-import javafx.concurrent.Task;
 import jenkins.MasterToSlaveFileCallable;
-import jenkins.security.MasterToSlaveCallable;
-import jenkins.security.Roles;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.cargo.container.Container;
@@ -36,7 +30,6 @@ import org.codehaus.cargo.generic.configuration.ConfigurationFactory;
 import org.codehaus.cargo.generic.configuration.DefaultConfigurationFactory;
 import org.codehaus.cargo.generic.deployer.DefaultDeployerFactory;
 import org.codehaus.cargo.generic.deployer.DeployerFactory;
-import org.jenkinsci.remoting.RoleChecker;
 
 /**
  * Provides container-specific glue code.
@@ -61,11 +54,11 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
      *
      * @param config
      */
-    protected abstract void configure(Configuration config, EnvVars envVars, VariableResolver<String> resolver);
+    protected abstract void configure(Configuration config, EnvVars envVars);
 
-    protected Container getContainer(ConfigurationFactory configFactory, ContainerFactory containerFactory, String id, EnvVars envVars, VariableResolver<String> resolver) {
+    protected Container getContainer(ConfigurationFactory configFactory, ContainerFactory containerFactory, String id, EnvVars envVars) {
         Configuration config = configFactory.createConfiguration(id, ContainerType.REMOTE, ConfigurationType.RUNTIME);
-        configure(config, envVars, resolver);
+        configure(config, envVars);
         return containerFactory.createContainer(id, ContainerType.REMOTE, config);
     }
 
@@ -101,12 +94,9 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
         return new WAR(deployableFile.getAbsolutePath());
     }
 
-    protected String expandVariable(EnvVars envVars, VariableResolver<String> resolver, String variable) {
-        return resolver.resolve(envVars.expand(variable));
-
-        // 95% sure we have a better way to do this
+    protected String expandVariable(EnvVars envVars, String variable) {
+        return envVars.expand(variable);
     }
-
 
     /**
      * Creates a Deployable object EAR from the given file object.
@@ -119,7 +109,7 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
     }
 
     public boolean redeploy(FilePath war, final String contextPath, final AbstractBuild<?, ?> build, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException {
-        return redeploy(war, contextPath, (Run)build, launcher, listener);
+        return redeploy(war, contextPath, build, launcher, (TaskListener)listener);
     }
 
     public boolean redeploy(FilePath war, final String contextPath, final Run<?, ?> build, final Launcher launcher, final TaskListener listener) throws IOException, InterruptedException {
@@ -132,13 +122,11 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
                 final DeployerFactory deployerFactory = new DefaultDeployerFactory(cl);
 
                 try {
-                    final EnvVars envVars = build.getEnvironment(listener);
-                    // Not the way they want it done
-                    final VariableResolver<String> resolver = new VariableResolver.ByMap<String>(envVars.descendingMap());
-
                     // FIXME need to evaluate the concrete environment variables here
-                    Container container = getContainer(configFactory, containerFactory, getContainerId(), envVars, resolver);
-                    deploy(deployerFactory, listener, container, f, expandVariable(envVars, resolver, contextPath));
+                    final EnvVars envVars = build.getEnvironment(listener);
+
+                    Container container = getContainer(configFactory, containerFactory, getContainerId(), envVars);
+                    deploy(deployerFactory, listener, container, f, expandVariable(envVars, contextPath));
                 } catch (InterruptedException e) {
                     throw new RuntimeException("Failed to get build environment", e);
                 }
