@@ -25,6 +25,7 @@ package hudson.plugins.deploy;
 
 import com.google.common.collect.ImmutableSet;
 import hudson.Extension;
+import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.*;
 import jenkins.model.Jenkins;
@@ -33,7 +34,9 @@ import org.jenkinsci.plugins.workflow.support.steps.build.BuildTriggerStep;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
+import java.io.IOException;
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * @author Alex Johnson
@@ -57,8 +60,8 @@ public class DeployStep extends Step {
 //    }
 
     @DataBoundConstructor
-    public DeployStep (List<ContainerAdapter> adapters, String war, String contextPath, boolean onFailure) {
-        pub = new DeployPublisher(adapters, war, contextPath, onFailure);
+    public DeployStep (ContainerAdapter[] adapters, String war, String contextPath, boolean onFailure) {
+        pub = new DeployPublisher(Arrays.asList(adapters), war, contextPath, onFailure);
     }
 
     @Override
