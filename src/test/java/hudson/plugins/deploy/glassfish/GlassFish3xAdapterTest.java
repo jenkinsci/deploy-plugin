@@ -2,10 +2,7 @@ package hudson.plugins.deploy.glassfish;
 
 import hudson.EnvVars;
 import hudson.FilePath;
-import hudson.model.BuildListener;
-import hudson.model.FreeStyleBuild;
-import hudson.model.StreamBuildListener;
-import hudson.model.FreeStyleProject;
+import hudson.model.*;
 import hudson.slaves.EnvironmentVariablesNodeProperty;
 
 import java.io.ByteArrayOutputStream;
@@ -118,28 +115,31 @@ public class GlassFish3xAdapterTest {
     }
     
     @Test
-    public void testVariables() throws IOException, InterruptedException, ExecutionException {
-        FreeStyleProject project = j.getInstance().createProject(FreeStyleProject.class, "fsp");
-        FreeStyleBuild build = project.scheduleBuild2(0).get();
-        BuildListener listener = new StreamBuildListener(new ByteArrayOutputStream());
+    public void testVariables() throws Exception {
+        FreeStyleProject project = j.createFreeStyleProject();
+        TaskListener listener = j.createTaskListener();
+        Node n = j.createSlave();
 
-        // TODO: does this test confirm impl?
-        EnvVars envVars = build.getEnvironment(listener);
+        /** vars to global environment */
+        EnvironmentVariablesNodeProperty property = new EnvironmentVariablesNodeProperty();
+        EnvVars envVars = property.getEnvVars();
         envVars.put(homeVariable, home);
         envVars.put(usernameVariable, username);
         envVars.put(adminPortVariable, adminPort);
         envVars.put(hostnameVariable, hostname);
+        j.getInstance().getGlobalNodeProperties().add(property);
 
         adapter = new  GlassFish3xAdapter(getVariable(homeVariable), password, getVariable(usernameVariable), getVariable(adminPortVariable), null);
         Configuration config = new DefaultConfigurationFactory().createConfiguration(adapter.getContainerId(), ContainerType.REMOTE, ConfigurationType.RUNTIME);
-        adapter.configure(config, envVars); // TODO: should be build.getEnvironment()
-        
+        adapter.configure(config, project.getEnvironment(n, listener));
+
+        /** Did the config successfully read envvars */
         Assert.assertEquals(username, config.getPropertyValue(RemotePropertySet.USERNAME));
         Assert.assertEquals(adminPort, config.getPropertyValue(GlassFishPropertySet.ADMIN_PORT));
         
         remoteAdapter = new  GlassFish3xAdapter(null, password, getVariable(usernameVariable), getVariable(adminPortVariable), getVariable(hostnameVariable));
         config = new DefaultConfigurationFactory().createConfiguration(adapter.getContainerId(), ContainerType.REMOTE, ConfigurationType.RUNTIME);
-        remoteAdapter.configure(config, envVars); // TODO: should be build.getEnvironment()
+        remoteAdapter.configure(config, project.getEnvironment(n, listener));
         
         Assert.assertEquals(username, config.getPropertyValue(RemotePropertySet.USERNAME));
         Assert.assertEquals(adminPort, config.getPropertyValue(GlassFishPropertySet.ADMIN_PORT));

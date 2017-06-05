@@ -1,7 +1,8 @@
 <?jelly escape-by-default='true'?>
-<div>
-  This plugin allows you to deploy a war to a container
-  after a successful build.
-  <br/>
-  Glassfish 3.x remote deployment
-</div>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+                 xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <div>
+      This plugin allows you to deploy a war to a container after a successful build. <br/>
+      Glassfish 3.x remote deployment
+    </div>
+</j:jelly>
