@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 
+import hudson.util.VariableResolver;
 import jenkins.MasterToSlaveFileCallable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
@@ -54,7 +55,7 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
      */
     protected abstract void configure(Configuration config, EnvVars envVars);
 
-    protected Container getContainer(ConfigurationFactory configFactory, ContainerFactory containerFactory, String id, EnvVars envVars) {
+    protected Container getContainer(ConfigurationFactory configFactory, ContainerFactory containerFactory, String id, EnvVars envVars, VariableResolver<String> resolver) {
         Configuration config = configFactory.createConfiguration(id, ContainerType.REMOTE, ConfigurationType.RUNTIME);
         configure(config, envVars);
         return containerFactory.createContainer(id, ContainerType.REMOTE, config);
@@ -92,10 +93,17 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
         return new WAR(deployableFile.getAbsolutePath());
     }
 
+    /**
+     * Deprecated as of 1.13, please use expandVariable(EnvVars, String)
+     */
+    @Deprecated
+    protected String expandVariable(EnvVars envVars, VariableResolver<String> resolver, String variable) {
+        return expandVariable(envVars, variable);
+    }
+
     protected String expandVariable(EnvVars envVars, String variable) {
         return envVars.expand(variable);
     }
-
 
     /**
      * Creates a Deployable object EAR from the given file object.
@@ -142,7 +150,8 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
             ConfigurationFactory configFactory = new DefaultConfigurationFactory(cl);
             ContainerFactory containerFactory = new DefaultContainerFactory(cl);
 
-            Container container = adapter.getContainer(configFactory, containerFactory, containerId, envVars);
+            VariableResolver<String> resolver = new VariableResolver.ByMap<String>(envVars);
+            Container container = adapter.getContainer(configFactory, containerFactory, containerId, envVars, resolver);
             adapter.deploy(deployerFactory, listener, container, f, envVars.expand(contextPath));
 
             return true;
