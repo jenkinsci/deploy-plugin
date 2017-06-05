@@ -52,7 +52,7 @@ public abstract class DefaultCargoContainerAdapterImpl extends CargoContainerAda
             String v = ConvertUtils.convert(getPropertyValue(ao));
             if(v!=null) {
                 if (v!=RemotePropertySet.PASSWORD) {
-                    v = expandVariable(envVars, resolver, v);
+                    v = expandVariable(envVars, v);
                 }
                 config.setProperty(p.value(), v);
             }

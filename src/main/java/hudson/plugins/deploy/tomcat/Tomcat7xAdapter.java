@@ -34,7 +34,7 @@ public class Tomcat7xAdapter extends TomcatAdapter {
     public void configure(Configuration config, EnvVars envVars, VariableResolver<String> resolver) {
         super.configure(config, envVars, resolver);
         try {
-            URL _url = new URL(expandVariable(envVars, resolver, url) + "/manager/text");
+            URL _url = new URL(expandVariable(envVars, url) + "/manager/text");
             config.setProperty(RemotePropertySet.URI, _url.toExternalForm());
         } catch (MalformedURLException e) {
             throw new AssertionError(e);

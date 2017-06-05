@@ -7,7 +7,7 @@ import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.model.Describable;
-import hudson.model.Hudson;
+import jenkins.model.Jenkins;
 
 import java.io.IOException;
 
@@ -30,10 +30,10 @@ public abstract class ContainerAdapter implements Describable<ContainerAdapter>,
     public abstract boolean redeploy(FilePath war, String aContextPath, AbstractBuild<?,?> build, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException;
 
     public ContainerAdapterDescriptor getDescriptor() {
-        return (ContainerAdapterDescriptor)Hudson.getInstance().getDescriptor(getClass());
+        return (ContainerAdapterDescriptor)Jenkins.getInstance().getDescriptor(getClass());
     }
 
     public static DescriptorExtensionList<ContainerAdapter,ContainerAdapterDescriptor> all() {
-        return Hudson.getInstance().<ContainerAdapter,ContainerAdapterDescriptor>getDescriptorList(ContainerAdapter.class);
+        return Jenkins.getInstance().<ContainerAdapter,ContainerAdapterDescriptor>getDescriptorList(ContainerAdapter.class);
     }
 }

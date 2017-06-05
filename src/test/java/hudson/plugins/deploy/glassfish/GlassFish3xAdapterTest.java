@@ -80,7 +80,7 @@ public class GlassFish3xAdapterTest {
 
     @Test
     public void testConfigureRemote() throws IOException, InterruptedException, ExecutionException {
-        Assert.assertNull("Expexted adapter.home to be null", remoteAdapter.home);
+        Assert.assertNull("Expected adapter.home to be null", remoteAdapter.home);
         Assert.assertEquals(remoteAdapter.adminPort, adminPort);
         Assert.assertEquals(remoteAdapter.userName, username);
         Assert.assertEquals(remoteAdapter.getPassword(), password);
@@ -100,19 +100,16 @@ public class GlassFish3xAdapterTest {
      * This test only runs in your local environment
      * @throws IOException
      * @throws InterruptedException
-     */
-    //@Test
+     *
+    @Test
     public void testDeploy() throws IOException, InterruptedException {
-        
         adapter.redeploy(new FilePath(new File("src/test/simple.war")), "contextPath", null, null, new StreamBuildListener(System.out));
     }
     
-    //@Test
+    @Test
     public void testRemoteDeploy() throws IOException, InterruptedException {
-       
-
         remoteAdapter.redeploy(new FilePath(new File("src/test/simple.war")), "contextPath", null, null, new StreamBuildListener(System.out));
-    }
+    }*/
     
     @Test
     public void testVariables() throws Exception {
