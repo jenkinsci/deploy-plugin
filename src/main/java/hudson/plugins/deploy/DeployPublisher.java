@@ -5,13 +5,12 @@ import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.BuildListener;
+import hudson.model.Descriptor;
 import hudson.model.Result;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.listeners.ItemListener;
-import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
-import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
 
 import java.io.IOException;
@@ -27,7 +26,6 @@ import jenkins.model.Jenkins;
 import jenkins.util.io.FileBoolean;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
-import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -35,7 +33,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
  * 
  * @author Kohsuke Kawaguchi
  */
-public class DeployPublisher extends Notifier implements Serializable {
+public class DeployPublisher extends Publisher implements Serializable {
     private List<ContainerAdapter> adapters;
     public final String contextPath;
 
@@ -83,6 +81,11 @@ public class DeployPublisher extends Notifier implements Serializable {
     	return this;
     }
 
+    @Override
+    public Descriptor getDescriptor () {
+        return new DeployPublisher.DescriptorImpl();
+    }
+
     /**
 	 * Get the value of the adapterWrappers property
 	 *
@@ -92,13 +95,10 @@ public class DeployPublisher extends Notifier implements Serializable {
 		return adapters;
 	}
 
-	@Extension
-    @Symbol("deploy")
-    public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
-	    @Override
-	    public boolean isApplicable(Class jobType) {
-            return true;
-        }
+    @Extension
+    public static final class DescriptorImpl extends Descriptor<Publisher> {
+
+
 
         public String getDisplayName() {
             return Messages.DeployPublisher_DisplayName();
