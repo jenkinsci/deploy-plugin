@@ -3,6 +3,7 @@ package hudson.plugins.deploy.glassfish;
 import hudson.EnvVars;
 import hudson.plugins.deploy.PasswordProtectedAdapterCargo;
 
+import hudson.util.VariableResolver;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.cargo.container.Container;
 import org.codehaus.cargo.container.ContainerType;
@@ -60,7 +61,7 @@ public abstract class GlassFishAdapter extends PasswordProtectedAdapterCargo {
      * {@inheritDoc}
      */
     @Override
-    protected Container getContainer(ConfigurationFactory configFactory, ContainerFactory containerFactory, String id, EnvVars envVars) {
+    protected Container getContainer(ConfigurationFactory configFactory, ContainerFactory containerFactory, String id, EnvVars envVars, VariableResolver resolver) {
 
         if (hostname != null) {
 

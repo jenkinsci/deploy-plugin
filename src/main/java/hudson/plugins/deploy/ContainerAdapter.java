@@ -31,6 +31,14 @@ public abstract class ContainerAdapter implements Describable<ContainerAdapter>,
      * Implementations that are pipeline compatible should implement {@link #redeploy(FilePath, String, Run, Launcher, BuildListener)}
      *   and have this simply delegate to the now-compatible implementation.
      * @deprecated Prefer to invoke {@link #redeploy(FilePath, String, Run, Launcher, BuildListener)} where possible.
+     * @param war the file path of the war to deploy
+     * @param aContextPath the context path for the war to be deployed
+     * @param build the build that is being deployed
+     * @param launcher the launcher of the build
+     * @param listener the BuildListener of the build to deploy
+     * @return true if deployed successfully, false if failed
+     * @throws IOException if there is an error locating the war file
+     * @throws InterruptedException if there is an error deploying to the server
      */
     @Deprecated
     public abstract boolean redeploy(FilePath war, String aContextPath, AbstractBuild<?,?> build, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException;
@@ -51,10 +59,10 @@ public abstract class ContainerAdapter implements Describable<ContainerAdapter>,
     }
 
     public ContainerAdapterDescriptor getDescriptor() {
-        return (ContainerAdapterDescriptor)Jenkins.getInstance().getDescriptor(getClass());
+        return (ContainerAdapterDescriptor)Jenkins.getActiveInstance().getDescriptor(getClass());
     }
 
     public static DescriptorExtensionList<ContainerAdapter,ContainerAdapterDescriptor> all() {
-        return Jenkins.getInstance().<ContainerAdapter,ContainerAdapterDescriptor>getDescriptorList(ContainerAdapter.class);
+        return Jenkins.getActiveInstance().<ContainerAdapter,ContainerAdapterDescriptor>getDescriptorList(ContainerAdapter.class);
     }
 }

@@ -28,6 +28,8 @@ import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import javax.annotation.Nonnull;
+
 /**
  * Deploys WAR to a container.
  * 
@@ -55,7 +57,7 @@ public class DeployPublisher extends Publisher implements Serializable {
     }
 
     @Override
-    public boolean perform(AbstractBuild<?,?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
+    public boolean perform(@Nonnull AbstractBuild<?,?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
         if (build.getResult().equals(Result.SUCCESS) || onFailure) {
             for (FilePath warFile : build.getWorkspace().list(this.war)) {
                 for (ContainerAdapter adapter : adapters)
@@ -106,6 +108,8 @@ public class DeployPublisher extends Publisher implements Serializable {
 
         /**
          * Sort the descriptors so that the order they are displayed is more predictable
+         *
+         * @return a alphabetically sorted list of AdapterDescriptors
          */
         public List<ContainerAdapterDescriptor> getAdaptersDescriptors() {
             List<ContainerAdapterDescriptor> r = new ArrayList<ContainerAdapterDescriptor>(ContainerAdapter.all());
