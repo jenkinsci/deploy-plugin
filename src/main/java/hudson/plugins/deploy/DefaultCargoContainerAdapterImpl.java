@@ -27,6 +27,7 @@ public abstract class DefaultCargoContainerAdapterImpl extends CargoContainerAda
     public @interface Property {
         /**
          * Property name.
+         * @return the property name
          */
         String value();
     }

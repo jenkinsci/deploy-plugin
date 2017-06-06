@@ -23,7 +23,8 @@ public abstract class PasswordProtectedAdapterCargo extends DefaultCargoContaine
     public String getPassword() {
         return Scrambler.descramble(passwordScrambled);
     }
-    
+
+    @SuppressWarnings("SE_PRIVATE_READ_RESOLVE_NOT_INHERITED")
     private Object readResolve() {
         // backward compatibility
         if(passwordScrambled == null && password != null){

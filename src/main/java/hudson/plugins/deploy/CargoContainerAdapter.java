@@ -2,9 +2,7 @@ package hudson.plugins.deploy;
 
 import hudson.EnvVars;
 import hudson.FilePath;
-import hudson.FilePath.FileCallable;
 import hudson.Launcher;
-import hudson.Util;
 import hudson.model.BuildListener;
 import hudson.model.AbstractBuild;
 import hudson.remoting.VirtualChannel;
@@ -45,14 +43,16 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
     /**
      * Returns the container ID used by Cargo.
      *
-     * @return
+     * @return the id of the container
      */
     protected abstract String getContainerId();
 
     /**
      * Fills in the {@link Configuration} object.
      *
-     * @param config
+     * @param config the configuration of the adapter
+     * @param envVars the environmental variables of the build
+     * @param resolver the variable resolver
      */
     protected abstract void configure(Configuration config, EnvVars envVars, VariableResolver<String> resolver);
 
@@ -96,13 +96,27 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
     }
 
     /**
-     * Deprecated as of 1.13, please use expandVariable(EnvVars, String)
+     * Expands an encoded environment variable. Ex. if HOME=/user/alex, expands '${HOME}' to '/user/alex'
+     *
+     * Deprecated as of 1.13, please use {@link #expandVariable(EnvVars, String)}
+     *
+     * @param envVars the environment variables of the build
+     * @param resolver unused
+     * @param variable the variable to expand
+     * @return the value of the expanded variable
      */
     @Deprecated
     protected String expandVariable(EnvVars envVars, VariableResolver<String> resolver, String variable) {
-        return expandVariable(envVars, variable);
+        return envVars.expand(variable);
     }
 
+    /**
+     * Expands an encoded environment variable. Ex. if HOME=/user/alex, expands '${HOME}' to '/user/alex'
+     *
+     * @param envVars the environment variables of the build
+     * @param variable the variable to expand
+     * @return the value of the expanded variable
+     */
     protected String expandVariable(EnvVars envVars, String variable) {
         return envVars.expand(variable);
     }
@@ -111,12 +125,13 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
      * Creates a Deployable object EAR from the given file object.
      *
      * @param deployableFile The deployable file to create the Deployable from.
-     * @return A Deployable object.
+     * @return A deployable object.
      */
     protected EAR createEAR(File deployableFile) {
         return new EAR(deployableFile.getAbsolutePath());
     }
 
+    @Override
     public boolean redeploy(FilePath war, final String contextPath, final AbstractBuild<?, ?> build, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException {
         return war.act(new MasterToSlaveFileCallable<Boolean>() {
             public Boolean invoke(File f, VirtualChannel channel) throws IOException {
