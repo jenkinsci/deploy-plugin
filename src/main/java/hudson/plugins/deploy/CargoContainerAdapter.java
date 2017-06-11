@@ -3,17 +3,8 @@ package hudson.plugins.deploy;
 import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.FilePath.FileCallable;
-import hudson.Launcher;
-import hudson.Util;
-import hudson.model.BuildListener;
-import hudson.model.AbstractBuild;
+import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
-import hudson.util.VariableResolver;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.cargo.container.Container;
@@ -29,6 +20,11 @@ import org.codehaus.cargo.generic.configuration.ConfigurationFactory;
 import org.codehaus.cargo.generic.configuration.DefaultConfigurationFactory;
 import org.codehaus.cargo.generic.deployer.DefaultDeployerFactory;
 import org.codehaus.cargo.generic.deployer.DeployerFactory;
+import org.jenkinsci.remoting.RoleChecker;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
 
 /**
  * Provides container-specific glue code.
@@ -53,15 +49,15 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
      *
      * @param config
      */
-    protected abstract void configure(Configuration config, EnvVars envVars, VariableResolver<String> resolver);
+    protected abstract void configure(Configuration config, EnvVars envVars);
 
-    protected Container getContainer(ConfigurationFactory configFactory, ContainerFactory containerFactory, String id, EnvVars envVars, VariableResolver<String> resolver) {
+    protected Container getContainer(ConfigurationFactory configFactory, ContainerFactory containerFactory, String id, EnvVars envVars) {
         Configuration config = configFactory.createConfiguration(id, ContainerType.REMOTE, ConfigurationType.RUNTIME);
-        configure(config, envVars, resolver);
+        configure(config, envVars);
         return containerFactory.createContainer(id, ContainerType.REMOTE, config);
     }
 
-    protected void deploy(DeployerFactory deployerFactory, final BuildListener listener, Container container, File f, String contextPath) {
+    protected void deploy(DeployerFactory deployerFactory, final TaskListener listener, Container container, File f, String contextPath) {
         Deployer deployer = deployerFactory.createDeployer(container);
 
         listener.getLogger().println("Deploying " + f + " to container " + container.getName() + " with context " + contextPath);
@@ -93,9 +89,8 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
         return new WAR(deployableFile.getAbsolutePath());
     }
 
-    protected String expandVariable(EnvVars envVars, VariableResolver<String> resolver, String variable) {
-        String temp = envVars.expand(variable);
-        return Util.replaceMacro(envVars.expand(variable), resolver);
+    protected String expandVariable(EnvVars envVars, String variable) {
+        return envVars.expand(variable);
     }
 
 
@@ -109,8 +104,13 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
         return new EAR(deployableFile.getAbsolutePath());
     }
 
-    public boolean redeploy(FilePath war, final String contextPath, final AbstractBuild<?, ?> build, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException {
+    public boolean redeploy(FilePath war, final String contextPath, final EnvVars envVars, final TaskListener listener) throws IOException, InterruptedException {
         return war.act(new FileCallable<Boolean>() {
+            @Override
+            public void checkRoles(RoleChecker roleChecker) throws SecurityException {
+
+            }
+
             public Boolean invoke(File f, VirtualChannel channel) throws IOException {
                 if (!f.exists()) {
                     listener.error(Messages.DeployPublisher_NoSuchFile(f));
@@ -121,14 +121,9 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
                 final ContainerFactory containerFactory = new DefaultContainerFactory(cl);
                 final DeployerFactory deployerFactory = new DefaultDeployerFactory(cl);
 
-                try {
-                    final EnvVars envVars = build.getEnvironment(listener);
-                    final VariableResolver<String> resolver = build.getBuildVariableResolver();
-                    Container container = getContainer(configFactory, containerFactory, getContainerId(), envVars, resolver);
-                    deploy(deployerFactory, listener, container, f, expandVariable(envVars, resolver, contextPath));
-                } catch (InterruptedException e) {
-                    throw new RuntimeException("Failed to get build environment", e);
-            	}
+                Container container = getContainer(configFactory, containerFactory, getContainerId(), envVars);
+                deploy(deployerFactory, listener, container, f, expandVariable(envVars, contextPath));
+
 
                 return true;
             }

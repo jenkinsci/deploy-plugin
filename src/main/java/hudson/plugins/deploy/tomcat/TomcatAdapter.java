@@ -2,16 +2,14 @@ package hudson.plugins.deploy.tomcat;
 
 import hudson.EnvVars;
 import hudson.plugins.deploy.PasswordProtectedAdapterCargo;
-import hudson.util.VariableResolver;
-
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import org.codehaus.cargo.container.configuration.Configuration;
 import org.codehaus.cargo.container.deployable.WAR;
 import org.codehaus.cargo.container.property.RemotePropertySet;
 import org.codehaus.cargo.container.tomcat.TomcatWAR;
+
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Base class for Tomcat adapters.
@@ -29,10 +27,10 @@ public abstract class TomcatAdapter extends PasswordProtectedAdapterCargo {
         this.url = url;
     }
 
-    public void configure(Configuration config, EnvVars envVars, VariableResolver<String> resolver) {
-        super.configure(config, envVars, resolver);
+    public void configure(Configuration config, EnvVars envVars) {
+        super.configure(config, envVars);
         try {
-            URL _url = new URL(expandVariable(envVars, resolver, this.url) + "/manager");
+            URL _url = new URL(expandVariable(envVars, this.url) + "/manager");
             config.setProperty(RemotePropertySet.URI, _url.toExternalForm());
         } catch (MalformedURLException e) {
             throw new AssertionError(e);

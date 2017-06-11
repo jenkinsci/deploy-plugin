@@ -3,14 +3,9 @@ package hudson.plugins.deploy.tomcat;
 import hudson.EnvVars;
 import hudson.model.BuildListener;
 import hudson.model.FreeStyleBuild;
-import hudson.model.StreamBuildListener;
 import hudson.model.FreeStyleProject;
+import hudson.model.StreamBuildListener;
 import hudson.slaves.EnvironmentVariablesNodeProperty;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-
 import org.codehaus.cargo.container.ContainerType;
 import org.codehaus.cargo.container.configuration.Configuration;
 import org.codehaus.cargo.container.configuration.ConfigurationType;
@@ -22,6 +17,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author soudmaijer
@@ -71,7 +70,7 @@ public class Tomcat7xAdapterTest {
 
         adapter = new  Tomcat7xAdapter(getVariable(urlVariable), password, getVariable(usernameVariable));
         Configuration config = new DefaultConfigurationFactory().createConfiguration(adapter.getContainerId(), ContainerType.REMOTE, ConfigurationType.RUNTIME);
-        adapter.configure(config, build.getEnvironment(listener), build.getBuildVariableResolver());
+        adapter.configure(config, build.getEnvironment(listener));
         
         Assert.assertEquals(configuredUrl, config.getPropertyValue(RemotePropertySet.URI));
         Assert.assertEquals(username, config.getPropertyValue(RemotePropertySet.USERNAME));
