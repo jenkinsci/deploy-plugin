@@ -2,6 +2,7 @@ package hudson.plugins.deploy.tomcat;
 
 import hudson.Extension;
 import hudson.plugins.deploy.ContainerAdapterDescriptor;
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -21,6 +22,7 @@ public class Tomcat6xAdapter extends TomcatAdapter {
     }
     
     @Extension
+    @Symbol("tomcat6x")
     public static final class DescriptorImpl extends ContainerAdapterDescriptor {
         public String getDisplayName() {
             return "Tomcat 6.x";

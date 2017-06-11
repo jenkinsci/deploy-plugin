@@ -1,13 +1,12 @@
 package hudson.plugins.deploy;
 
 import hudson.DescriptorExtensionList;
+import hudson.EnvVars;
 import hudson.ExtensionPoint;
 import hudson.FilePath;
-import hudson.Launcher;
-import hudson.model.AbstractBuild;
-import hudson.model.BuildListener;
 import hudson.model.Describable;
 import hudson.model.Hudson;
+import hudson.model.TaskListener;
 
 import java.io.IOException;
 
@@ -27,7 +26,7 @@ public abstract class ContainerAdapter implements Describable<ContainerAdapter>,
      *
      * If failed, return false.
      */
-    public abstract boolean redeploy(FilePath war, String aContextPath, AbstractBuild<?,?> build, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException;
+    public abstract boolean redeploy(FilePath war, String aContextPath, EnvVars envVars, final TaskListener listener) throws IOException, InterruptedException;
 
     public ContainerAdapterDescriptor getDescriptor() {
         return (ContainerAdapterDescriptor)Hudson.getInstance().getDescriptor(getClass());

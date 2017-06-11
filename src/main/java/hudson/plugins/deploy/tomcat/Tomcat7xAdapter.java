@@ -3,14 +3,13 @@ package hudson.plugins.deploy.tomcat;
 import hudson.EnvVars;
 import hudson.Extension;
 import hudson.plugins.deploy.ContainerAdapterDescriptor;
-import hudson.util.VariableResolver;
+import org.codehaus.cargo.container.configuration.Configuration;
+import org.codehaus.cargo.container.property.RemotePropertySet;
+import org.jenkinsci.Symbol;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import org.codehaus.cargo.container.configuration.Configuration;
-import org.codehaus.cargo.container.property.RemotePropertySet;
-import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * Tomcat 7.x
@@ -31,10 +30,10 @@ public class Tomcat7xAdapter extends TomcatAdapter {
         super(url, password, userName);
     }
 
-    public void configure(Configuration config, EnvVars envVars, VariableResolver<String> resolver) {
-        super.configure(config, envVars, resolver);
+    public void configure(Configuration config, EnvVars envVars) {
+        super.configure(config, envVars);
         try {
-            URL _url = new URL(expandVariable(envVars, resolver, url) + "/manager/text");
+            URL _url = new URL(expandVariable(envVars, url) + "/manager/text");
             config.setProperty(RemotePropertySet.URI, _url.toExternalForm());
         } catch (MalformedURLException e) {
             throw new AssertionError(e);
@@ -50,6 +49,7 @@ public class Tomcat7xAdapter extends TomcatAdapter {
     }
 
     @Extension
+    @Symbol("tomcat7x")
     public static final class DescriptorImpl extends ContainerAdapterDescriptor {
         public String getDisplayName() {
             return "Tomcat 7.x";
