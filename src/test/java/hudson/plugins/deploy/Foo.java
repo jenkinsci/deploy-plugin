@@ -1,17 +1,15 @@
 package hudson.plugins.deploy;
 
+import javax.management.MBeanServerConnection;
+import javax.management.MBeanServerInvocationHandler;
+import javax.management.ObjectName;
+import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
-import javax.management.remote.JMXConnector;
-import javax.management.MBeanServerConnection;
-import javax.management.ObjectName;
-import javax.management.MBeanInfo;
-import javax.management.ObjectInstance;
-import javax.management.MBeanServerInvocationHandler;
 import javax.naming.Context;
-import java.util.Hashtable;
-import java.net.URLClassLoader;
 import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Hashtable;
 
 /**
  *

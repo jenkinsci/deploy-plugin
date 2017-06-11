@@ -2,13 +2,11 @@ package hudson.plugins.deploy;
 
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
-
-import java.io.IOException;
-import java.net.URL;
+import org.kohsuke.stapler.QueryParameter;
 
 import javax.servlet.ServletException;
-
-import org.kohsuke.stapler.QueryParameter;
+import java.io.IOException;
+import java.net.URL;
 
 /**
  * Base class for {@link ContainerAdapter} descriptors.
