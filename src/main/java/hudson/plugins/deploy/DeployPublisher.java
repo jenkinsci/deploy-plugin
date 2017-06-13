@@ -22,8 +22,6 @@ import java.util.List;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import javax.annotation.Nonnull;
-
 /**
  * Deploys WAR to a container.
  * 

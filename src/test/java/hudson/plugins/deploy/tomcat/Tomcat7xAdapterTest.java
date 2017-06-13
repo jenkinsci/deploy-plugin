@@ -71,7 +71,7 @@ public class Tomcat7xAdapterTest {
 
         adapter = new  Tomcat7xAdapter(getVariable(urlVariable), password, getVariable(usernameVariable));
         Configuration config = new DefaultConfigurationFactory().createConfiguration(adapter.getContainerId(), ContainerType.REMOTE, ConfigurationType.RUNTIME);
-        adapter.configure(config, project.getEnvironment(n, listener), build.getBuildVariableResolver());
+        adapter.configure(config, project.getEnvironment(n, listener), null);
         
         Assert.assertEquals(configuredUrl, config.getPropertyValue(RemotePropertySet.URI));
         Assert.assertEquals(username, config.getPropertyValue(RemotePropertySet.USERNAME));

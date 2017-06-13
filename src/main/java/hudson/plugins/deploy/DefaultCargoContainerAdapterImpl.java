@@ -38,14 +38,14 @@ public abstract class DefaultCargoContainerAdapterImpl extends CargoContainerAda
      */
     public void configure(Configuration config, EnvVars envVars, VariableResolver<String> resolver) {
         for(Field f : getClass().getFields()) {
-            setConfiguration(f, config, envVars, resolver);
+            setConfiguration(f, config, envVars);
         }
         for (Method m : getClass().getMethods()) {
-            setConfiguration(m, config, envVars, resolver);
+            setConfiguration(m, config, envVars);
         }
     }
     
-    private void setConfiguration(AccessibleObject ao, Configuration config, EnvVars envVars, VariableResolver<String> resolver) {
+    private void setConfiguration(AccessibleObject ao, Configuration config, EnvVars envVars) {
         Property p = ao.getAnnotation(Property.class);
         if(p==null) return;
         
