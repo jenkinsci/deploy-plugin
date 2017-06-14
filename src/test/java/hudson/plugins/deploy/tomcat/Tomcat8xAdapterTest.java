@@ -71,7 +71,7 @@ public class Tomcat8xAdapterTest {
 
         adapter = new  Tomcat8xAdapter(getVariable(urlVariable), password, getVariable(usernameVariable));
         Configuration config = new DefaultConfigurationFactory().createConfiguration(adapter.getContainerId(), ContainerType.REMOTE, ConfigurationType.RUNTIME);
-        adapter.configure(config, project.getEnvironment(n, listener), null);
+        adapter.configure(config, project.getEnvironment(n, listener), build.getBuildVariableResolver());
         
         Assert.assertEquals(configuredUrl, config.getPropertyValue(RemotePropertySet.URI));
         Assert.assertEquals(username, config.getPropertyValue(RemotePropertySet.USERNAME));

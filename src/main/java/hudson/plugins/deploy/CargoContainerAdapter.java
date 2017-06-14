@@ -2,7 +2,9 @@ package hudson.plugins.deploy;
 
 import hudson.EnvVars;
 import hudson.FilePath;
+import jenkins.MasterToSlaveFileCallable;
 import hudson.Launcher;
+import hudson.Util;
 import hudson.model.BuildListener;
 import hudson.model.AbstractBuild;
 import hudson.remoting.VirtualChannel;
@@ -12,7 +14,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 
-import jenkins.MasterToSlaveFileCallable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.cargo.container.Container;
@@ -56,7 +57,6 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
      */
     protected abstract void configure(Configuration config, EnvVars envVars, VariableResolver<String> resolver);
 
-
     protected Container getContainer(ConfigurationFactory configFactory, ContainerFactory containerFactory, String id, EnvVars envVars, VariableResolver<String> resolver) {
         Configuration config = configFactory.createConfiguration(id, ContainerType.REMOTE, ConfigurationType.RUNTIME);
         configure(config, envVars, resolver);
@@ -98,29 +98,14 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
     /**
      * Expands an encoded environment variable. Ex. if HOME=/user/alex, expands '${HOME}' to '/user/alex'
      *
-     * Deprecated as of 1.13, please use {@link #expandVariable(EnvVars, String)}
-     *
      * @param envVars the environment variables of the build
      * @param resolver unused
      * @param variable the variable to expand
      * @return the value of the expanded variable
      */
-    @Deprecated
     protected String expandVariable(EnvVars envVars, VariableResolver<String> resolver, String variable) {
-        return envVars.expand(variable);
+        return Util.replaceMacro(envVars.expand(variable), resolver);
     }
-
-    /**
-     * Expands an encoded environment variable. Ex. if HOME=/user/alex, expands '${HOME}' to '/user/alex'
-     *
-     * @param envVars the environment variables of the build
-     * @param variable the variable to expand
-     * @return the value of the expanded variable
-     */
-    protected String expandVariable(EnvVars envVars, String variable) {
-        return envVars.expand(variable);
-    }
-
     /**
      * Creates a Deployable object EAR from the given file object.
      *
@@ -142,8 +127,9 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
 
                 try {
                     final EnvVars envVars = build.getEnvironment(listener);
-                    Container container = getContainer(configFactory, containerFactory, getContainerId(), envVars, null);
-                    deploy(deployerFactory, listener, container, f, expandVariable(envVars, null, contextPath));
+                    final VariableResolver<String> resolver = build.getBuildVariableResolver();
+                    Container container = getContainer(configFactory, containerFactory, getContainerId(), envVars, resolver);
+                    deploy(deployerFactory, listener, container, f, expandVariable(envVars, resolver, contextPath));
                 } catch (InterruptedException e) {
                     throw new RuntimeException("Failed to get build environment", e);
             	}

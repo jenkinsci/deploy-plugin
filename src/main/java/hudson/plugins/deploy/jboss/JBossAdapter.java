@@ -28,7 +28,7 @@ public abstract class JBossAdapter extends PasswordProtectedAdapterCargo {
     public void configure(Configuration config, EnvVars envVars, VariableResolver<String> resolver) {
         super.configure(config, envVars, resolver);
         try {
-            URL _url = new URL(expandVariable(envVars, url));
+            URL _url = new URL(expandVariable(envVars, resolver, url));
             config.setProperty(GeneralPropertySet.PROTOCOL,_url.getProtocol());
             config.setProperty(GeneralPropertySet.HOSTNAME,_url.getHost());
             int p = _url.getPort();

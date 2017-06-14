@@ -75,7 +75,7 @@ public abstract class GlassFishAdapter extends PasswordProtectedAdapterCargo {
             AbstractInstalledLocalContainer container = (AbstractInstalledLocalContainer) containerFactory.createContainer(id, ContainerType.INSTALLED, config);
 
             // Explicitly sets the home on the LocalContainer:
-            container.setHome(expandVariable(envVars, home));
+            container.setHome(expandVariable(envVars, resolver, home));
 
             return container;
         }
