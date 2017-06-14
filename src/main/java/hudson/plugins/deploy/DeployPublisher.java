@@ -1,5 +1,6 @@
 package hudson.plugins.deploy;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -47,6 +48,7 @@ public class DeployPublisher extends Notifier implements Serializable {
         this.contextPath = contextPath;
     }
 
+    @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
     @Override
     public boolean perform(AbstractBuild<?,?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
         if (build.getResult().equals(Result.SUCCESS) || onFailure) {
@@ -95,6 +97,8 @@ public class DeployPublisher extends Notifier implements Serializable {
 
         /**
          * Sort the descriptors so that the order they are displayed is more predictable
+         *
+         * @return a alphabetically sorted list of AdapterDescriptors
          */
         public List<ContainerAdapterDescriptor> getAdaptersDescriptors() {
             List<ContainerAdapterDescriptor> r = new ArrayList<ContainerAdapterDescriptor>(ContainerAdapter.all());
