@@ -12,6 +12,7 @@ import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import hudson.util.VariableResolver;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.codehaus.cargo.container.configuration.Configuration;
 import org.codehaus.cargo.container.property.RemotePropertySet;
@@ -35,16 +36,16 @@ public abstract class DefaultCargoContainerAdapterImpl extends CargoContainerAda
      * Default implementation that fills the configuration by using
      * fields and getters annotated with {@link Property}.
      */
-    public void configure(Configuration config, EnvVars envVars) {
+    public void configure(Configuration config, EnvVars envVars, VariableResolver resolver) {
         for(Field f : getClass().getFields()) {
-            setConfiguration(f, config, envVars);
+            setConfiguration(f, config, envVars, resolver);
         }
         for (Method m : getClass().getMethods()) {
-            setConfiguration(m, config, envVars);
+            setConfiguration(m, config, envVars, resolver);
         }
     }
     
-    private void setConfiguration(AccessibleObject ao, Configuration config, EnvVars envVars) {
+    private void setConfiguration(AccessibleObject ao, Configuration config, EnvVars envVars, VariableResolver<String> resolver) {
         Property p = ao.getAnnotation(Property.class);
         if(p==null) return;
         
@@ -52,7 +53,7 @@ public abstract class DefaultCargoContainerAdapterImpl extends CargoContainerAda
             String v = ConvertUtils.convert(getPropertyValue(ao));
             if(v!=null) {
                 if (v!=RemotePropertySet.PASSWORD) {
-                    v = expandVariable(envVars, v);
+                    v = expandVariable(envVars, resolver, v);
                 }
                 config.setProperty(p.value(), v);
             }

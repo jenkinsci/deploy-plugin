@@ -6,6 +6,7 @@ import hudson.plugins.deploy.PasswordProtectedAdapterCargo;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import hudson.util.VariableResolver;
 import org.codehaus.cargo.container.configuration.Configuration;
 import org.codehaus.cargo.container.property.GeneralPropertySet;
 import org.codehaus.cargo.container.property.ServletPropertySet;
@@ -29,10 +30,10 @@ public abstract class JBossAdapter extends PasswordProtectedAdapterCargo {
     }
 
     @Override
-    public void configure(Configuration config, EnvVars envVars) {
+    public void configure(Configuration config, EnvVars envVars, VariableResolver resolver) {
         super.configure(config, envVars);
         try {
-            URL _url = new URL(expandVariable(envVars, url));
+            URL _url = new URL(expandVariable(envVars, resolver, url));
             config.setProperty(GeneralPropertySet.PROTOCOL,_url.getProtocol());
             config.setProperty(GeneralPropertySet.HOSTNAME,_url.getHost());
             int p = _url.getPort();

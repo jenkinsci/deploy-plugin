@@ -66,7 +66,7 @@ public abstract class GlassFishAdapter extends PasswordProtectedAdapterCargo {
         if (hostname != null) {
 
             AbstractRuntimeConfiguration config = (AbstractRuntimeConfiguration) configFactory.createConfiguration(id, ContainerType.REMOTE, ConfigurationType.RUNTIME);
-            configure(config, envVars);
+            configure(config, envVars, resolver);
             config.setProperty(RemotePropertySet.PASSWORD, getPassword());
 
             AbstractRemoteContainer container = (AbstractRemoteContainer) containerFactory.createContainer(id, ContainerType.REMOTE, config);
@@ -75,12 +75,12 @@ public abstract class GlassFishAdapter extends PasswordProtectedAdapterCargo {
 
         } else {
             AbstractStandaloneLocalConfiguration config = (AbstractStandaloneLocalConfiguration) configFactory.createConfiguration(id, ContainerType.INSTALLED, ConfigurationType.STANDALONE, home);
-            configure(config, envVars);
+            configure(config, envVars, resolver);
 
             AbstractInstalledLocalContainer container = (AbstractInstalledLocalContainer) containerFactory.createContainer(id, ContainerType.INSTALLED, config);
 
             // Explicitly sets the home on the LocalContainer:
-            container.setHome(expandVariable(envVars, home));
+            container.setHome(expandVariable(envVars, resolver, home));
 
             return container;
         }

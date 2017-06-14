@@ -25,18 +25,12 @@ package hudson.plugins.deploy;
 
 import com.google.common.collect.ImmutableSet;
 import hudson.Extension;
-import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.*;
-import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.workflow.steps.*;
-import org.jenkinsci.plugins.workflow.support.steps.build.BuildTriggerStep;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
 
-import java.io.IOException;
 import java.util.*;
-import java.util.logging.Logger;
 
 /**
  * @author Alex Johnson
@@ -47,21 +41,16 @@ public class DeployStep extends Step {
 
     private DeployPublisher pub;
 
-//    public DeployStep (ContainerAdapter adapter, String war, String contextPath) {
-//        this(Arrays.asList(adapter), war, contextPath, false);
-//    }
-//
-//    public DeployStep (ContainerAdapter adapter, String war, String contextPath, boolean onFailure) {
-//        this(Arrays.asList(adapter), war, contextPath, onFailure);
-//    }
-//
-//    public DeployStep (List<ContainerAdapter> adapters, String war, String contextPath) {
-//        this(adapters, war, contextPath, false);
-//    }
-
     @DataBoundConstructor
-    public DeployStep (ContainerAdapter[] adapters, String war, String contextPath, boolean onFailure) {
-        pub = new DeployPublisher(Arrays.asList(adapters), war, contextPath, onFailure);
+    public DeployStep (ContainerAdapter container, ContainerAdapter[] containers, String war, String contextPath, boolean onFailure) {
+        if (container == null) {
+            if (containers == null) {
+                containers = new ContainerAdapter[0];
+            }
+            pub = new DeployPublisher(Arrays.asList(containers), war, contextPath, onFailure);
+        } else {
+            pub = new DeployPublisher(Arrays.asList(container), war, contextPath, onFailure);
+        }
     }
 
     @Override
@@ -99,14 +88,18 @@ public class DeployStep extends Step {
             this.step = step;
         }
 
-        /** Runs the DeployStep */
+        /** Runs the DeployPublisher */
         @Override
         protected Void run() throws Exception {
             Run r = getContext().get(Run.class);
             if (r instanceof AbstractBuild) {
                 Launcher launcher = getContext().get(Launcher.class);
                 BuildListener listener = (BuildListener)getContext().get(TaskListener.class);
-                step.pub.perform((AbstractBuild)r, launcher, listener);
+                if (step.pub.getAdapters().isEmpty()) {
+                    listener.getLogger().print(" WARN: No containers specified");
+                } else {
+                    step.pub.perform((AbstractBuild) r, launcher, listener);
+                }
             }
             return null;
         }

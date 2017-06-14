@@ -8,6 +8,7 @@ import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.model.Describable;
 import hudson.model.Run;
+import hudson.tasks.BuildStep;
 import jenkins.model.Jenkins;
 
 import java.io.IOException;

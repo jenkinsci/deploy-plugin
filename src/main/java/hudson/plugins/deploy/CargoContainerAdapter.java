@@ -2,7 +2,9 @@ package hudson.plugins.deploy;
 
 import hudson.EnvVars;
 import hudson.FilePath;
+import jenkins.MasterToSlaveFileCallable;
 import hudson.Launcher;
+import hudson.Util;
 import hudson.model.BuildListener;
 import hudson.model.AbstractBuild;
 import hudson.model.TaskListener;
@@ -13,7 +15,6 @@ import java.io.IOException;
 import java.io.Serializable;
 
 import hudson.util.VariableResolver;
-import jenkins.MasterToSlaveFileCallable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.cargo.container.Container;
@@ -53,13 +54,13 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
      *
      * @param config the configuration of the adapter
      * @param envVars the environmental variables of the build
-     * param resolver the variable resolver
+     * @param resolver the variable resolver
      */
-    protected abstract void configure(Configuration config, EnvVars envVars);
+    protected abstract void configure(Configuration config, EnvVars envVars, VariableResolver<String> resolver);
 
     protected Container getContainer(ConfigurationFactory configFactory, ContainerFactory containerFactory, String id, EnvVars envVars, VariableResolver<String> resolver) {
         Configuration config = configFactory.createConfiguration(id, ContainerType.REMOTE, ConfigurationType.RUNTIME);
-        configure(config, envVars);
+        configure(config, envVars, resolver);
         return containerFactory.createContainer(id, ContainerType.REMOTE, config);
     }
 
@@ -98,29 +99,14 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
     /**
      * Expands an encoded environment variable. Ex. if HOME=/user/alex, expands '${HOME}' to '/user/alex'
      *
-     * Deprecated as of 1.13, please use {@link #expandVariable(EnvVars, String)}
-     *
      * @param envVars the environment variables of the build
      * @param resolver unused
      * @param variable the variable to expand
      * @return the value of the expanded variable
      */
-    @Deprecated
     protected String expandVariable(EnvVars envVars, VariableResolver<String> resolver, String variable) {
-        return envVars.expand(variable);
+        return Util.replaceMacro(envVars.expand(variable), resolver);
     }
-
-    /**
-     * Expands an encoded environment variable. Ex. if HOME=/user/alex, expands '${HOME}' to '/user/alex'
-     *
-     * @param envVars the environment variables of the build
-     * @param variable the variable to expand
-     * @return the value of the expanded variable
-     */
-    protected String expandVariable(EnvVars envVars, String variable) {
-        return envVars.expand(variable);
-    }
-
     /**
      * Creates a Deployable object EAR from the given file object.
      *

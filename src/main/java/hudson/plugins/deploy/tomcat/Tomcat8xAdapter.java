@@ -7,8 +7,10 @@ import hudson.plugins.deploy.ContainerAdapterDescriptor;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import hudson.util.VariableResolver;
 import org.codehaus.cargo.container.configuration.Configuration;
 import org.codehaus.cargo.container.property.RemotePropertySet;
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -29,10 +31,11 @@ public class Tomcat8xAdapter extends TomcatAdapter {
         super(url, credentialsId);
     }
 
-    public void configure(Configuration config, EnvVars envVars) {
+    @Override
+    public void configure(Configuration config, EnvVars envVars, VariableResolver resolver) {
         super.configure(config, envVars);
         try {
-            URL _url = new URL(expandVariable(envVars, url) + "/manager/text");
+            URL _url = new URL(expandVariable(envVars, resolver, url) + "/manager/text");
             config.setProperty(RemotePropertySet.URI, _url.toExternalForm());
         } catch (MalformedURLException e) {
             throw new AssertionError(e);
@@ -47,6 +50,7 @@ public class Tomcat8xAdapter extends TomcatAdapter {
         return "tomcat8x";
     }
 
+    @Symbol("tomcat8")
     @Extension
     public static final class DescriptorImpl extends ContainerAdapterDescriptor {
         public String getDisplayName() {

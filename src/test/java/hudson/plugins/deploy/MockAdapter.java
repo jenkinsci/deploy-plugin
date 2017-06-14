@@ -14,8 +14,14 @@ import java.io.IOException;
  * Mocks out a ContainerAdapter so that we can actually run the deployer in a trivial way, just to test pipeline compatibility
  * CHECKME Might need to extend CargoContainerAdapter to better exercise APIs
  */
+@Extension
 public class MockAdapter extends ContainerAdapter {
     String containerName;
+
+    @DataBoundConstructor
+    public MockAdapter() {
+        this.containerName = "mock";
+    }
 
     @Override
     public boolean redeploy(FilePath war, String aContextPath, AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
@@ -27,13 +33,9 @@ public class MockAdapter extends ContainerAdapter {
         return "mockContainer";
     }
 
-    @DataBoundConstructor
-    public MockAdapter(String containerName) {
-        this.containerName = containerName;
-    }
 
-    @Extension
     @Symbol("mock")
+    @Extension
     public static class DescriptorImpl extends ContainerAdapterDescriptor {
         public String getDisplayName() {
             return "Mock Container";

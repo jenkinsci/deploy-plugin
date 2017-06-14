@@ -21,6 +21,7 @@ public class GlassFish2xAdapter extends GlassFishAdapter {
         return "glassfish2x";
     }
 
+    @Symbol("glassfish2")
     @Extension
     public static final class DescriptorImpl extends ContainerAdapterDescriptor {
         public String getDisplayName() {
