@@ -12,27 +12,38 @@ import org.jvnet.hudson.test.JenkinsRule;
  * Test pipeline compat
  */
 public class PipelineTest {
+
     @Rule
     public JenkinsRule j = new JenkinsRule();
 
     @Test
-    public void testNoAdapterDeployNoContainer() throws Exception {
+    public void testNoAdapterDeploy() throws Exception {
         WorkflowJob p1 = j.getInstance().createProject(WorkflowJob.class, "DryRunTest");
         j.createOnlineSlave(Label.get("remote"));
         p1.setDefinition(new CpsFlowDefinition("node {" +
-                "deploy(adapters: [], war: '/target/app.war', contextPath: '/app', onFailure: false) \n"+
-                "}"));
+                "deploy(war: '/target/app.war', contextPath: '/app', onFailure: false) \n"+
+                "}", false));
         j.assertBuildStatusSuccess(p1.scheduleBuild2(0));
     }
 
     @Test
-    public void testAdapterDeploy() throws Exception {
+    public void testMockAdapterDeploy() throws Exception {
         WorkflowJob p = j.getInstance().createProject(WorkflowJob.class, "MockTest");
         j.createOnlineSlave(Label.get("remote"));
         p.setDefinition(new CpsFlowDefinition("node { \n" +
-                "def mockContainer = [$class: 'MockAdapter', containerName: 'mock'] \n" +
-                "deploy(adapters: [mockContainer], war: '/target/app.war', contextPath: '/app') \n"+
-                "}"));
+                "deploy(container: mock(), war: '/target/app.war', contextPath: '/app') \n"+
+                "}", false));
+
+        WorkflowRun b = j.assertBuildStatusSuccess(p.scheduleBuild2(0));
+    }
+
+    @Test
+    public void testMockAdaptersDeploy() throws Exception {
+        WorkflowJob p = j.getInstance().createProject(WorkflowJob.class, "MockTest");
+        j.createOnlineSlave(Label.get("remote"));
+        p.setDefinition(new CpsFlowDefinition("node { \n" +
+                "deploy(containers: [mock(), mock(), mock()], war: '/target/app.war', contextPath: '/app') \n"+
+                "}", false));
 
         WorkflowRun b = j.assertBuildStatusSuccess(p.scheduleBuild2(0));
     }
@@ -42,20 +53,20 @@ public class PipelineTest {
         WorkflowJob p = j.getInstance().createProject(WorkflowJob.class, "GlassfishTest");
         j.createOnlineSlave(Label.get("remote"));
         p.setDefinition(new CpsFlowDefinition("node { \n" +
-                "def gf2 = [$class: 'GlassFish2xAdapter', " +
+                "def gf2 = glassfish2( " +
                     "home: 'FAKE', " +
                     "password: 'FAKE', " +
                     "userName: 'FAKE', " +
                     "adminPort: '1234', " +
-                    "hostname: 'localhost'] \n" +
-                "def gf3 = [$class: 'GlassFish3xAdapter', " +
+                    "hostname: 'localhost') \n" +
+                "def gf3 = glassfish3( " +
                     "home: 'FAKE', " +
                     "password: 'FAKE', " +
                     "userName: 'FAKE', " +
                     "adminPort: '1234', " +
-                    "hostname: 'localhost'] \n" +
-                "deploy(adapters: [gf2, gf3], war: '/target/app.war', contextPath: '/app') \n"+
-                "}"));
+                    "hostname: 'localhost') \n" +
+                "deploy(containers: [gf2, gf3], war: '/target/app.war', contextPath: '/app') \n"+
+                "}", false));
 
         WorkflowRun b = j.assertBuildStatusSuccess(p.scheduleBuild2(0));
     }
@@ -65,16 +76,16 @@ public class PipelineTest {
         WorkflowJob p = j.getInstance().createProject(WorkflowJob.class, "TomcatTest");
         j.createOnlineSlave(Label.get("remote"));
         p.setDefinition(new CpsFlowDefinition("node { \n" +
-                "def tc7 = [$class: 'Tomcat7xAdapter', " +
+                "def tc7 = tomcat7( " +
                     "url: 'FAKE', " +
                     "password: 'FAKE', " +
-                    "userName: 'FAKE'] \n" +
-                "def tc8 = [$class: 'Tomcat8xAdapter', " +
+                    "userName: 'FAKE') \n" +
+                "def tc8 = tomcat8( " +
                     "home: 'FAKE', " +
                     "password: 'FAKE', " +
-                    "userName: 'FAKE'] \n" +
-                "deploy(adapters: [tc7, tc8], war: '/target/app.war', contextPath: '/app') \n"+
-                "}"));
+                    "userName: 'FAKE') \n" +
+                "deploy(containers: [tc7, tc8], war: '/target/app.war', contextPath: '/app') \n"+
+                "}", false));
 
         WorkflowRun b = j.assertBuildStatusSuccess(p.scheduleBuild2(0));
     }

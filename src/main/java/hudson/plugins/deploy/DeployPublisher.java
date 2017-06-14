@@ -1,6 +1,5 @@
 package hudson.plugins.deploy;
 
-import com.google.common.collect.ImmutableSet;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -11,11 +10,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 
-import org.jenkinsci.Symbol;
-import org.jenkinsci.plugins.workflow.steps.Step;
-import org.jenkinsci.plugins.workflow.steps.StepContext;
-import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
-import org.jenkinsci.plugins.workflow.steps.StepExecution;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -44,6 +38,7 @@ public class DeployPublisher extends Publisher implements Serializable {
         this.contextPath = contextPath;
     }
 
+    // TODO : update to use Run
     @Override
     public boolean perform(AbstractBuild<?,?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
         if (build.getResult().equals(Result.SUCCESS) || onFailure) {

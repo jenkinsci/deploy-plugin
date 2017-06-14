@@ -41,6 +41,7 @@ public class GlassFish3xAdapter extends GlassFishAdapter {
     /**
      * {@inheritDoc}
      */
+    @Symbol("glassfish3")
     @Extension
     public static final class DescriptorImpl extends ContainerAdapterDescriptor {
         public String getDisplayName() {
