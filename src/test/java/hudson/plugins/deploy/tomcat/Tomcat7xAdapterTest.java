@@ -13,9 +13,7 @@ import hudson.model.TaskListener;
 import hudson.slaves.EnvironmentVariablesNodeProperty;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.Collections;
-import java.util.concurrent.ExecutionException;
 
 import org.codehaus.cargo.container.ContainerType;
 import org.codehaus.cargo.container.configuration.Configuration;

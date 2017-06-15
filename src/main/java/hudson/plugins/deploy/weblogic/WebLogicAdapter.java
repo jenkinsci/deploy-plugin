@@ -4,6 +4,7 @@ import hudson.EnvVars;
 import hudson.plugins.deploy.ContainerAdapterDescriptor;
 import hudson.plugins.deploy.PasswordProtectedAdapterCargo;
 import hudson.util.FormValidation;
+import hudson.util.VariableResolver;
 
 import java.io.File;
 
@@ -42,9 +43,9 @@ public abstract class WebLogicAdapter extends PasswordProtectedAdapterCargo {
     }
 
     @Override
-    protected Container getContainer(ConfigurationFactory configFactory, ContainerFactory containerFactory, String id, EnvVars envVars) {
+    protected Container getContainer(ConfigurationFactory configFactory, ContainerFactory containerFactory, String id, EnvVars envVars, VariableResolver<String> resolver) {
         Configuration config = configFactory.createConfiguration(id, ContainerType.INSTALLED, ConfigurationType.EXISTING, home);
-        configure(config, envVars);
+        configure(config, envVars, resolver);
         return containerFactory.createContainer(id, ContainerType.INSTALLED, config);
     }
 

@@ -5,6 +5,7 @@ import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.domains.Domain;
 import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
 import hudson.EnvVars;
+import hudson.model.FreeStyleBuild;
 import hudson.model.StreamBuildListener;
 import hudson.model.FreeStyleProject;
 import hudson.model.Node;
@@ -75,6 +76,7 @@ public class Tomcat8xAdapterTest {
 
         FreeStyleProject project = jenkinsRule.createFreeStyleProject();
         project.setAssignedNode(n);
+        FreeStyleBuild build = project.scheduleBuild2(0).get();
         TaskListener listener = new StreamBuildListener(new ByteArrayOutputStream());
 
         UsernamePasswordCredentialsImpl c = new UsernamePasswordCredentialsImpl(CredentialsScope.GLOBAL, null,
@@ -85,7 +87,7 @@ public class Tomcat8xAdapterTest {
         Configuration config = new DefaultConfigurationFactory().createConfiguration(adapter.getContainerId(), ContainerType.REMOTE, ConfigurationType.RUNTIME);
         adapter.migrateCredentials(Collections.EMPTY_LIST);
         adapter.loadCredentials(project);
-        adapter.configure(config, project.getEnvironment(n, listener));
+        adapter.configure(config, project.getEnvironment(n, listener), build.getBuildVariableResolver());
 
         Assert.assertEquals(configuredUrl, config.getPropertyValue(RemotePropertySet.URI));
         Assert.assertEquals(username, config.getPropertyValue(RemotePropertySet.USERNAME));

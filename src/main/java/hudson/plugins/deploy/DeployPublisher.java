@@ -10,6 +10,8 @@ import hudson.model.Descriptor;
 import hudson.model.Result;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.model.listeners.ItemListener;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
@@ -27,14 +29,18 @@ import jenkins.model.Jenkins;
 import jenkins.util.io.FileBoolean;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
+
+import jenkins.tasks.SimpleBuildStep;
 import org.kohsuke.stapler.DataBoundConstructor;
+
+import javax.annotation.Nonnull;
 
 /**
  * Deploys WAR to a container.
  * 
  * @author Kohsuke Kawaguchi
  */
-public class DeployPublisher extends Publisher implements Serializable {
+public class DeployPublisher extends Publisher implements SimpleBuildStep, Serializable {
     private List<ContainerAdapter> adapters;
     public final String contextPath;
 
@@ -58,16 +64,21 @@ public class DeployPublisher extends Publisher implements Serializable {
     // TODO : update to use Run
     @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
     @Override
+    @Deprecated
     public boolean perform(AbstractBuild<?,?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
-        if (build.getResult().equals(Result.SUCCESS) || onFailure) {
-            for (FilePath warFile : build.getWorkspace().list(this.war)) {
+        perform(build, build.getWorkspace(), launcher, listener);
+        return true;
+    }
+
+    @Override
+    public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
+        if (onFailure || run.getResult().equals(Result.SUCCESS)) {
+            for (FilePath warFile : workspace.list(this.war)) {
                 for (ContainerAdapter adapter : adapters)
-                    if (!adapter.redeploy(warFile, contextPath, build, launcher, listener))
-                        build.setResult(Result.FAILURE);
+                    if (!adapter.redeploy(warFile, contextPath, run, launcher, listener))
+                        run.setResult(Result.FAILURE);
             }
         }
-
-        return true;
     }
 
     public BuildStepMonitor getRequiredMonitorService() {
@@ -100,8 +111,6 @@ public class DeployPublisher extends Publisher implements Serializable {
 
     @Extension
     public static final class DescriptorImpl extends Descriptor<Publisher> {
-
-
 
         public String getDisplayName() {
             return Messages.DeployPublisher_DisplayName();
