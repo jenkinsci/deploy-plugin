@@ -59,7 +59,7 @@ public class GlassFish2xAdapterTest {
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         BuildListener listener = new StreamBuildListener(new ByteArrayOutputStream());
 
-        Container container = adapter.getContainer(configFactory, containerFactory, adapter.getContainerId(), build.getEnvironment(listener));
+        Container container = adapter.getContainer(configFactory, containerFactory, adapter.getContainerId(), build.getEnvironment(listener), build.getBuildVariableResolver());
         Assert.assertNotNull(container);
     }
 }

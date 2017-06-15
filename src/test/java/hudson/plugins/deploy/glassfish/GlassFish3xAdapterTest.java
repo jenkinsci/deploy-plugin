@@ -48,7 +48,7 @@ public class GlassFish3xAdapterTest {
     private static final String variableStart = "${";
     private static final String variableEnd = "}";
     
-    @Rule public JenkinsRule j = new JenkinsRule();
+    @Rule public JenkinsRule jenkinsRule = new JenkinsRule();
 
     @Before
     public void setup() {
@@ -70,11 +70,11 @@ public class GlassFish3xAdapterTest {
 
         ConfigurationFactory configFactory = new DefaultConfigurationFactory();
         ContainerFactory containerFactory = new DefaultContainerFactory();
-        FreeStyleProject project = j.getInstance().createProject(FreeStyleProject.class, "fsp");
+        FreeStyleProject project = jenkinsRule.createFreeStyleProject();
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         BuildListener listener = new StreamBuildListener(new ByteArrayOutputStream());
 
-        Container container = adapter.getContainer(configFactory, containerFactory, adapter.getContainerId(), build.getEnvironment(listener));
+        Container container = adapter.getContainer(configFactory, containerFactory, adapter.getContainerId(), build.getEnvironment(listener), build.getBuildVariableResolver());
         Assert.assertNotNull(container);
     }
 
@@ -88,11 +88,11 @@ public class GlassFish3xAdapterTest {
 
         ConfigurationFactory configFactory = new DefaultConfigurationFactory();
         ContainerFactory containerFactory = new DefaultContainerFactory();
-        FreeStyleProject project = j.getInstance().createProject(FreeStyleProject.class, "fsp");
+        FreeStyleProject project = jenkinsRule.getInstance().createProject(FreeStyleProject.class, "fsp");
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         BuildListener listener = new StreamBuildListener(new ByteArrayOutputStream());
 
-        Container container = remoteAdapter.getContainer(configFactory, containerFactory, remoteAdapter.getContainerId(), build.getEnvironment(listener));
+        Container container = remoteAdapter.getContainer(configFactory, containerFactory, remoteAdapter.getContainerId(), build.getEnvironment(listener), build.getBuildVariableResolver());
         Assert.assertNotNull(container);
     }
 
@@ -116,30 +116,31 @@ public class GlassFish3xAdapterTest {
     
     @Test
     public void testVariables() throws Exception {
-        FreeStyleProject project = j.createFreeStyleProject();
-        TaskListener listener = j.createTaskListener();
-        Node n = j.createSlave();
+        Node n = jenkinsRule.createSlave();
 
-        /** vars to global environment */
         EnvironmentVariablesNodeProperty property = new EnvironmentVariablesNodeProperty();
         EnvVars envVars = property.getEnvVars();
         envVars.put(homeVariable, home);
         envVars.put(usernameVariable, username);
         envVars.put(adminPortVariable, adminPort);
         envVars.put(hostnameVariable, hostname);
-        j.getInstance().getGlobalNodeProperties().add(property);
+        jenkinsRule.getInstance().getGlobalNodeProperties().add(property);
+
+        FreeStyleProject project = jenkinsRule.createFreeStyleProject();
+        FreeStyleBuild build = project.scheduleBuild2(0).get();
+        BuildListener listener = new StreamBuildListener(new ByteArrayOutputStream());
+
 
         adapter = new  GlassFish3xAdapter(getVariable(homeVariable), password, getVariable(usernameVariable), getVariable(adminPortVariable), null);
         Configuration config = new DefaultConfigurationFactory().createConfiguration(adapter.getContainerId(), ContainerType.REMOTE, ConfigurationType.RUNTIME);
-        adapter.configure(config, project.getEnvironment(n, listener));
+        adapter.configure(config, project.getEnvironment(n, listener), build.getBuildVariableResolver());
 
-        /** Did the config successfully read envvars */
         Assert.assertEquals(username, config.getPropertyValue(RemotePropertySet.USERNAME));
         Assert.assertEquals(adminPort, config.getPropertyValue(GlassFishPropertySet.ADMIN_PORT));
         
         remoteAdapter = new  GlassFish3xAdapter(null, password, getVariable(usernameVariable), getVariable(adminPortVariable), getVariable(hostnameVariable));
         config = new DefaultConfigurationFactory().createConfiguration(adapter.getContainerId(), ContainerType.REMOTE, ConfigurationType.RUNTIME);
-        remoteAdapter.configure(config, project.getEnvironment(n, listener));
+        remoteAdapter.configure(config, project.getEnvironment(n, listener), build.getBuildVariableResolver());
         
         Assert.assertEquals(username, config.getPropertyValue(RemotePropertySet.USERNAME));
         Assert.assertEquals(adminPort, config.getPropertyValue(GlassFishPropertySet.ADMIN_PORT));

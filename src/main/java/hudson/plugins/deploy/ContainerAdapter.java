@@ -4,11 +4,7 @@ import hudson.DescriptorExtensionList;
 import hudson.ExtensionPoint;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.AbstractBuild;
-import hudson.model.BuildListener;
-import hudson.model.Describable;
-import hudson.model.Hudson;
-import hudson.model.Run;
+import hudson.model.*;
 import hudson.tasks.BuildStep;
 import jenkins.model.Jenkins;
 
@@ -45,18 +41,18 @@ public abstract class ContainerAdapter implements Describable<ContainerAdapter>,
      * Implementations should override me and make {@link #redeploy(FilePath, String, AbstractBuild, Launcher, BuildListener)}
      *  delegate to that implementation to be usable within Pipeline projects
      */
-    public boolean redeploy(FilePath war, String aContextPath, Run<?,?> build, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException {
+    public boolean redeploy(FilePath war, String aContextPath, Run<?,?> build, Launcher launcher, final TaskListener listener) throws IOException, InterruptedException {
         if (build instanceof AbstractBuild) {
-            return redeploy(war, aContextPath, build, launcher, listener);
+            return redeploy(war, aContextPath, (AbstractBuild<?, ?>) build, launcher, (BuildListener)listener);
         }
         return false;
     }
 
     public ContainerAdapterDescriptor getDescriptor() {
-        return (ContainerAdapterDescriptor)Hudson.getInstance().getDescriptor(getClass());
+        return (ContainerAdapterDescriptor)Jenkins.getActiveInstance().getDescriptor(getClass());
     }
 
     public static DescriptorExtensionList<ContainerAdapter,ContainerAdapterDescriptor> all() {
-        return Jenkins.getInstance().<ContainerAdapter,ContainerAdapterDescriptor>getDescriptorList(ContainerAdapter.class);
+        return Jenkins.getActiveInstance().<ContainerAdapter,ContainerAdapterDescriptor>getDescriptorList(ContainerAdapter.class);
     }
 }
