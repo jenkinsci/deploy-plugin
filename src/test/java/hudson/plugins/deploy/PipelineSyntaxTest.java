@@ -43,7 +43,7 @@ public class PipelineSyntaxTest {
         j.jenkins.setNumExecutors(1);
         WorkflowJob p = j.getInstance().createProject(WorkflowJob.class, "MockTest");
         p.setDefinition(new CpsFlowDefinition(
-                getFullScript("deploy(container: mock(), war: 'target/app.war', contextPath: 'app')"),
+                getFullScript("deploy(adapters: [mock()], war: 'target/app.war', contextPath: 'app')"),
                 false));
         WorkflowRun b = j.assertBuildStatusSuccess(p.scheduleBuild2(0));
     }
@@ -53,7 +53,7 @@ public class PipelineSyntaxTest {
         WorkflowJob p = j.getInstance().createProject(WorkflowJob.class, "MockTest");
         j.createOnlineSlave(Label.get("remote"));
         p.setDefinition(new CpsFlowDefinition(
-                getFullScript("deploy(containers: [mock(), mock(), mock()], war: 'target/app.war', contextPath: 'app')"),
+                getFullScript("deploy(adapters: [mock(), mock(), mock()], war: 'target/app.war', contextPath: 'app')"),
                 false));
         WorkflowRun b = j.assertBuildStatusSuccess(p.scheduleBuild2(0));
     }
@@ -74,7 +74,7 @@ public class PipelineSyntaxTest {
                     "credentialsId: 'FAKE'" +
                     "adminPort: '1234', " +
                     "hostname: 'localhost') \n" +
-                "deploy(containers: [gf2, gf3], war: 'target/app.war', contextPath: 'app')"),
+                "deploy(adapters: [gf2, gf3], war: 'target/app.war', contextPath: 'app')"),
                 false));
 
         WorkflowRun b = j.assertBuildStatusSuccess(p.scheduleBuild2(0));
@@ -92,7 +92,7 @@ public class PipelineSyntaxTest {
                 "def tc8 = tomcat8( " +
                     "home: 'FAKE', " +
                     "credentialsId: 'FAKE') \n" +
-                "deploy(containers: [tc7, tc8], war: 'target/app.war', contextPath: 'app')"),
+                "deploy(adapters: [tc7, tc8], war: 'target/app.war', contextPath: 'app')"),
                 false));
 
         WorkflowRun b = j.assertBuildStatusSuccess(p.scheduleBuild2(0));

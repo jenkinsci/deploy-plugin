@@ -32,6 +32,7 @@ import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 import jenkins.tasks.SimpleBuildStep;
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import javax.annotation.Nonnull;
@@ -118,7 +119,7 @@ public class DeployPublisher extends Publisher implements SimpleBuildStep, Seria
 
     @Override
     public Descriptor getDescriptor () {
-        return new DeployPublisher.DescriptorImpl();
+        return new DescriptorImpl();
     }
 
     /**
@@ -130,6 +131,7 @@ public class DeployPublisher extends Publisher implements SimpleBuildStep, Seria
 		return adapters;
 	}
 
+	@Symbol("deploy")
     @Extension
     public static final class DescriptorImpl extends Descriptor<Publisher> {
 
