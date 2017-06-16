@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.util.*;
 
 import jenkins.tasks.SimpleBuildStep;
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import javax.annotation.Nonnull;
@@ -36,8 +37,8 @@ public class DeployPublisher extends Publisher implements SimpleBuildStep, Seria
     public final ContainerAdapter adapter = null;
     
     @DataBoundConstructor
-    public DeployPublisher(List<ContainerAdapter> adapters, String war, String contextPath, boolean onFailure) {
-   		this.adapters = adapters;
+    public DeployPublisher(List<ContainerAdapter> containers, String war, String contextPath, boolean onFailure) {
+   		this.adapters = containers;
         this.war = war;
         this.onFailure = onFailure;
         this.contextPath = contextPath;
@@ -110,6 +111,7 @@ public class DeployPublisher extends Publisher implements SimpleBuildStep, Seria
 		return adapters;
 	}
 
+	@Symbol("deploy")
     @Extension
     public static final class DescriptorImpl extends Descriptor<Publisher> {
 

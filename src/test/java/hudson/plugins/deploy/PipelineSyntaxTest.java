@@ -43,7 +43,7 @@ public class PipelineSyntaxTest {
         j.jenkins.setNumExecutors(1);
         WorkflowJob p = j.getInstance().createProject(WorkflowJob.class, "MockTest");
         p.setDefinition(new CpsFlowDefinition(
-                getFullScript("deploy(container: mock(), war: 'target/app.war', contextPath: 'app')"),
+                getFullScript("deploy(containers: [mock()], war: 'target/app.war', contextPath: 'app')"),
                 false));
         WorkflowRun b = j.assertBuildStatusSuccess(p.scheduleBuild2(0));
     }
