@@ -55,14 +55,15 @@ public class Tomcat7xAdapterTest {
     @Test
     public void testVariables() throws Exception {
         Node n = jenkinsRule.createSlave();
+    	EnvironmentVariablesNodeProperty property = new EnvironmentVariablesNodeProperty();
 
-        EnvironmentVariablesNodeProperty property = new EnvironmentVariablesNodeProperty();
-        EnvVars envVars = property.getEnvVars();
-        envVars.put(urlVariable, url);
-        envVars.put(usernameVariable, username);
-        jenkinsRule.getInstance().getGlobalNodeProperties().add(property);
+    	EnvVars envVars = property.getEnvVars();
+    	envVars.put(urlVariable, url);
+    	envVars.put(usernameVariable, username);
+    	jenkinsRule.jenkins.getGlobalNodeProperties().add(property);
 
-        FreeStyleProject project = jenkinsRule.createFreeStyleProject();
+        FreeStyleProject project = jenkinsRule.getInstance().createProject(FreeStyleProject.class, "fsp");
+        project.setAssignedNode(n);
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         BuildListener listener = new StreamBuildListener(new ByteArrayOutputStream());
 

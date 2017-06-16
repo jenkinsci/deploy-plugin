@@ -59,15 +59,17 @@ public class Tomcat8xAdapterTest {
     @Test
     public void testVariables() throws Exception {
         Node n = jenkinsRule.createSlave();
+    	EnvironmentVariablesNodeProperty property = new EnvironmentVariablesNodeProperty();
 
-        EnvironmentVariablesNodeProperty property = new EnvironmentVariablesNodeProperty();
-        EnvVars envVars = property.getEnvVars();
-        envVars.put(urlVariable, url);
-        envVars.put(usernameVariable, username);
-        jenkinsRule.getInstance().getGlobalNodeProperties().add(property);
+    	EnvVars envVars = property.getEnvVars();
+    	envVars.put(urlVariable, url);
+    	envVars.put(usernameVariable, username);
+    	jenkinsRule.jenkins.getGlobalNodeProperties().add(property);
 
-        FreeStyleProject project = jenkinsRule.createFreeStyleProject();
-        FreeStyleBuild build = jenkinsRule.buildAndAssertSuccess(project);
+        FreeStyleProject project = jenkinsRule.getInstance().createProject(FreeStyleProject.class, "fsp");
+        project.setAssignedNode(n);
+        FreeStyleBuild build = project.scheduleBuild2(0).get();
+
         BuildListener listener = new StreamBuildListener(new ByteArrayOutputStream());
 
         adapter = new Tomcat8xAdapter(getVariable(urlVariable), password, getVariable(usernameVariable));

@@ -1,5 +1,6 @@
 package hudson.plugins.deploy;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.util.Scrambler;
 import org.codehaus.cargo.container.property.RemotePropertySet;
 
@@ -23,7 +24,8 @@ public abstract class PasswordProtectedAdapterCargo extends DefaultCargoContaine
     public String getPassword() {
         return Scrambler.descramble(passwordScrambled);
     }
-    
+
+    @SuppressFBWarnings("SE_PRIVATE_READ_RESOLVE_NOT_INHERITED")
     private Object readResolve() {
         // backward compatibility
         if(passwordScrambled == null && password != null){

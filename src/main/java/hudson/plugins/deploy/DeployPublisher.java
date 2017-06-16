@@ -1,5 +1,6 @@
 package hudson.plugins.deploy;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -42,6 +43,7 @@ public class DeployPublisher extends Publisher implements SimpleBuildStep, Seria
         this.contextPath = contextPath;
     }
 
+    @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
     @Override
     @Deprecated
     public boolean perform(AbstractBuild<?,?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
@@ -55,7 +57,7 @@ public class DeployPublisher extends Publisher implements SimpleBuildStep, Seria
     }
 
     private void perform (boolean fromWorkFlow, @Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
-        if (fromWorkFlow || onFailure || run.getResult().equals(Result.SUCCESS)) {
+        if (fromWorkFlow || onFailure || Result.SUCCESS.equals(run.getResult())) {
             if (!workspace.exists()) {
                 listener.getLogger().println("[DeployPublisher][ERROR] Workspace not found");
                 throw new FileNotFoundException("Workspace not found");
@@ -76,7 +78,7 @@ public class DeployPublisher extends Publisher implements SimpleBuildStep, Seria
                 }
             }
         } else {
-            listener.getLogger().println("[DeployPublisher][INFO] Build failed, project not deployed");
+            listener.getLogger().println("[DeployPublisher][INFO] Build failed or incomplete, project not deployed");
         }
     }
 

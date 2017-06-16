@@ -64,13 +64,13 @@ public class GlassFish3xAdapterTest {
     @Test
     public void testConfigure() throws IOException, InterruptedException, ExecutionException {
         Assert.assertEquals(adapter.home, home);
-    //    Assert.assertEquals(adapter.adminPort, port);
+        Assert.assertEquals(adapter.adminPort, port);
         Assert.assertEquals(adapter.userName, username);
         Assert.assertEquals(adapter.getPassword(), password);
 
         ConfigurationFactory configFactory = new DefaultConfigurationFactory();
         ContainerFactory containerFactory = new DefaultContainerFactory();
-        FreeStyleProject project = jenkinsRule.createFreeStyleProject();
+        FreeStyleProject project = jenkinsRule.getInstance().createProject(FreeStyleProject.class, "fsp");
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         BuildListener listener = new StreamBuildListener(new ByteArrayOutputStream());
 
@@ -81,7 +81,7 @@ public class GlassFish3xAdapterTest {
     @Test
     public void testConfigureRemote() throws IOException, InterruptedException, ExecutionException {
         Assert.assertNull("Expected adapter.home to be null", remoteAdapter.home);
-   //     Assert.assertEquals(remoteAdapter.adminPort, adminPort);
+        Assert.assertEquals(remoteAdapter.adminPort, adminPort);
         Assert.assertEquals(remoteAdapter.userName, username);
         Assert.assertEquals(remoteAdapter.getPassword(), password);
         Assert.assertEquals(remoteAdapter.hostname, hostname);
@@ -100,33 +100,31 @@ public class GlassFish3xAdapterTest {
      * This test only runs in your local environment
      * @throws IOException
      * @throws InterruptedException
-     */
-    //@Test
+     *
+    @Test
     public void testDeploy() throws IOException, InterruptedException {
-        
         adapter.redeploy(new FilePath(new File("src/test/simple.war")), "contextPath", null, null, new StreamBuildListener(System.out));
     }
     
-    //@Test
+    @Test
     public void testRemoteDeploy() throws IOException, InterruptedException {
-       
-
         remoteAdapter.redeploy(new FilePath(new File("src/test/simple.war")), "contextPath", null, null, new StreamBuildListener(System.out));
-    }
+    }*/
     
     @Test
     public void testVariables() throws Exception {
         Node n = jenkinsRule.createSlave();
+    	EnvironmentVariablesNodeProperty property = new EnvironmentVariablesNodeProperty();
 
-        EnvironmentVariablesNodeProperty property = new EnvironmentVariablesNodeProperty();
-        EnvVars envVars = property.getEnvVars();
-        envVars.put(homeVariable, home);
-        envVars.put(usernameVariable, username);
-        envVars.put(adminPortVariable, adminPort);
-        envVars.put(hostnameVariable, hostname);
-        jenkinsRule.getInstance().getGlobalNodeProperties().add(property);
+    	EnvVars envVars = property.getEnvVars();
+    	envVars.put(homeVariable, home);
+    	envVars.put(usernameVariable, username);
+    	envVars.put(adminPortVariable, adminPort);
+    	envVars.put(hostnameVariable, hostname);
+    	jenkinsRule.jenkins.getGlobalNodeProperties().add(property);
 
-        FreeStyleProject project = jenkinsRule.createFreeStyleProject();
+        FreeStyleProject project = jenkinsRule.getInstance().createProject(FreeStyleProject.class, "fsp");
+        project.setAssignedNode(n);
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         BuildListener listener = new StreamBuildListener(new ByteArrayOutputStream());
 
