@@ -69,7 +69,6 @@ public class DeployStep extends Step {
 
         @Override
         public Set<? extends Class<?>> getRequiredContext() {
-            // TODO: require someway to get workspace
             return ImmutableSet.of(Run.class, Launcher.class, TaskListener.class, FilePath.class);
         }
 
@@ -94,14 +93,10 @@ public class DeployStep extends Step {
         @Override
         protected Void run() throws Exception {
             Run r = getContext().get(Run.class);
-            if (r instanceof AbstractBuild) { // No-op deploy
-                Launcher launcher = getContext().get(Launcher.class);
-                TaskListener listener = getContext().get(TaskListener.class);
-                // TODO: doesn't succesfully get workspace
-                FilePath ws = getContext().get(FilePath.class);
-                listener.getLogger().print(" WARN: No containers specified");
-                step.pub.perform(r, ws, launcher, listener);
-            }
+            Launcher launcher = getContext().get(Launcher.class);
+            TaskListener listener = getContext().get(TaskListener.class);
+            FilePath ws = getContext().get(FilePath.class);
+            step.pub.perform(r, ws, launcher, listener);
             return null;
         }
     }
