@@ -6,6 +6,7 @@ import hudson.Launcher;
 import hudson.model.*;
 import hudson.tasks.*;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
@@ -44,18 +45,38 @@ public class DeployPublisher extends Publisher implements SimpleBuildStep, Seria
     @Override
     @Deprecated
     public boolean perform(AbstractBuild<?,?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
-        perform(build, build.getWorkspace(), launcher, listener);
+        perform(false, build, build.getWorkspace(), launcher, listener);
         return true;
     }
 
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
-        if (onFailure || run.getResult().equals(Result.SUCCESS)) {
-            for (FilePath warFile : workspace.list(this.war)) {
-                for (ContainerAdapter adapter : adapters)
-                    if (!adapter.redeploy(warFile, contextPath, run, launcher, listener))
-                        run.setResult(Result.FAILURE);
+        perform(true, run, workspace, launcher, listener);
+    }
+
+    private void perform (boolean fromWorkFlow, @Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
+        if (fromWorkFlow || onFailure || run.getResult().equals(Result.SUCCESS)) {
+            if (!workspace.exists()) {
+                listener.getLogger().println("[DeployPublisher][ERROR] Workspace not found");
+                throw new FileNotFoundException("Workspace not found");
             }
+
+            FilePath[] wars = workspace.list(this.war);
+            if (wars.length == 0) {
+                listener.getLogger().printf("[DeployPublisher][WARN] No wars found. Deploy aborted. %n");
+                return;
+            }
+            listener.getLogger().printf("[DeployPublisher][INFO] Attempting to deploy %d war file(s)%n", wars.length);
+
+            for (FilePath warFile : wars) {
+                for (ContainerAdapter adapter : adapters) {
+                    if (!adapter.redeploy(warFile, contextPath, run, launcher, listener)) {
+                        run.setResult(Result.FAILURE);
+                    }
+                }
+            }
+        } else {
+            listener.getLogger().println("[DeployPublisher][INFO] Build failed, project not deployed");
         }
     }
 
