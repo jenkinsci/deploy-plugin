@@ -5,6 +5,7 @@ import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.*;
+import hudson.model.Descriptor;
 import hudson.tasks.*;
 
 import java.io.FileNotFoundException;
@@ -17,6 +18,7 @@ import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import javax.annotation.Nonnull;
+import javax.management.*;
 
 /**
  * Deploys WAR to a container.
@@ -37,8 +39,8 @@ public class DeployPublisher extends Publisher implements SimpleBuildStep, Seria
     public final ContainerAdapter adapter = null;
     
     @DataBoundConstructor
-    public DeployPublisher(List<ContainerAdapter> containers, String war, String contextPath, boolean onFailure) {
-   		this.adapters = containers;
+    public DeployPublisher(List<ContainerAdapter> adapters, String war, String contextPath, boolean onFailure) {
+   		this.adapters = adapters;
         this.war = war;
         this.onFailure = onFailure;
         this.contextPath = contextPath;
@@ -99,7 +101,7 @@ public class DeployPublisher extends Publisher implements SimpleBuildStep, Seria
 
     @Override
     public Descriptor getDescriptor () {
-        return new DeployPublisher.DescriptorImpl();
+        return new DescriptorImpl();
     }
 
     /**
