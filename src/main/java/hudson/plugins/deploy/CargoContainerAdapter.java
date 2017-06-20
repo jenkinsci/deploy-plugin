@@ -141,27 +141,32 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
                 final ContainerFactory containerFactory = new DefaultContainerFactory(cl);
                 final DeployerFactory deployerFactory = new DefaultDeployerFactory(cl);
 
-                final EnvVars envVars = getAllEnvVars(run, listener);
-                final VariableResolver<String> resolver = new VariableResolver.ByMap<String>(envVars);
-                Container container = getContainer(configFactory, containerFactory, getContainerId(), envVars, resolver);
-                deploy(deployerFactory, listener, container, f, expandVariable(envVars, resolver, contextPath));
-
+                try {
+                    final EnvVars envVars = getAllEnvVars(run, listener);
+                    final VariableResolver<String> resolver = new VariableResolver.ByMap<String>(envVars);
+                    Container container = getContainer(configFactory, containerFactory, getContainerId(), envVars, resolver);
+                    deploy(deployerFactory, listener, container, f, expandVariable(envVars, resolver, contextPath));
+                } catch (IOException e) {
+                    listener.getLogger().println("[DeployPublisher][ERROR] Could not load Run-specific environment variables");
+                } catch (InterruptedException e) {
+                    listener.getLogger().println("[DeployPublisher][ERROR] Could not load Run-specific environment variables");
+                }
                 return true;
             }
         });
     }
 
     /**
-     * Collects some of the environment variables
+     * Collects some of the environment variables.
+     *
      * @param run the {@Link Job}'s Run
      * @param listener the {@Link TaskListener} of the {@Link Run}
      * @return the list of configured environment variables
      */
-    private EnvVars getAllEnvVars (Run<?, ?> run, TaskListener listener) {
+    private EnvVars getAllEnvVars (Run<?, ?> run, TaskListener listener) throws IOException, InterruptedException{
         Jenkins j = Jenkins.getActiveInstance();
         EnvVars env = new EnvVars();
 
-        // start with global and local node env
         List<EnvironmentVariablesNodeProperty> props = new ArrayList<EnvironmentVariablesNodeProperty>();
         props.addAll(j.getGlobalNodeProperties().getAll(EnvironmentVariablesNodeProperty.class));
         props.addAll(j.getNodeProperties().getAll(EnvironmentVariablesNodeProperty.class));
@@ -169,22 +174,11 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
                 env.putAll(n.getEnvVars());
         }
 
-        // if AbstractBuild add EnvironmentContributingAction's
         if (run instanceof AbstractBuild) {
-            AbstractBuild build = (AbstractBuild) run;
-            for (EnvironmentContributingAction a : build.getActions(EnvironmentContributingAction.class)) {
-                a.buildEnvVars(build, env);
-            }
+            env.overrideAll(((AbstractBuild) run).getBuildVariables());
         }
 
-        // Lets EnvironmentContributor add variables
-        try {
-            env.overrideAll(run.getEnvironment(listener));
-        } catch (IOException e) {
-            listener.getLogger().println("[DeployPublisher][ERROR] Could not load Run-specific environment variables");
-        } catch (InterruptedException e) {
-            listener.getLogger().println("[DeployPublisher][ERROR] Could not load Run-specific environment variables");
-        }
+        env.overrideAll(run.getEnvironment(listener));
 
         return env;
     }
