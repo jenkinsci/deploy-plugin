@@ -10,6 +10,9 @@ import hudson.remoting.VirtualChannel;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
 
 import hudson.slaves.EnvironmentVariablesNodeProperty;
 import hudson.slaves.NodeProperty;
@@ -128,7 +131,7 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
         return redeploy(war, contextPath, build, launcher, (TaskListener)listener);
     }
 
-    public boolean redeploy(FilePath war, final String contextPath, final Run<?, ?> build, final Launcher launcher, final TaskListener listener) throws IOException, InterruptedException {
+    public boolean redeploy(FilePath war, final String contextPath, final Run<?, ?> run, final Launcher launcher, final TaskListener listener) throws IOException, InterruptedException {
         return war.act(new MasterToSlaveFileCallable<Boolean>() {
             @Override
             public Boolean invoke(File f, VirtualChannel channel) throws IOException, InterruptedException {
@@ -138,15 +141,10 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
                 final ContainerFactory containerFactory = new DefaultContainerFactory(cl);
                 final DeployerFactory deployerFactory = new DefaultDeployerFactory(cl);
 
-                try {
-                    final EnvVars envVars = build.getEnvironment(listener);
-                    envVars.putAll(globalEnvVars()); // gets global variables
-                    final VariableResolver<String> resolver = new VariableResolver.ByMap<String>(envVars);
-                    Container container = getContainer(configFactory, containerFactory, getContainerId(), envVars, resolver);
-                    deploy(deployerFactory, listener, container, f, expandVariable(envVars, resolver, contextPath));
-                } catch (InterruptedException e) {
-                    throw new RuntimeException("Failed to get build environment", e);
-                }
+                final EnvVars envVars = getAllEnvVars(run, listener);
+                final VariableResolver<String> resolver = new VariableResolver.ByMap<String>(envVars);
+                Container container = getContainer(configFactory, containerFactory, getContainerId(), envVars, resolver);
+                deploy(deployerFactory, listener, container, f, expandVariable(envVars, resolver, contextPath));
 
                 return true;
             }
@@ -154,10 +152,40 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
     }
 
     /**
-     * Collects the global Environment variables
-     * @return the list of globally configured environment variables
+     * Collects some of the environment variables
+     * @param run the {@Link Job}'s Run
+     * @param listener the {@Link TaskListener} of the {@Link Run}
+     * @return the list of configured environment variables
      */
-    private EnvVars globalEnvVars () {
-        return Jenkins.getActiveInstance().getGlobalNodeProperties().get(EnvironmentVariablesNodeProperty.class).getEnvVars();
+    private EnvVars getAllEnvVars (Run<?, ?> run, TaskListener listener) {
+        Jenkins j = Jenkins.getActiveInstance();
+        EnvVars env = new EnvVars();
+
+        // start with global and local node env
+        List<EnvironmentVariablesNodeProperty> props = new ArrayList<EnvironmentVariablesNodeProperty>();
+        props.addAll(j.getGlobalNodeProperties().getAll(EnvironmentVariablesNodeProperty.class));
+        props.addAll(j.getNodeProperties().getAll(EnvironmentVariablesNodeProperty.class));
+        for (EnvironmentVariablesNodeProperty n : props) {
+                env.putAll(n.getEnvVars());
+        }
+
+        // if AbstractBuild add EnvironmentContributingAction's
+        if (run instanceof AbstractBuild) {
+            AbstractBuild build = (AbstractBuild) run;
+            for (EnvironmentContributingAction a : build.getActions(EnvironmentContributingAction.class)) {
+                a.buildEnvVars(build, env);
+            }
+        }
+
+        // Lets EnvironmentContributor add variables
+        try {
+            env.overrideAll(run.getEnvironment(listener));
+        } catch (IOException e) {
+            listener.getLogger().println("[DeployPublisher][ERROR] Could not load Run-specific environment variables");
+        } catch (InterruptedException e) {
+            listener.getLogger().println("[DeployPublisher][ERROR] Could not load Run-specific environment variables");
+        }
+
+        return env;
     }
 }
