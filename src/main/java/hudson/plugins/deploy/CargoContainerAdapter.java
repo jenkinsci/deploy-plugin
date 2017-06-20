@@ -119,9 +119,12 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
 
     public boolean redeploy(FilePath war, final String contextPath, final AbstractBuild<?, ?> build, Launcher launcher,
                             final BuildListener listener) throws IOException, InterruptedException {
-        final EnvVars envVars = build.getEnvironment(listener);
+        EnvVars envVars = new EnvVars();
+        if (build instanceof AbstractBuild) {
+            envVars = build.getEnvironment(listener);
+        }
         // FIXME need to evaluate the concrete environment variables here
-        return war.act(new DeployCallable(this, getContainerId(), build.getEnvironment(listener), listener, contextPath));
+        return war.act(new DeployCallable(this, getContainerId(), envVars, listener, contextPath));
     }
 
     public static class DeployCallable extends MasterToSlaveFileCallable<Boolean> {
@@ -132,8 +135,8 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
         private String contextPath;
         private EnvVars envVars;
 
-        public DeployCallable (CargoContainerAdapter adapter, String containerId, EnvVars envVars,
-                               BuildListener listener, String contextPath) {
+        public DeployCallable(CargoContainerAdapter adapter, String containerId, EnvVars envVars,
+                              BuildListener listener, String contextPath) {
             this.adapter = adapter;
             this.containerId = containerId;
             this.envVars = envVars;
@@ -159,4 +162,5 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
             return true;
         }
     }
+
 }
