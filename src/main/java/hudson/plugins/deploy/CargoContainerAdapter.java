@@ -10,18 +10,9 @@ import hudson.remoting.VirtualChannel;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
 
-import hudson.slaves.EnvironmentVariablesNodeProperty;
-import hudson.slaves.NodeProperty;
-import hudson.slaves.NodePropertyDescriptor;
-import hudson.util.DescribableList;
 import hudson.util.VariableResolver;
 import jenkins.MasterToSlaveFileCallable;
-import jenkins.model.Jenkins;
-import jenkins.model.JenkinsLocationConfiguration;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.cargo.container.Container;
@@ -37,7 +28,6 @@ import org.codehaus.cargo.generic.configuration.ConfigurationFactory;
 import org.codehaus.cargo.generic.configuration.DefaultConfigurationFactory;
 import org.codehaus.cargo.generic.deployer.DefaultDeployerFactory;
 import org.codehaus.cargo.generic.deployer.DeployerFactory;
-import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 
 /**
  * Provides container-specific glue code.
@@ -142,44 +132,22 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
                 final DeployerFactory deployerFactory = new DefaultDeployerFactory(cl);
 
                 try {
-                    final EnvVars envVars = getAllEnvVars(run, listener);
+                    final EnvVars envVars;
+                    if (run instanceof AbstractBuild) {
+                        envVars = run.getEnvironment(listener);
+                    } else {
+                        envVars = new EnvVars(); // empty for Workflow
+                    }
                     final VariableResolver<String> resolver = new VariableResolver.ByMap<String>(envVars);
                     Container container = getContainer(configFactory, containerFactory, getContainerId(), envVars, resolver);
                     deploy(deployerFactory, listener, container, f, expandVariable(envVars, resolver, contextPath));
-                } catch (IOException e) {
-                    listener.getLogger().println("[DeployPublisher][ERROR] Could not load Run-specific environment variables");
                 } catch (InterruptedException e) {
-                    listener.getLogger().println("[DeployPublisher][ERROR] Could not load Run-specific environment variables");
-                }
+                    throw new RuntimeException("Failed to get build environment", e);
+            	}
+
                 return true;
             }
         });
     }
 
-    /**
-     * Collects some of the environment variables.
-     *
-     * @param run the {@Link Job}'s Run
-     * @param listener the {@Link TaskListener} of the {@Link Run}
-     * @return the list of configured environment variables
-     */
-    private EnvVars getAllEnvVars (Run<?, ?> run, TaskListener listener) throws IOException, InterruptedException{
-        Jenkins j = Jenkins.getActiveInstance();
-        EnvVars env = new EnvVars();
-
-        List<EnvironmentVariablesNodeProperty> props = new ArrayList<EnvironmentVariablesNodeProperty>();
-        props.addAll(j.getGlobalNodeProperties().getAll(EnvironmentVariablesNodeProperty.class));
-        props.addAll(j.getNodeProperties().getAll(EnvironmentVariablesNodeProperty.class));
-        for (EnvironmentVariablesNodeProperty n : props) {
-                env.putAll(n.getEnvVars());
-        }
-
-        if (run instanceof AbstractBuild) {
-            env.overrideAll(((AbstractBuild) run).getBuildVariables());
-        }
-
-        env.overrideAll(run.getEnvironment(listener));
-
-        return env;
-    }
 }
