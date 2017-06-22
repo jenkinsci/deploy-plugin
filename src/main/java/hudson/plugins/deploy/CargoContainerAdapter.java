@@ -123,7 +123,6 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
         if (build instanceof AbstractBuild) {
             envVars = build.getEnvironment(listener);
         }
-        // FIXME need to evaluate the concrete environment variables here
         return war.act(new DeployCallable(this, getContainerId(), envVars, listener, contextPath));
     }
 
