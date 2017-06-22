@@ -133,12 +133,15 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
 
                 try {
                     final EnvVars envVars;
+                    final VariableResolver<String> resolver;
                     if (run instanceof AbstractBuild) {
-                        envVars = run.getEnvironment(listener);
+                        AbstractBuild build = (AbstractBuild) run;
+                        envVars = build.getEnvironment(listener);
+                        resolver = build.getBuildVariableResolver();
                     } else {
-                        envVars = new EnvVars(); // empty for Workflow
+                        envVars = new EnvVars();
+                        resolver = new VariableResolver.ByMap<String>(envVars);
                     }
-                    final VariableResolver<String> resolver = new VariableResolver.ByMap<String>(envVars);
                     Container container = getContainer(configFactory, containerFactory, getContainerId(), envVars, resolver);
                     deploy(deployerFactory, listener, container, f, expandVariable(envVars, resolver, contextPath));
                 } catch (InterruptedException e) {
