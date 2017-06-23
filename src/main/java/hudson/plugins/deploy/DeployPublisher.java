@@ -6,7 +6,6 @@ import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.BuildListener;
-import hudson.model.Descriptor;
 import hudson.model.Result;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
@@ -14,6 +13,8 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.model.listeners.ItemListener;
 import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
 
 import java.io.FileNotFoundException;
@@ -42,7 +43,7 @@ import javax.annotation.Nonnull;
  * 
  * @author Kohsuke Kawaguchi
  */
-public class DeployPublisher extends Publisher implements SimpleBuildStep, Serializable {
+public class DeployPublisher extends Notifier implements SimpleBuildStep, Serializable {
     private List<ContainerAdapter> adapters;
     public final String contextPath;
 
@@ -77,8 +78,8 @@ public class DeployPublisher extends Publisher implements SimpleBuildStep, Seria
         perform(true, run, workspace, launcher, listener);
     }
 
-    private void perform (boolean fromWorkFlow, @Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
-        if (fromWorkFlow || onFailure || run.getResult().equals(Result.SUCCESS)) {
+    private void perform(boolean fromWorkFlow, @Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
+        if (fromWorkFlow || onFailure || Result.SUCCESS.equals(run.getResult())) {
             if (!workspace.exists()) {
                 listener.getLogger().println("[DeployPublisher][ERROR] Workspace not found");
                 throw new FileNotFoundException("Workspace not found");
@@ -93,7 +94,7 @@ public class DeployPublisher extends Publisher implements SimpleBuildStep, Seria
 
             for (FilePath warFile : wars) {
                 for (ContainerAdapter adapter : adapters) {
-                    if (!adapter.redeploy(warFile, contextPath, run, launcher, listener)) {
+                    if (!adapter.redeployWar(warFile, contextPath, run, launcher, listener)) {
                         run.setResult(Result.FAILURE);
                     }
                 }
@@ -118,7 +119,7 @@ public class DeployPublisher extends Publisher implements SimpleBuildStep, Seria
     }
 
     @Override
-    public Descriptor getDescriptor () {
+    public BuildStepDescriptor getDescriptor () {
         return new DescriptorImpl();
     }
 
@@ -133,7 +134,11 @@ public class DeployPublisher extends Publisher implements SimpleBuildStep, Seria
 
 	@Symbol("deploy")
     @Extension
-    public static final class DescriptorImpl extends Descriptor<Publisher> {
+    public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
+	    @Override
+        public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+            return true;
+        }
 
         public String getDisplayName() {
             return Messages.DeployPublisher_DisplayName();

@@ -3,8 +3,8 @@ package hudson.plugins.deploy;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.AbstractBuild;
-import hudson.model.BuildListener;
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -15,30 +15,30 @@ import java.io.IOException;
  * CHECKME Might need to extend CargoContainerAdapter to better exercise APIs
  */
 @Extension
-public class MockAdapter extends ContainerAdapter {
+public class WorkflowCompatibleAdapter extends ContainerAdapter {
     String containerName;
 
     @DataBoundConstructor
-    public MockAdapter() {
-        this.containerName = "mock";
+    public WorkflowCompatibleAdapter() {
+        this.containerName = "workflowAdapter";
     }
 
     @Override
-    public boolean redeploy(FilePath war, String aContextPath, AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
+    public boolean redeployWar(FilePath war, String aContextPath, Run<?, ?> run, Launcher launcher, TaskListener listener) throws IOException, InterruptedException {
         listener.getLogger().println("Mock container deployed to "+containerName);
         return true;
     }
 
     public String getContainerId() {
-        return "mockContainer";
-    }
+            return containerName;
+        }
 
 
-    @Symbol("mock")
+    @Symbol("workflowAdapter")
     @Extension
     public static class DescriptorImpl extends ContainerAdapterDescriptor {
         public String getDisplayName() {
-            return "Mock Container";
+            return "Workflow Adapter";
         }
     }
 }
