@@ -1,12 +1,15 @@
 package hudson.plugins.deploy.tomcat;
 
 import hudson.EnvVars;
-import hudson.model.*;
+import hudson.model.BuildListener;
+import hudson.model.FreeStyleBuild;
+import hudson.model.StreamBuildListener;
+import hudson.model.FreeStyleProject;
+import hudson.model.Node;
 import hudson.slaves.EnvironmentVariablesNodeProperty;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import org.codehaus.cargo.container.ContainerType;
@@ -15,7 +18,6 @@ import org.codehaus.cargo.container.configuration.ConfigurationType;
 import org.codehaus.cargo.container.property.RemotePropertySet;
 import org.codehaus.cargo.container.tomcat.Tomcat8xRemoteContainer;
 import org.codehaus.cargo.generic.configuration.DefaultConfigurationFactory;
-import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -32,7 +34,7 @@ public class Tomcat8xAdapterTest {
     private static final String configuredUrl = "http://localhost:8080/manager/text";
     private static final String urlVariable = "URL";
     private static final String username = "usernm";
-    private static final String usernameVariable = "USER";
+    private static final String usernameVariable = "user";
     private static final String password = "password";
     private static final String variableStart = "${";
     private static final String variableEnd = "}";

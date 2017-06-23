@@ -1,7 +1,11 @@
 package hudson.plugins.deploy.tomcat;
 
 import hudson.EnvVars;
-import hudson.model.*;
+import hudson.model.BuildListener;
+import hudson.model.FreeStyleBuild;
+import hudson.model.StreamBuildListener;
+import hudson.model.FreeStyleProject;
+import hudson.model.Node;
 import hudson.slaves.EnvironmentVariablesNodeProperty;
 
 import java.io.ByteArrayOutputStream;
@@ -28,7 +32,7 @@ public class Tomcat7xAdapterTest {
     private static final String configuredUrl = "http://localhost:8080/manager/text";
     private static final String urlVariable = "URL";
     private static final String username = "usernm";
-    private static final String usernameVariable = "USER";
+    private static final String usernameVariable = "user";
     private static final String password = "password";
     private static final String variableStart = "${";
     private static final String variableEnd = "}";
@@ -56,7 +60,6 @@ public class Tomcat7xAdapterTest {
     public void testVariables() throws Exception {
         Node n = jenkinsRule.createSlave();
     	EnvironmentVariablesNodeProperty property = new EnvironmentVariablesNodeProperty();
-
     	EnvVars envVars = property.getEnvVars();
     	envVars.put(urlVariable, url);
     	envVars.put(usernameVariable, username);

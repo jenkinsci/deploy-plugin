@@ -12,6 +12,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 /**
  * Tests pipeline compatibility. Since there are no *.war files in the workspace all of these scripts
  * will ultimately result in a no-op.
@@ -31,7 +36,6 @@ public class PipelineSyntaxTest {
     @Test
     public void testNoAdapterDeploy() throws Exception {
         WorkflowJob p = j.getInstance().createProject(WorkflowJob.class, "DryRunTest");
-        j.createOnlineSlave(Label.get("remote"));
         p.setDefinition(new CpsFlowDefinition(
                 getFullScript("deploy(war: 'target/app.war', contextPath: 'app', onFailure: false)"),
                 false));
@@ -40,10 +44,9 @@ public class PipelineSyntaxTest {
 
     @Test
     public void testMockAdapterDeploy() throws Exception {
-        j.jenkins.setNumExecutors(1);
         WorkflowJob p = j.getInstance().createProject(WorkflowJob.class, "MockTest");
         p.setDefinition(new CpsFlowDefinition(
-                getFullScript("deploy(adapters: [mock()], war: 'target/app.war', contextPath: 'app')"),
+                getFullScript("deploy(adapters: [workflowAdapter()], war: 'target/app.war', contextPath: 'app')"),
                 false));
         WorkflowRun b = j.assertBuildStatusSuccess(p.scheduleBuild2(0));
     }
@@ -51,9 +54,8 @@ public class PipelineSyntaxTest {
     @Test
     public void testMockAdaptersDeploy() throws Exception {
         WorkflowJob p = j.getInstance().createProject(WorkflowJob.class, "MockTest");
-        j.createOnlineSlave(Label.get("remote"));
         p.setDefinition(new CpsFlowDefinition(
-                getFullScript("deploy(adapters: [mock(), mock(), mock()], war: 'target/app.war', contextPath: 'app')"),
+                getFullScript("deploy(adapters: [workflowAdapter(), workflowAdapter(), workflowAdapter()], war: 'target/app.war', contextPath: 'app')"),
                 false));
         WorkflowRun b = j.assertBuildStatusSuccess(p.scheduleBuild2(0));
     }
@@ -61,7 +63,6 @@ public class PipelineSyntaxTest {
     @Test
     public void testGlassFishAdapter() throws Exception {
         WorkflowJob p = j.getInstance().createProject(WorkflowJob.class, "GlassfishTest");
-        j.createOnlineSlave(Label.get("remote"));
         p.setDefinition(new CpsFlowDefinition(
                 getFullScript(
                 "def gf2 = glassfish2( " +
@@ -85,7 +86,6 @@ public class PipelineSyntaxTest {
     @Test
     public void testTomcatAdapter() throws Exception {
         WorkflowJob p = j.getInstance().createProject(WorkflowJob.class, "TomcatTest");
-        j.createOnlineSlave(Label.get("remote"));
         p.setDefinition(new CpsFlowDefinition(
                 getFullScript(
                 "def tc7 = tomcat7( " +
@@ -98,8 +98,20 @@ public class PipelineSyntaxTest {
                     "userName: 'FAKE') \n" +
                 "deploy(adapters: [tc7, tc8], war: 'target/app.war', contextPath: 'app')"),
                 false));
-
         WorkflowRun b = j.assertBuildStatusSuccess(p.scheduleBuild2(0));
+    }
+
+    @Test
+    public void testLegacyAdapterThrows() throws Exception {
+        WorkflowJob p = j.getInstance().createProject(WorkflowJob.class, "legacyTest");
+        p.setDefinition(new CpsFlowDefinition(
+                getFullScript(
+                        "writeFile(file: 'target/app.war', text: '')\n" +
+                        "deploy(adapters: [legacyAdapter()], war: 'target/app.war', contextPath: 'app')"),
+                false));
+        WorkflowRun r = p.scheduleBuild2(0).get();
+        j.assertBuildStatus(Result.FAILURE, r);
+        assertTrue(r.getLog().contains("redeploy() called using a Run, but adapter doesn't have an implementation for Run"));
     }
 
 }

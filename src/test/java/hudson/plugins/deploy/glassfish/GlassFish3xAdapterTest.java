@@ -2,7 +2,11 @@ package hudson.plugins.deploy.glassfish;
 
 import hudson.EnvVars;
 import hudson.FilePath;
-import hudson.model.*;
+import hudson.model.BuildListener;
+import hudson.model.FreeStyleBuild;
+import hudson.model.StreamBuildListener;
+import hudson.model.FreeStyleProject;
+import hudson.model.Node;
 import hudson.slaves.EnvironmentVariablesNodeProperty;
 
 import java.io.ByteArrayOutputStream;
@@ -100,22 +104,24 @@ public class GlassFish3xAdapterTest {
      * This test only runs in your local environment
      * @throws IOException
      * @throws InterruptedException
-     *
-    @Test
+     */
+    //@Test
     public void testDeploy() throws IOException, InterruptedException {
+
         adapter.redeploy(new FilePath(new File("src/test/simple.war")), "contextPath", null, null, new StreamBuildListener(System.out));
     }
     
-    @Test
+    //@Test
     public void testRemoteDeploy() throws IOException, InterruptedException {
+
+
         remoteAdapter.redeploy(new FilePath(new File("src/test/simple.war")), "contextPath", null, null, new StreamBuildListener(System.out));
-    }*/
+    }
     
     @Test
     public void testVariables() throws Exception {
         Node n = jenkinsRule.createSlave();
     	EnvironmentVariablesNodeProperty property = new EnvironmentVariablesNodeProperty();
-
     	EnvVars envVars = property.getEnvVars();
     	envVars.put(homeVariable, home);
     	envVars.put(usernameVariable, username);
@@ -127,7 +133,6 @@ public class GlassFish3xAdapterTest {
         project.setAssignedNode(n);
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         BuildListener listener = new StreamBuildListener(new ByteArrayOutputStream());
-
 
         adapter = new  GlassFish3xAdapter(getVariable(homeVariable), password, getVariable(usernameVariable), getVariable(adminPortVariable), null);
         Configuration config = new DefaultConfigurationFactory().createConfiguration(adapter.getContainerId(), ContainerType.REMOTE, ConfigurationType.RUNTIME);
