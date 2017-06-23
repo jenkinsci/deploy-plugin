@@ -18,7 +18,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**
- * Tests pipeline compatibility. Since there are no *.war files in the workspace all of these scripts
+ * Tests pipeline compatibility. Since there ia no Builder that sets the build status all of these tests
  * will ultimately result in a no-op.
  */
 public class PipelineSyntaxTest {
@@ -103,11 +103,11 @@ public class PipelineSyntaxTest {
         p.setDefinition(new CpsFlowDefinition(
                 getFullScript(
                         "writeFile(file: 'target/app.war', text: '')\n" +
-                        "deploy(adapters: [legacyAdapter()], war: 'target/app.war', contextPath: 'app')"),
+                        "deploy(adapters: [legacyAdapter()], war: 'target/app.war', contextPath: 'app', onFailure: true)"),
                 false));
         WorkflowRun r = p.scheduleBuild2(0).get();
         j.assertBuildStatus(Result.FAILURE, r);
-        assertTrue(r.getLog().contains("redeploy() called using a Run, but adapter doesn't have an implementation for Run"));
+        assertTrue(r.getLog().contains("maintainer") && r.getLog().contains("update"));
     }
 
 }

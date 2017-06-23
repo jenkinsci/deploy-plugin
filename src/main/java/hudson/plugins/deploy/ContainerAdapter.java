@@ -1,5 +1,6 @@
 package hudson.plugins.deploy;
 
+import hudson.AbortException;
 import hudson.DescriptorExtensionList;
 import hudson.ExtensionPoint;
 import hudson.FilePath;
@@ -26,26 +27,10 @@ import static hudson.Util.isOverridden;
  * @author Kohsuke Kawaguchi
  */
 public abstract class ContainerAdapter implements Describable<ContainerAdapter>, ExtensionPoint {
-    /**
-     * Perform redeployment.
-     *
-     * If failed, return false.
-     * Retained as abstract for back-compatibility in cases where a plugin extends deploy plugin and implements this only.
-     * Implementations that are pipeline compatible should implement {@link #redeployWar(FilePath, String, Run, Launcher, TaskListener)}
-     *   and have this simply delegate to the now-compatible implementation.
-     * @deprecated Prefer to invoke {@link #redeployWar(FilePath, String, Run, Launcher, TaskListener)} where possible.
-     * @param war the file path of the war to deploy
-     * @param aContextPath the context path for the war to be deployed
-     * @param build the build that is being deployed
-     * @param launcher the launcher of the build
-     * @param listener the BuildListener of the build to deploy
-     * @return true if deployed successfully, false if failed
-     * @throws IOException if there is an error locating the war file
-     * @throws InterruptedException if there is an error deploying to the server
-     */
+
     @Deprecated
     public boolean redeploy(FilePath war, String aContextPath, AbstractBuild<?,?> build, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException {
-        return redeployWar(war, aContextPath, build, launcher, listener);
+        return redeployFile(war, aContextPath, build, launcher, listener);
     }
 
     /**
@@ -55,17 +40,34 @@ public abstract class ContainerAdapter implements Describable<ContainerAdapter>,
      *
      * Implementations should override me and make {@link #redeploy(FilePath, String, AbstractBuild, Launcher, BuildListener)}
      *  delegate to that implementation to be usable within Pipeline projects
+     *
+     * @param war the path of the war/ear file to deploy
+     * @param aContextPath the context path for the war to be deployed
+     * @param build the build that is being deployed
+     * @param launcher the launcher of the build
+     * @param listener the BuildListener of the build to deploy
+     * @return true if deployed successfully, false if failed
+     * @throws IOException if there is an error locating the war file
+     * @throws InterruptedException if there is an error deploying to the server
      */
-    public boolean redeployWar(FilePath war, String aContextPath, Run<?,?> build, Launcher launcher, final TaskListener listener) throws IOException, InterruptedException {
+    public boolean redeployFile(FilePath war, String aContextPath, Run<?,?> build, Launcher launcher, final TaskListener listener) throws IOException, InterruptedException {
         if (build instanceof AbstractBuild) {
-            if (isOverridden(ContainerAdapter.class, ContainerAdapter.class, "redeploy",
+            if (isOverridden(ContainerAdapter.class, getClass(), "redeploy",
                     FilePath.class, String.class, AbstractBuild.class, Launcher.class, BuildListener.class)) {
                 return redeploy(war, aContextPath, (AbstractBuild<?, ?>) build, launcher, (BuildListener) listener);
             } else {
-                throw new IllegalStateException("Adapter doesn't have an implementation for redeploy() or redeployWar()");
+                // TODO get approved
+                throw new AbortException(
+                        "This ContainerAdapter doesn't have an implementation of redeployFile(). Please contact " +
+                        "the plugin maintainer and ask them to update their plugin to be compatible with Workflow"
+                );
             }
         } else {
-            throw new IllegalStateException("redeploy() called using a Run, but adapter doesn't have an implementation for Run");
+            throw new AbortException(
+                    "[JENKINS-44810] redeploy() called using a Run, but this ContainerAdapter doesn't have an " +
+                    "implementation for Run. Please contact the plugin maintainer and ask them to update their " +
+                    "plugin to be compatible pipeline"
+            );
         }
     }
 
