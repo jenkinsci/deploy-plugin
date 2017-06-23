@@ -1,6 +1,6 @@
 package hudson.plugins.deploy;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import hudson.AbortException;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -15,7 +15,6 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -55,28 +54,29 @@ public class DeployPublisher extends Notifier implements SimpleBuildStep, Serial
         this.contextPath = contextPath;
     }
 
-    @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
     @Override
     @Deprecated
     public boolean perform(AbstractBuild<?,?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
-        perform(false, build, build.getWorkspace(), launcher, listener);
+        FilePath workspace = build.getWorkspace();
+        if (workspace  == null) {
+            listener.getLogger().println("[DeployPublisher][ERROR] Workspace not found");
+            throw new AbortException("Workspace not found");
+        }
+        perform(build, workspace, launcher, listener);
         return true;
     }
 
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
-        perform(true, run, workspace, launcher, listener);
-    }
-
-    private void perform(boolean fromWorkFlow, @Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
-        if (fromWorkFlow || onFailure || Result.SUCCESS.equals(run.getResult())) {
+        Result result = run.getResult();
+        if (onFailure || Result.SUCCESS.equals(result)) {
             if (!workspace.exists()) {
                 listener.getLogger().println("[DeployPublisher][ERROR] Workspace not found");
-                throw new FileNotFoundException("Workspace not found");
+                throw new AbortException("Workspace not found");
             }
 
             FilePath[] wars = workspace.list(this.war);
-            if (wars.length == 0) {
+            if (wars == null || wars.length == 0) {
                 listener.getLogger().printf("[DeployPublisher][WARN] No wars found. Deploy aborted. %n");
                 return;
             }
@@ -84,13 +84,17 @@ public class DeployPublisher extends Notifier implements SimpleBuildStep, Serial
 
             for (FilePath warFile : wars) {
                 for (ContainerAdapter adapter : adapters) {
-                    if (!adapter.redeployWar(warFile, contextPath, run, launcher, listener)) {
+                    if (!adapter.redeployFile(warFile, contextPath, run, launcher, listener)) {
                         run.setResult(Result.FAILURE);
                     }
                 }
             }
         } else {
-            listener.getLogger().println("[DeployPublisher][INFO] Build failed or incomplete, project not deployed");
+            if (result == null) {
+                listener.getLogger().println("[DeployPublisher][INFO] Build incomplete, project not deployed");
+            } else {
+                listener.getLogger().println("[DeployPublisher][INFO] Build failed, project not deployed");
+            }
         }
     }
 
