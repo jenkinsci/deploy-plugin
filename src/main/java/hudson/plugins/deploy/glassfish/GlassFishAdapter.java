@@ -2,8 +2,8 @@ package hudson.plugins.deploy.glassfish;
 
 import hudson.EnvVars;
 import hudson.plugins.deploy.PasswordProtectedAdapterCargo;
-
 import hudson.util.VariableResolver;
+
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.cargo.container.Container;
 import org.codehaus.cargo.container.ContainerType;
@@ -65,6 +65,7 @@ public abstract class GlassFishAdapter extends PasswordProtectedAdapterCargo {
 
         if (hostname != null) {
 
+
             AbstractRuntimeConfiguration config = (AbstractRuntimeConfiguration) configFactory.createConfiguration(id, ContainerType.REMOTE, ConfigurationType.RUNTIME);
             configure(config, envVars, resolver);
             config.setProperty(RemotePropertySet.PASSWORD, getPassword());
@@ -72,6 +73,7 @@ public abstract class GlassFishAdapter extends PasswordProtectedAdapterCargo {
             AbstractRemoteContainer container = (AbstractRemoteContainer) containerFactory.createContainer(id, ContainerType.REMOTE, config);
 
             return container;
+
 
         } else {
             AbstractStandaloneLocalConfiguration config = (AbstractStandaloneLocalConfiguration) configFactory.createConfiguration(id, ContainerType.INSTALLED, ConfigurationType.STANDALONE, home);

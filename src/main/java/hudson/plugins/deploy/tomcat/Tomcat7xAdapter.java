@@ -8,7 +8,6 @@ import hudson.util.VariableResolver;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import hudson.util.VariableResolver;
 import org.codehaus.cargo.container.configuration.Configuration;
 import org.codehaus.cargo.container.property.RemotePropertySet;
 import org.jenkinsci.Symbol;

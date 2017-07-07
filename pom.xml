@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>2.0</version>
+        <version>2.29</version>
     </parent>
 
     <artifactId>deploy</artifactId>
@@ -44,9 +44,6 @@
         <cargo.version>1.5.0</cargo.version>
         <jenkins.version>1.642.3</jenkins.version>
         <workflow-cps-plugin.version>2.15</workflow-cps-plugin.version>
-        <!-- temp -->
-        <findbugs.failOnError>false</findbugs.failOnError>
-        <jenkins.version>1.642.3</jenkins.version>
     </properties>
 
     <dependencies>
@@ -206,3 +203,4 @@
     </pluginRepositories>
 
 </project>
+

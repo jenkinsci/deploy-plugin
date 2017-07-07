@@ -5,11 +5,11 @@ import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.domains.Domain;
 import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
 import hudson.EnvVars;
+import hudson.model.BuildListener;
 import hudson.model.FreeStyleBuild;
 import hudson.model.StreamBuildListener;
 import hudson.model.FreeStyleProject;
 import hudson.model.Node;
-import hudson.model.TaskListener;
 import hudson.slaves.EnvironmentVariablesNodeProperty;
 
 import java.io.ByteArrayOutputStream;
@@ -77,7 +77,7 @@ public class Tomcat7xAdapterTest {
         FreeStyleProject project = jenkinsRule.createFreeStyleProject();
         project.setAssignedNode(n);
         FreeStyleBuild build = project.scheduleBuild2(0).get();
-        TaskListener listener = new StreamBuildListener(new ByteArrayOutputStream());
+        BuildListener listener = new StreamBuildListener(new ByteArrayOutputStream());
 
 
         UsernamePasswordCredentialsImpl c = new UsernamePasswordCredentialsImpl(CredentialsScope.GLOBAL, null,

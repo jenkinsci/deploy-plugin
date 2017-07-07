@@ -56,7 +56,7 @@ public class GlassFish3xAdapterTest {
     private static final String adminPortVariable = "adminPort";
     private static final String variableStart = "${";
     private static final String variableEnd = "}";
-    
+
     @Rule public JenkinsRule jenkinsRule = new JenkinsRule();
 
     @Before
@@ -85,11 +85,11 @@ public class GlassFish3xAdapterTest {
 
         ConfigurationFactory configFactory = new DefaultConfigurationFactory();
         ContainerFactory containerFactory = new DefaultContainerFactory();
-        FreeStyleProject project = jenkinsRule.getInstance().createProject(FreeStyleProject.class, "fsp");
+        FreeStyleProject project = jenkinsRule.createFreeStyleProject();
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         BuildListener listener = new StreamBuildListener(new ByteArrayOutputStream());
 
-        Container container = adapter.getContainer(configFactory, containerFactory, adapter.getContainerId(), build.getEnvironment(listener), null);
+        Container container = adapter.getContainer(configFactory, containerFactory, adapter.getContainerId(), build.getEnvironment(listener), build.getBuildVariableResolver());
         Assert.assertNotNull(container);
     }
 
@@ -103,11 +103,11 @@ public class GlassFish3xAdapterTest {
 
         ConfigurationFactory configFactory = new DefaultConfigurationFactory();
         ContainerFactory containerFactory = new DefaultContainerFactory();
-        FreeStyleProject project = jenkinsRule.getInstance().createProject(FreeStyleProject.class, "fsp");
+        FreeStyleProject project = jenkinsRule.createFreeStyleProject();
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         BuildListener listener = new StreamBuildListener(new ByteArrayOutputStream());
 
-        Container container = remoteAdapter.getContainer(configFactory, containerFactory, remoteAdapter.getContainerId(), build.getEnvironment(listener), null);
+        Container container = remoteAdapter.getContainer(configFactory, containerFactory, remoteAdapter.getContainerId(), build.getEnvironment(listener), build.getBuildVariableResolver());
         Assert.assertNotNull(container);
     }
 

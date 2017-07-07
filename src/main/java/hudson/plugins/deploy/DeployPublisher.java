@@ -1,20 +1,18 @@
 package hudson.plugins.deploy;
 
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.AbortException;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.BuildListener;
+import hudson.Util;
 import hudson.model.Result;
-import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
+import hudson.model.listeners.ItemListener;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import hudson.model.listeners.ItemListener;
-import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
 
@@ -31,57 +29,69 @@ import jenkins.model.Jenkins;
 import jenkins.util.io.FileBoolean;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
-
 import jenkins.tasks.SimpleBuildStep;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 
 import javax.annotation.Nonnull;
 
 /**
  * Deploys WAR to a container.
- * 
+ *
  * @author Kohsuke Kawaguchi
  */
 public class DeployPublisher extends Notifier implements SimpleBuildStep, Serializable {
-    private List<ContainerAdapter> adapters;
-    public final String contextPath;
 
-    public final String war;
-    public final boolean onFailure;
+    private List<ContainerAdapter> adapters;
+    private String war;
+    private String contextPath = null;
+    private boolean onFailure = true;
 
     /**
      * @deprecated
      *      Use {@link #getAdapters()}
      */
     public final ContainerAdapter adapter = null;
-    
+
     @DataBoundConstructor
+    public DeployPublisher(List<ContainerAdapter> adapters, String war) {
+        this.adapters = adapters;
+        this.war = war;
+    }
+
+    @Deprecated
     public DeployPublisher(List<ContainerAdapter> adapters, String war, String contextPath, boolean onFailure) {
    		this.adapters = adapters;
         this.war = war;
-        this.onFailure = onFailure;
-        this.contextPath = contextPath;
     }
 
-    // TODO : update to use Run
-    @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
-    @Override
-    @Deprecated
-    public boolean perform(AbstractBuild<?,?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
-        FilePath workspace = build.getWorkspace();
-        if (workspace  == null) {
-            listener.getLogger().println("[DeployPublisher][ERROR] Workspace not found");
-            throw new AbortException("Workspace not found");
-        }
-        perform(build, workspace, launcher, listener);
-        return true;
+    public String getWar () {
+        return war;
+    }
+
+    public boolean isOnFailure () {
+        return onFailure;
+    }
+
+    @DataBoundSetter
+    public void setOnFailure (boolean onFailure) {
+        this.onFailure = onFailure;
+    }
+
+    public String getContextPath () {
+        return contextPath;
+    }
+
+    @DataBoundSetter
+    public void setContextPath (String contextPath) {
+        this.contextPath = Util.fixEmpty(contextPath);
     }
 
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
         Result result = run.getResult();
-        if (onFailure || Result.SUCCESS.equals(result)) {
+        if (onFailure || result == null || Result.SUCCESS.equals(result)) {
             if (!workspace.exists()) {
                 listener.getLogger().println("[DeployPublisher][ERROR] Workspace not found");
                 throw new AbortException("Workspace not found");
@@ -96,17 +106,11 @@ public class DeployPublisher extends Notifier implements SimpleBuildStep, Serial
 
             for (FilePath warFile : wars) {
                 for (ContainerAdapter adapter : adapters) {
-                    if (!adapter.redeployFile(warFile, contextPath, run, launcher, listener)) {
-                        run.setResult(Result.FAILURE);
-                    }
+                    adapter.redeployFile(warFile, contextPath, run, launcher, listener);
                 }
             }
         } else {
-            if (result == null) {
-                listener.getLogger().println("[DeployPublisher][INFO] Build incomplete, project not deployed");
-            } else {
-                listener.getLogger().println("[DeployPublisher][INFO] Build failed, project not deployed");
-            }
+            listener.getLogger().println("[DeployPublisher][INFO] Build failed, project not deployed");
         }
     }
 
@@ -124,11 +128,6 @@ public class DeployPublisher extends Notifier implements SimpleBuildStep, Serial
     	return this;
     }
 
-    @Override
-    public BuildStepDescriptor getDescriptor () {
-        return new DescriptorImpl();
-    }
-
     /**
 	 * Get the value of the adapterWrappers property
 	 *
@@ -138,12 +137,16 @@ public class DeployPublisher extends Notifier implements SimpleBuildStep, Serial
 		return adapters;
 	}
 
-	@Symbol("deploy")
+    @Symbol("deploy")
     @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
-	    @Override
+        @Override
         public boolean isApplicable(Class<? extends AbstractProject> jobType) {
             return true;
+        }
+
+        public boolean defaultOnFailure (Object job) {
+            return !(job instanceof AbstractProject);
         }
 
         public String getDisplayName() {

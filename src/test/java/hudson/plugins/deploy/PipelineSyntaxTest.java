@@ -1,21 +1,17 @@
 package hudson.plugins.deploy;
 
-import hudson.model.Label;
 import hudson.model.Result;
-import hudson.model.labels.LabelOperatorPrecedence;
-import hudson.model.labels.LabelVisitor;
-import hudson.util.VariableResolver;
+import hudson.plugins.deploy.tomcat.Tomcat8xAdapter;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
+import org.jenkinsci.plugins.workflow.cps.SnippetizerTester;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
+import org.jenkinsci.plugins.workflow.steps.CoreStep;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
-import java.util.List;
-
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import java.util.Collections;
 
 /**
  * Tests pipeline compatibility. Since there ia no Builder that sets the build status all of these tests
@@ -107,7 +103,31 @@ public class PipelineSyntaxTest {
                 false));
         WorkflowRun r = p.scheduleBuild2(0).get();
         j.assertBuildStatus(Result.FAILURE, r);
-        assertTrue(r.getLog().contains("maintainer") && r.getLog().contains("update"));
+        j.assertLogContains("Please contact the plugin maintainer", r);
+    }
+
+    @Test
+    public void testSnippetizerDefaults() throws Exception {
+        WorkflowJob p = j.getInstance().createProject(WorkflowJob.class, "SnippetTest");
+        SnippetizerTester t = new SnippetizerTester(j);
+
+        ContainerAdapter tc = new Tomcat8xAdapter("http://example.com", "pw", "admin");
+        DeployPublisher dp = new DeployPublisher(Collections.singletonList(tc), "app.war");
+
+        t.assertRoundTrip(new CoreStep(dp), "deploy adapters: [tomcat8(password: 'pw', url: 'http://example.com', userName: 'admin')], war: 'app.war'");
+    }
+
+    @Test
+    public void testSnippetizerNonDefault() throws Exception {
+        WorkflowJob p = j.getInstance().createProject(WorkflowJob.class, "SnippetTest");
+        SnippetizerTester t = new SnippetizerTester(j);
+
+        ContainerAdapter tc = new Tomcat8xAdapter("http://example.com", "pw", "admin");
+        DeployPublisher dp = new DeployPublisher(Collections.singletonList(tc), "app.war");
+        dp.setOnFailure(!j.jenkins.getDescriptorByType(DeployPublisher.DescriptorImpl.class).defaultOnFailure(p));
+        dp.setContextPath("my-app");
+
+        t.assertRoundTrip(new CoreStep(dp), "deploy adapters: [tomcat8(password: 'pw', url: 'http://example.com', userName: 'admin')], contextPath: 'my-app', onFailure: false, war: 'app.war'");
     }
 
 }

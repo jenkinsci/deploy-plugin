@@ -5,8 +5,8 @@ import hudson.FilePath;
 import jenkins.MasterToSlaveFileCallable;
 import hudson.Launcher;
 import hudson.Util;
-import hudson.model.BuildListener;
 import hudson.model.AbstractBuild;
+import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 
@@ -52,8 +52,8 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
     /**
      * Fills in the {@link Configuration} object.
      *
-     * @param config the configuration of the adapter
-     * @param envVars the environmental variables of the build
+     * @param config   the configuration of the adapter
+     * @param envVars  the environmental variables of the build
      * @param resolver the variable resolver
      */
     protected abstract void configure(Configuration config, EnvVars envVars, VariableResolver<String> resolver);
@@ -67,7 +67,7 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
     protected void deploy(DeployerFactory deployerFactory, final TaskListener listener, Container container, File f, String contextPath) {
         Deployer deployer = deployerFactory.createDeployer(container);
 
-        listener.getLogger().println("Deploying " + f + " to container " + container.getName() + " with context " + contextPath);
+        listener.getLogger().println("[DeployPublisher][INFO] Deploying " + f + " to container " + container.getName() + " with context " + contextPath);
         deployer.setLogger(new LoggerImpl(listener.getLogger()));
 
 
@@ -99,7 +99,7 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
     /**
      * Expands an encoded environment variable. Ex. if HOME=/user/alex, expands '${HOME}' to '/user/alex'
      *
-     * @param envVars the environment variables of the build
+     * @param envVars  the environment variables of the build
      * @param resolver unused
      * @param variable the variable to expand
      * @return the value of the expanded variable
@@ -107,6 +107,8 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
     protected String expandVariable(EnvVars envVars, VariableResolver<String> resolver, String variable) {
         return Util.replaceMacro(envVars.expand(variable), resolver);
     }
+
+
     /**
      * Creates a Deployable object EAR from the given file object.
      *
@@ -117,25 +119,29 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
         return new EAR(deployableFile.getAbsolutePath());
     }
 
-    public boolean redeploy(FilePath war, final String contextPath, final AbstractBuild<?, ?> build, Launcher launcher,
-                            final BuildListener listener) throws IOException, InterruptedException {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void redeployFile(FilePath war, final String contextPath, final Run<?, ?> run, final Launcher launcher, final TaskListener listener) throws IOException, InterruptedException {
         EnvVars envVars = new EnvVars();
-        if (build instanceof AbstractBuild) {
+        if (run instanceof AbstractBuild) {
+            AbstractBuild build = (AbstractBuild) run;
             envVars = build.getEnvironment(listener);
         }
-        return war.act(new DeployCallable(this, getContainerId(), envVars, listener, contextPath));
+        war.act(new DeployCallable(this, getContainerId(), envVars, listener, contextPath));
     }
 
     public static class DeployCallable extends MasterToSlaveFileCallable<Boolean> {
 
         private CargoContainerAdapter adapter;
         private String containerId;
-        private BuildListener listener;
+        private TaskListener listener;
         private String contextPath;
         private EnvVars envVars;
 
-        public DeployCallable(CargoContainerAdapter adapter, String containerId, EnvVars envVars,
-                              BuildListener listener, String contextPath) {
+        public DeployCallable (CargoContainerAdapter adapter, String containerId, EnvVars envVars,
+                              TaskListener listener, String contextPath) {
             this.adapter = adapter;
             this.containerId = containerId;
             this.envVars = envVars;
@@ -156,10 +162,9 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
 
             VariableResolver<String> resolver = new VariableResolver.ByMap<String>(envVars);
             Container container = adapter.getContainer(configFactory, containerFactory, containerId, envVars, resolver);
-            adapter.deploy(deployerFactory, listener, container, f, envVars.expand(contextPath));
+            adapter.deploy(deployerFactory, listener, container, f, Util.replaceMacro(envVars.expand(contextPath), resolver));
 
             return true;
         }
     }
-
 }
