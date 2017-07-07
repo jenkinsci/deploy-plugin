@@ -122,8 +122,8 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
      * {@inheritDoc}
      */
     @Override
-    public boolean redeployFile(FilePath war, final String contextPath, final Run<?, ?> run, final Launcher launcher, final TaskListener listener) throws IOException, InterruptedException {
-        return war.act(new MasterToSlaveFileCallable<Boolean>() {
+    public void redeployFile(FilePath war, final String contextPath, final Run<?, ?> run, final Launcher launcher, final TaskListener listener) throws IOException, InterruptedException {
+        war.act(new MasterToSlaveFileCallable<Boolean>() {
             @Override
             public Boolean invoke(File f, VirtualChannel channel) throws IOException, InterruptedException {
 

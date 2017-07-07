@@ -27,7 +27,8 @@ public abstract class ContainerAdapter implements Describable<ContainerAdapter>,
 
     @Deprecated
     public boolean redeploy(FilePath war, String aContextPath, AbstractBuild<?,?> build, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException {
-        return redeployFile(war, aContextPath, build, launcher, listener);
+        redeployFile(war, aContextPath, build, launcher, listener);
+        return true;
     }
 
     /**
@@ -42,17 +43,17 @@ public abstract class ContainerAdapter implements Describable<ContainerAdapter>,
      * @param build the build that is being deployed
      * @param launcher the launcher of the build
      * @param listener the BuildListener of the build to deploy
-     * @return true if deployed successfully, false if failed
      * @throws IOException if there is an error locating the war file
      * @throws InterruptedException if there is an error deploying to the server
      */
-    public boolean redeployFile(FilePath war, String aContextPath, Run<?,?> build, Launcher launcher, final TaskListener listener) throws IOException, InterruptedException {
+    public void redeployFile(FilePath war, String aContextPath, Run<?,?> build, Launcher launcher, final TaskListener listener) throws IOException, InterruptedException {
         if (build instanceof AbstractBuild) {
             if (isOverridden(ContainerAdapter.class, getClass(), "redeploy",
                     FilePath.class, String.class, AbstractBuild.class, Launcher.class, BuildListener.class)) {
-                return redeploy(war, aContextPath, (AbstractBuild<?, ?>) build, launcher, (BuildListener) listener);
+                if (!redeploy(war, aContextPath, (AbstractBuild<?, ?>) build, launcher, (BuildListener) listener)) {
+                    throw new AbortException("Deployment failed for unknown reason");
+                }
             } else {
-                // TODO get approved
                 throw new AbortException(
                         "This ContainerAdapter doesn't have an implementation of redeployFile(). Please contact " +
                         "the plugin maintainer and ask them to update their plugin to be compatible with Workflow"
