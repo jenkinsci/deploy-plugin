@@ -110,11 +110,6 @@ public class DeployPublisher extends Notifier implements SimpleBuildStep, Serial
     	return this;
     }
 
-    @Override
-    public BuildStepDescriptor getDescriptor () {
-        return new DescriptorImpl();
-    }
-
     /**
 	 * Get the value of the adapterWrappers property
 	 *
