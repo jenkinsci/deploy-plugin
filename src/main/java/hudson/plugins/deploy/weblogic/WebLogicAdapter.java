@@ -2,6 +2,7 @@ package hudson.plugins.deploy.weblogic;
 
 import hudson.EnvVars;
 import hudson.plugins.deploy.ContainerAdapterDescriptor;
+import hudson.plugins.deploy.DefaultCargoContainerAdapterImpl;
 import hudson.plugins.deploy.PasswordProtectedAdapterCargo;
 import hudson.util.FormValidation;
 import hudson.util.VariableResolver;
@@ -15,7 +16,9 @@ import org.codehaus.cargo.container.configuration.ConfigurationType;
 import org.codehaus.cargo.generic.ContainerFactory;
 import org.codehaus.cargo.generic.configuration.ConfigurationFactory;
 import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.DoNotUse;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
 /**

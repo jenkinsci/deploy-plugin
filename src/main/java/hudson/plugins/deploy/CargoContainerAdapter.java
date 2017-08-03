@@ -2,19 +2,19 @@ package hudson.plugins.deploy;
 
 import hudson.EnvVars;
 import hudson.FilePath;
-import jenkins.MasterToSlaveFileCallable;
 import hudson.Launcher;
 import hudson.Util;
 import hudson.model.AbstractBuild;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
+import hudson.util.VariableResolver;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 
-import hudson.util.VariableResolver;
+import jenkins.MasterToSlaveFileCallable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.cargo.container.Container;

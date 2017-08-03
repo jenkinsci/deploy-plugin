@@ -63,12 +63,12 @@ public class PipelineSyntaxTest {
                 getFullScript(
                 "def gf2 = glassfish2( " +
                     "home: 'FAKE', " +
-                    "credentialsId: 'FAKE'" +
+                    "credentialsId: 'FAKE'," +
                     "adminPort: '1234', " +
                     "hostname: 'localhost') \n" +
                 "def gf3 = glassfish3( " +
                     "home: 'FAKE', " +
-                    "credentialsId: 'FAKE'" +
+                    "credentialsId: 'FAKE'," +
                     "adminPort: '1234', " +
                     "hostname: 'localhost') \n" +
                 "deploy(adapters: [gf2, gf3], war: 'target/app.war', contextPath: 'app')"),
@@ -111,10 +111,10 @@ public class PipelineSyntaxTest {
         WorkflowJob p = j.getInstance().createProject(WorkflowJob.class, "SnippetTest");
         SnippetizerTester t = new SnippetizerTester(j);
 
-        ContainerAdapter tc = new Tomcat8xAdapter("http://example.com", "pw", "admin");
+        ContainerAdapter tc = new Tomcat8xAdapter("http://example.com", "test-id");
         DeployPublisher dp = new DeployPublisher(Collections.singletonList(tc), "app.war");
 
-        t.assertRoundTrip(new CoreStep(dp), "deploy adapters: [tomcat8(password: 'pw', url: 'http://example.com', userName: 'admin')], war: 'app.war'");
+        t.assertRoundTrip(new CoreStep(dp), "deploy adapters: [tomcat8(credentialsId: 'test-id', url: 'http://example.com')], war: 'app.war'");
     }
 
     @Test
@@ -122,12 +122,12 @@ public class PipelineSyntaxTest {
         WorkflowJob p = j.getInstance().createProject(WorkflowJob.class, "SnippetTest");
         SnippetizerTester t = new SnippetizerTester(j);
 
-        ContainerAdapter tc = new Tomcat8xAdapter("http://example.com", "pw", "admin");
+        ContainerAdapter tc = new Tomcat8xAdapter("http://example.com", "test-id");
         DeployPublisher dp = new DeployPublisher(Collections.singletonList(tc), "app.war");
         dp.setOnFailure(!j.jenkins.getDescriptorByType(DeployPublisher.DescriptorImpl.class).defaultOnFailure(p));
         dp.setContextPath("my-app");
 
-        t.assertRoundTrip(new CoreStep(dp), "deploy adapters: [tomcat8(password: 'pw', url: 'http://example.com', userName: 'admin')], contextPath: 'my-app', onFailure: false, war: 'app.war'");
+        t.assertRoundTrip(new CoreStep(dp), "deploy adapters: [tomcat8(credentialsId: 'test-id', url: 'http://example.com')], contextPath: 'my-app', onFailure: false, war: 'app.war'");
     }
 
 }

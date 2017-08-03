@@ -44,8 +44,9 @@ import javax.annotation.Nonnull;
 public class DeployPublisher extends Notifier implements SimpleBuildStep, Serializable {
 
     private List<ContainerAdapter> adapters;
+    private String contextPath = "";
+
     private String war;
-    private String contextPath = null;
     private boolean onFailure = true;
 
     /**
