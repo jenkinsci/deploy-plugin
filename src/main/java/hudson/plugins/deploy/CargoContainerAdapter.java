@@ -2,7 +2,6 @@ package hudson.plugins.deploy;
 
 import hudson.EnvVars;
 import hudson.FilePath;
-import hudson.FilePath.FileCallable;
 import hudson.Launcher;
 import hudson.Util;
 import hudson.model.BuildListener;
@@ -14,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 
+import jenkins.MasterToSlaveFileCallable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.cargo.container.Container;
@@ -109,29 +109,44 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
         return new EAR(deployableFile.getAbsolutePath());
     }
 
-    public boolean redeploy(FilePath war, final String contextPath, final AbstractBuild<?, ?> build, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException {
-        return war.act(new FileCallable<Boolean>() {
-            public Boolean invoke(File f, VirtualChannel channel) throws IOException {
-                if (!f.exists()) {
-                    listener.error(Messages.DeployPublisher_NoSuchFile(f));
-                    return true;
-                }
-                ClassLoader cl = getClass().getClassLoader();
-                final ConfigurationFactory configFactory = new DefaultConfigurationFactory(cl);
-                final ContainerFactory containerFactory = new DefaultContainerFactory(cl);
-                final DeployerFactory deployerFactory = new DefaultDeployerFactory(cl);
+    public boolean redeploy(FilePath war, final String contextPath, final AbstractBuild<?, ?> build, Launcher launcher,
+                            final BuildListener listener) throws IOException, InterruptedException {
+        return war.act(new DeployCallable(this, getContainerId(), build.getEnvironment(listener), listener, contextPath));
+    }
 
-                try {
-                    final EnvVars envVars = build.getEnvironment(listener);
-                    final VariableResolver<String> resolver = build.getBuildVariableResolver();
-                    Container container = getContainer(configFactory, containerFactory, getContainerId(), envVars, resolver);
-                    deploy(deployerFactory, listener, container, f, expandVariable(envVars, resolver, contextPath));
-                } catch (InterruptedException e) {
-                    throw new RuntimeException("Failed to get build environment", e);
-            	}
+    public static class DeployCallable extends MasterToSlaveFileCallable<Boolean> {
 
+        private CargoContainerAdapter adapter;
+        private String containerId;
+        private BuildListener listener;
+        private String contextPath;
+        private EnvVars envVars;
+
+        public DeployCallable (CargoContainerAdapter adapter, String containerId, EnvVars envVars,
+                               BuildListener listener, String contextPath) {
+            this.adapter = adapter;
+            this.containerId = containerId;
+            this.envVars = envVars;
+            this.listener = listener;
+            this.contextPath = contextPath;
+        }
+
+        public Boolean invoke(File f, VirtualChannel channel) throws IOException {
+            if (!f.exists()) {
+                listener.error(Messages.DeployPublisher_NoSuchFile(f));
                 return true;
             }
-        });
+
+            ClassLoader cl = getClass().getClassLoader();
+            DeployerFactory deployerFactory = new DefaultDeployerFactory(cl);
+            ConfigurationFactory configFactory = new DefaultConfigurationFactory(cl);
+            ContainerFactory containerFactory = new DefaultContainerFactory(cl);
+
+            VariableResolver<String> resolver = new VariableResolver.ByMap<String>(envVars);
+            Container container = adapter.getContainer(configFactory, containerFactory, containerId, envVars, resolver);
+            adapter.deploy(deployerFactory, listener, container, f, Util.replaceMacro(envVars.expand(contextPath), resolver));
+
+            return true;
+        }
     }
 }

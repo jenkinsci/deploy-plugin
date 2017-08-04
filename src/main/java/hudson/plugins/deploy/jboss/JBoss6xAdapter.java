@@ -6,9 +6,10 @@ import hudson.plugins.deploy.ContainerAdapterDescriptor;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 public class JBoss6xAdapter extends JBossAdapter {
+
     @DataBoundConstructor
-    public JBoss6xAdapter(String url, String password, String userName) {
-        super(url, password, userName);
+    public JBoss6xAdapter(String url, String credentialsId) {
+        super(url, credentialsId);
     }
 
     @Override

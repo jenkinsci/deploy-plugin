@@ -11,9 +11,10 @@ import org.kohsuke.stapler.DataBoundConstructor;
  * @author Kohsuke Kawaguchi
  */
 public class JBoss3xAdapter extends JBossAdapter {
+
     @DataBoundConstructor
-    public JBoss3xAdapter(String url, String password, String userName) {
-        super(url, password, userName);
+    public JBoss3xAdapter(String url, String credentialsId) {
+        super(url, credentialsId);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package hudson.plugins.deploy;
 
+import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -7,18 +8,26 @@ import hudson.model.BuildListener;
 import hudson.model.Result;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
+import hudson.model.listeners.ItemListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import jenkins.model.Jenkins;
+import jenkins.util.io.FileBoolean;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -108,4 +117,51 @@ public class DeployPublisher extends Notifier implements Serializable {
     }
 
     private static final long serialVersionUID = 1L;
+
+    @Restricted(NoExternalUse.class)
+    @Extension
+    public static final class Migrator extends ItemListener {
+
+        @SuppressWarnings("deprecation")
+        @Override
+        public void onLoaded() {
+            FileBoolean migrated = new FileBoolean(getClass(), "migratedCredentials");
+            if (migrated.isOn()) {
+                return;
+            }
+            List<StandardUsernamePasswordCredentials> generatedCredentials = new ArrayList<StandardUsernamePasswordCredentials>();
+            for (AbstractProject<?,?> project : Jenkins.getActiveInstance().getAllItems(AbstractProject.class)) {
+                try {
+                    DeployPublisher d = project.getPublishersList().get(DeployPublisher.class);
+                    if (d == null) {
+                        continue;
+                    }
+                    boolean modified = false;
+                    boolean successful = true;
+                    for (ContainerAdapter a : d.getAdapters()) {
+                        if (a instanceof PasswordProtectedAdapterCargo) {
+                            PasswordProtectedAdapterCargo ppac = (PasswordProtectedAdapterCargo) a;
+                            if (ppac.getCredentialsId() == null) {
+                                successful &= ppac.migrateCredentials(generatedCredentials);
+                                modified = true;
+                            }
+                        }
+                    }
+                    if (modified) {
+                        if (successful) {
+                            Logger.getLogger(DeployPublisher.class.getName()).log(Level.INFO, "Successfully migrated DeployPublisher in project: {0}", project.getName());
+                            project.save();
+                        } else {
+                            // Avoid calling project.save() because PasswordProtectedAdapterCargo will null out the username/password fields upon saving
+                            Logger.getLogger(DeployPublisher.class.getName()).log(Level.SEVERE, "Failed to create credentials and migrate DeployPublisher in project: {0}, please manually add credentials.", project.getName());
+                        }
+                    }
+                } catch (IOException e) {
+                    Logger.getLogger(DeployPublisher.class.getName()).log(Level.WARNING, "Migration unsuccessful", e);
+                }
+            }
+            migrated.on();
+        }
+    }
+
 }

@@ -23,12 +23,11 @@ public class Tomcat8xAdapter extends TomcatAdapter {
      * Tomcat 8 support
      *
      * @param url Tomcat server location (for example: http://localhost:8080)
-     * @param password tomcat manager password
-     * @param userName tomcat manager username
+     * @param credentialsId tomcat manager username password credentials
      */
     @DataBoundConstructor
-    public Tomcat8xAdapter(String url, String password, String userName) {
-        super(url, password, userName);
+    public Tomcat8xAdapter(String url, String credentialsId) {
+        super(url, credentialsId);
     }
 
     public void configure(Configuration config, EnvVars envVars, VariableResolver<String> resolver) {

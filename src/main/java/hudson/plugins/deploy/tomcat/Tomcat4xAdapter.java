@@ -12,8 +12,8 @@ import org.kohsuke.stapler.DataBoundConstructor;
 public class Tomcat4xAdapter extends TomcatAdapter {
 
     @DataBoundConstructor
-    public Tomcat4xAdapter(String url, String password, String userName) {
-        super(url, password, userName);
+    public Tomcat4xAdapter(String url, String credentialsId) {
+        super(url, credentialsId);
     }
 
     public String getContainerId() {

@@ -7,7 +7,9 @@ import org.codehaus.cargo.generic.configuration.ConfigurationFactory;
 import org.codehaus.cargo.generic.configuration.DefaultConfigurationFactory;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.jvnet.hudson.test.JenkinsRule;
 
 /**
  * @author soudmaijer
@@ -16,13 +18,14 @@ public class GlassFishAdapterTest {
 
     private GlassFish3xAdapter glassFish3xAdapter;
     private static final String home = "/dev/null";
-    private static final String username = "username";
-    private static final String password = "password";
     private static final String port = "1234";
+
+    @Rule
+    public JenkinsRule j = new JenkinsRule();
 
     @Before
     public void setup() {
-        glassFish3xAdapter = new GlassFish3xAdapter(home, password, username, port, null);
+        glassFish3xAdapter = new GlassFish3xAdapter(home, "", port, "");
     }
 
     @Test

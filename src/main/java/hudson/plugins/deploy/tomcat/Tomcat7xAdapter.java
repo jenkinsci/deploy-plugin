@@ -23,12 +23,11 @@ public class Tomcat7xAdapter extends TomcatAdapter {
      * Tomcat 7 support
      *
      * @param url Tomcat server location (for example: http://localhost:8080)
-     * @param password tomcat manager password
-     * @param userName tomcat manager username
+     * @param credentialsId the tomcat user credentials
      */
     @DataBoundConstructor
-    public Tomcat7xAdapter(String url, String password, String userName) {
-        super(url, password, userName);
+    public Tomcat7xAdapter(String url, String credentialsId) {
+        super(url, credentialsId);
     }
 
     public void configure(Configuration config, EnvVars envVars, VariableResolver<String> resolver) {
