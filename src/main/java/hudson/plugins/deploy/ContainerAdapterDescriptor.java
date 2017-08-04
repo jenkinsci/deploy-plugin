@@ -12,10 +12,11 @@ import org.kohsuke.stapler.QueryParameter;
 
 /**
  * Base class for {@link ContainerAdapter} descriptors.
- * 
+ *
  * @author Kohsuke Kawaguchi
  */
 public abstract class ContainerAdapterDescriptor extends Descriptor<ContainerAdapter> {
+
     protected ContainerAdapterDescriptor(Class<? extends ContainerAdapter> clazz) {
         super(clazz);
     }

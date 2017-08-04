@@ -9,9 +9,10 @@ import org.kohsuke.stapler.DataBoundConstructor;
  * @author Kohsuke Kawaguchi
  */
 public class JBoss5xAdapter extends JBossAdapter {
+
     @DataBoundConstructor
-    public JBoss5xAdapter(String url, String password, String userName) {
-        super(url, password, userName);
+    public JBoss5xAdapter(String url, String password, String userName, String portOffset) {
+        super(url, password, userName, portOffset);
     }
 
     @Override
@@ -19,9 +20,9 @@ public class JBoss5xAdapter extends JBossAdapter {
         return "jboss5x";
     }
 
-
     @Extension
     public static final class DescriptorImpl extends ContainerAdapterDescriptor {
+
         @Override
         public String getDisplayName() {
             return "JBoss AS 5.x";

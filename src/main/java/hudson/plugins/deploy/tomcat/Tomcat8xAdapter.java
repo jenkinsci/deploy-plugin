@@ -31,6 +31,7 @@ public class Tomcat8xAdapter extends TomcatAdapter {
         super(url, password, userName);
     }
 
+    @Override
     public void configure(Configuration config, EnvVars envVars, VariableResolver<String> resolver) {
         super.configure(config, envVars, resolver);
         try {
@@ -43,6 +44,7 @@ public class Tomcat8xAdapter extends TomcatAdapter {
 
     /**
      * Tomcat Cargo containerId
+     *
      * @return tomcat8x
      */
     public String getContainerId() {
@@ -51,6 +53,7 @@ public class Tomcat8xAdapter extends TomcatAdapter {
 
     @Extension
     public static final class DescriptorImpl extends ContainerAdapterDescriptor {
+
         public String getDisplayName() {
             return "Tomcat 8.x";
         }

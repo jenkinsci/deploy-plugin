@@ -7,13 +7,14 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * JBoss 3.x.
- * 
+ *
  * @author Kohsuke Kawaguchi
  */
 public class JBoss3xAdapter extends JBossAdapter {
+
     @DataBoundConstructor
-    public JBoss3xAdapter(String url, String password, String userName) {
-        super(url, password, userName);
+    public JBoss3xAdapter(String url, String password, String userName, String portOffset) {
+        super(url, password, userName, portOffset);
     }
 
     @Override
@@ -23,6 +24,7 @@ public class JBoss3xAdapter extends JBossAdapter {
 
     @Extension
     public static final class DescriptorImpl extends ContainerAdapterDescriptor {
+
         @Override
         public String getDisplayName() {
             return "JBoss AS 3.x";

@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -18,7 +17,6 @@
         <connection>scm:git:git://github.com/jenkinsci/deploy-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:jenkinsci/deploy-plugin.git</developerConnection>
         <url>https://github.com/jenkinsci/deploy-plugin</url>
-        <tag>HEAD</tag>
     </scm>
 
     <developers>
@@ -35,7 +33,7 @@
             <name>Daniel Barth</name>
         </developer>
         <developer>
-            <id>frekele</id>
+            <id>leandro-freitas-softdevelop</id>
             <name>Leandro Kersting de Freitas</name>
         </developer>
     </developers>
@@ -43,6 +41,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <cargo.version>1.5.0</cargo.version>
+        <jboss.version>7.2.0.Final</jboss.version>
+        <jboss.remoting.version>3.3.8.Final</jboss.remoting.version>
     </properties>
 
     <dependencies>
@@ -68,34 +68,19 @@
 
         <dependency>
             <groupId>org.codehaus.cargo</groupId>
-            <artifactId>cargo-core-container-wildfly</artifactId>
-            <version>${cargo.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.codehaus.cargo</groupId>
             <artifactId>cargo-core-container-jboss</artifactId>
             <version>${cargo.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.codehaus.cargo</groupId>
             <artifactId>cargo-core-container-tomcat</artifactId>
             <version>${cargo.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>org.codehaus.cargo</groupId>
-            <artifactId>cargo-core-container-jetty</artifactId>
-            <version>${cargo.version}</version>
-        </dependency>
-
         <dependency>
             <groupId>org.codehaus.cargo</groupId>
             <artifactId>cargo-core-container-glassfish</artifactId>
             <version>${cargo.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.codehaus.cargo</groupId>
             <artifactId>cargo-core-container-weblogic</artifactId>
@@ -108,6 +93,22 @@
             <version>3.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.jboss.as</groupId>
+            <artifactId>jboss-as-controller-client</artifactId>
+            <version>${jboss.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.remoting3</groupId>
+            <artifactId>jboss-remoting</artifactId>
+            <version>${jboss.remoting.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jboss.xnio</groupId>
+                    <artifactId>xnio-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
     </dependencies>
 
     <repositories>
@@ -132,6 +133,4 @@
             <url>https://repo.jenkins-ci.org/public/</url>
         </pluginRepository>
     </pluginRepositories>
-
 </project>
-

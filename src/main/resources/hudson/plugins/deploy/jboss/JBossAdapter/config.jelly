@@ -9,4 +9,7 @@
   <f:entry title="JBoss URL" field="url">
     <f:textbox />
   </f:entry>
+  <f:entry title="Port offset" field="portOffset">
+    <f:textbox />
+  </f:entry>
 </j:jelly>
