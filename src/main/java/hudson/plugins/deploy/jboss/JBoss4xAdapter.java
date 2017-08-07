@@ -3,6 +3,7 @@ package hudson.plugins.deploy.jboss;
 import hudson.Extension;
 import hudson.plugins.deploy.ContainerAdapterDescriptor;
 
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -23,6 +24,7 @@ public class JBoss4xAdapter extends JBossAdapter {
     }
 
     @Extension
+    @Symbol("jboss4")
     public static final class DescriptorImpl extends ContainerAdapterDescriptor {
         @Override
         public String getDisplayName() {

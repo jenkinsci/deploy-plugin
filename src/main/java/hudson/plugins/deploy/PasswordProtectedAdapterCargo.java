@@ -8,10 +8,10 @@ import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.AbstractBuild;
-import hudson.model.BuildListener;
+import hudson.model.Run;
 import hudson.model.Job;
 import hudson.Util;
+import hudson.model.TaskListener;
 import hudson.util.Scrambler;
 import jenkins.model.Jenkins;
 import org.codehaus.cargo.container.property.RemotePropertySet;
@@ -87,10 +87,10 @@ public abstract class PasswordProtectedAdapterCargo extends DefaultCargoContaine
     }
 
     @Override
-    public boolean redeploy(FilePath war, String aContextPath, AbstractBuild<?,?> build, Launcher launcher,
-                            final BuildListener listener) throws IOException, InterruptedException {
-        loadCredentials(build.getParent());
-        return super.redeploy(war, aContextPath, build, launcher, listener);
+    public void redeployFile(FilePath war, String aContextPath, Run<?,?> run, Launcher launcher,
+                            final TaskListener listener) throws IOException, InterruptedException {
+        loadCredentials(run.getParent());
+        super.redeployFile(war, aContextPath, run, launcher, listener);
     }
 
     /**
