@@ -56,7 +56,7 @@ public class GlassFish3xAdapterTest {
     private static final String adminPortVariable = "adminPort";
     private static final String variableStart = "${";
     private static final String variableEnd = "}";
-    
+
     @Rule public JenkinsRule jenkinsRule = new JenkinsRule();
 
     @Before
