@@ -4,8 +4,9 @@ import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
-import hudson.model.BuildListener;
 import hudson.model.AbstractBuild;
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import hudson.util.VariableResolver;
 
@@ -44,14 +45,16 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
     /**
      * Returns the container ID used by Cargo.
      *
-     * @return
+     * @return the id of the container
      */
     protected abstract String getContainerId();
 
     /**
      * Fills in the {@link Configuration} object.
      *
-     * @param config
+     * @param config   the configuration of the adapter
+     * @param envVars  the environmental variables of the build
+     * @param resolver the variable resolver
      */
     protected abstract void configure(Configuration config, EnvVars envVars, VariableResolver<String> resolver);
 
@@ -61,10 +64,10 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
         return containerFactory.createContainer(id, ContainerType.REMOTE, config);
     }
 
-    protected void deploy(DeployerFactory deployerFactory, final BuildListener listener, Container container, File f, String contextPath) {
+    protected void deploy(DeployerFactory deployerFactory, final TaskListener listener, Container container, File f, String contextPath) {
         Deployer deployer = deployerFactory.createDeployer(container);
 
-        listener.getLogger().println("Deploying " + f + " to container " + container.getName() + " with context " + contextPath);
+        listener.getLogger().println("[DeployPublisher][INFO] Deploying " + f + " to container " + container.getName() + " with context " + contextPath);
         deployer.setLogger(new LoggerImpl(listener.getLogger()));
 
 
@@ -79,7 +82,7 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
             EAR ear = createEAR(f);
             deployer.redeploy(ear);
         } else {
-            throw new RuntimeException("Extension File Error.");
+            throw new RuntimeException("Extension File Error. Unsupported: .\"" + extension + "\"");
         }
     }
 
@@ -93,8 +96,15 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
         return new WAR(deployableFile.getAbsolutePath());
     }
 
+    /**
+     * Expands an encoded environment variable. Ex. if HOME=/user/alex, expands '${HOME}' to '/user/alex'
+     *
+     * @param envVars  the environment variables of the build
+     * @param resolver unused
+     * @param variable the variable to expand
+     * @return the value of the expanded variable
+     */
     protected String expandVariable(EnvVars envVars, VariableResolver<String> resolver, String variable) {
-        String temp = envVars.expand(variable);
         return Util.replaceMacro(envVars.expand(variable), resolver);
     }
 
@@ -103,27 +113,35 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
      * Creates a Deployable object EAR from the given file object.
      *
      * @param deployableFile The deployable file to create the Deployable from.
-     * @return A Deployable object.
+     * @return A deployable object.
      */
     protected EAR createEAR(File deployableFile) {
         return new EAR(deployableFile.getAbsolutePath());
     }
 
-    public boolean redeploy(FilePath war, final String contextPath, final AbstractBuild<?, ?> build, Launcher launcher,
-                            final BuildListener listener) throws IOException, InterruptedException {
-        return war.act(new DeployCallable(this, getContainerId(), build.getEnvironment(listener), listener, contextPath));
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void redeployFile(FilePath war, final String contextPath, final Run<?, ?> run, final Launcher launcher, final TaskListener listener) throws IOException, InterruptedException {
+        EnvVars envVars = new EnvVars();
+        if (run instanceof AbstractBuild) {
+            AbstractBuild build = (AbstractBuild) run;
+            envVars = build.getEnvironment(listener);
+        }
+        war.act(new DeployCallable(this, getContainerId(), envVars, listener, contextPath));
     }
 
     public static class DeployCallable extends MasterToSlaveFileCallable<Boolean> {
 
         private CargoContainerAdapter adapter;
         private String containerId;
-        private BuildListener listener;
+        private TaskListener listener;
         private String contextPath;
         private EnvVars envVars;
 
         public DeployCallable (CargoContainerAdapter adapter, String containerId, EnvVars envVars,
-                               BuildListener listener, String contextPath) {
+                              TaskListener listener, String contextPath) {
             this.adapter = adapter;
             this.containerId = containerId;
             this.envVars = envVars;

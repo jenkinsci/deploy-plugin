@@ -10,6 +10,7 @@ import java.net.URL;
 
 import org.codehaus.cargo.container.configuration.Configuration;
 import org.codehaus.cargo.container.property.RemotePropertySet;
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -30,6 +31,7 @@ public class Tomcat8xAdapter extends TomcatAdapter {
         super(url, credentialsId);
     }
 
+    @Override
     public void configure(Configuration config, EnvVars envVars, VariableResolver<String> resolver) {
         super.configure(config, envVars, resolver);
         try {
@@ -48,6 +50,7 @@ public class Tomcat8xAdapter extends TomcatAdapter {
         return "tomcat8x";
     }
 
+    @Symbol("tomcat8")
     @Extension
     public static final class DescriptorImpl extends ContainerAdapterDescriptor {
         public String getDisplayName() {

@@ -56,7 +56,7 @@ public class GlassFish3xAdapterTest {
     private static final String adminPortVariable = "adminPort";
     private static final String variableStart = "${";
     private static final String variableEnd = "}";
-    
+
     @Rule public JenkinsRule jenkinsRule = new JenkinsRule();
 
     @Before
@@ -118,13 +118,13 @@ public class GlassFish3xAdapterTest {
      */
     //@Test
     public void testDeploy() throws IOException, InterruptedException {
-        
+
         adapter.redeploy(new FilePath(new File("src/test/simple.war")), "contextPath", null, null, new StreamBuildListener(System.out));
     }
     
     //@Test
     public void testRemoteDeploy() throws IOException, InterruptedException {
-       
+
 
         remoteAdapter.redeploy(new FilePath(new File("src/test/simple.war")), "contextPath", null, null, new StreamBuildListener(System.out));
     }
