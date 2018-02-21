@@ -1,31 +1,7 @@
 package hudson.plugins.deploy;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.annotation.Nonnull;
-
-import org.jenkinsci.Symbol;
-import org.kohsuke.accmod.Restricted;
-import org.kohsuke.accmod.restrictions.NoExternalUse;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
-
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
-
-import hudson.AbortException;
-import hudson.EnvVars;
-import hudson.Extension;
-import hudson.FilePath;
-import hudson.Launcher;
-import hudson.Util;
-import hudson.model.AbstractBuild;
+import hudson.*;
 import hudson.model.AbstractProject;
 import hudson.model.Result;
 import hudson.model.Run;
@@ -35,10 +11,24 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
-import hudson.util.VariableResolver;
 import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 import jenkins.util.io.FileBoolean;
+import org.jenkinsci.Symbol;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
+
+import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Deploys WAR to a container.
@@ -101,7 +91,6 @@ public class DeployPublisher extends Notifier implements SimpleBuildStep, Serial
                 listener.getLogger().println("[DeployPublisher][ERROR] Workspace not found");
                 throw new AbortException("Workspace not found");
             }
-
             EnvVars envVars = new EnvVars();
             if (run instanceof AbstractBuild) {
                 final AbstractBuild build = (AbstractBuild) run;
@@ -113,8 +102,7 @@ public class DeployPublisher extends Notifier implements SimpleBuildStep, Serial
 
             FilePath[] wars = workspace.list(warFiles);
             if (wars == null || wars.length == 0) {
-                listener.getLogger().printf("[DeployPublisher][WARN] No wars found. Deploy aborted. %n");
-                return;
+                throw new InterruptedException("[DeployPublisher][WARN] No wars found. Deploy aborted. %n");
             }
             listener.getLogger().printf("[DeployPublisher][INFO] Attempting to deploy %d war file(s)%n", wars.length);
 
