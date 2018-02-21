@@ -1,21 +1,26 @@
 package hudson.plugins.deploy;
 
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
-import hudson.AbortException;
-import hudson.Extension;
-import hudson.FilePath;
-import hudson.Launcher;
-import hudson.Util;
-import hudson.model.Result;
+import hudson.*;
 import hudson.model.AbstractProject;
-import hudson.model.listeners.ItemListener;
+import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import hudson.model.listeners.ItemListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
+import jenkins.model.Jenkins;
+import jenkins.tasks.SimpleBuildStep;
+import jenkins.util.io.FileBoolean;
+import org.jenkinsci.Symbol;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -24,17 +29,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import jenkins.model.Jenkins;
-import jenkins.util.io.FileBoolean;
-import org.kohsuke.accmod.Restricted;
-import org.kohsuke.accmod.restrictions.NoExternalUse;
-import jenkins.tasks.SimpleBuildStep;
-import org.jenkinsci.Symbol;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
-
-import javax.annotation.Nonnull;
 
 /**
  * Deploys WAR to a container.
@@ -97,8 +91,9 @@ public class DeployPublisher extends Notifier implements SimpleBuildStep, Serial
                 listener.getLogger().println("[DeployPublisher][ERROR] Workspace not found");
                 throw new AbortException("Workspace not found");
             }
-
-            FilePath[] wars = workspace.list(this.war);
+            EnvVars environment = run.getEnvironment(listener);
+            String expandedVar = Util.replaceMacro(war, environment);
+            FilePath[] wars = workspace.list(expandedVar);
             if (wars == null || wars.length == 0) {
                 listener.getLogger().printf("[DeployPublisher][WARN] No wars found. Deploy aborted. %n");
                 return;
