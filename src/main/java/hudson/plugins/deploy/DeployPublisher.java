@@ -91,9 +91,16 @@ public class DeployPublisher extends Notifier implements SimpleBuildStep, Serial
                 listener.getLogger().println("[DeployPublisher][ERROR] Workspace not found");
                 throw new AbortException("Workspace not found");
             }
-            EnvVars environment = run.getEnvironment(listener);
-            String expandedVar = Util.replaceMacro(war, environment);
-            FilePath[] wars = workspace.list(expandedVar);
+            EnvVars envVars = new EnvVars();
+            if (run instanceof AbstractBuild) {
+                final AbstractBuild build = (AbstractBuild) run;
+                envVars = build.getEnvironment(listener);
+            }
+            
+            final VariableResolver<String> resolver = new VariableResolver.ByMap<String>(envVars);
+            final String warFiles = Util.replaceMacro(envVars.expand(this.war), resolver); 
+
+            FilePath[] wars = workspace.list(warFiles);
             if (wars == null || wars.length == 0) {
                 throw new InterruptedException("[DeployPublisher][WARN] No wars found. Deploy aborted. %n");
             }
