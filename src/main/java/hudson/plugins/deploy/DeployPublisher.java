@@ -95,8 +95,7 @@ public class DeployPublisher extends Notifier implements SimpleBuildStep, Serial
             String expandedVar = Util.replaceMacro(war, environment);
             FilePath[] wars = workspace.list(expandedVar);
             if (wars == null || wars.length == 0) {
-                listener.getLogger().printf("[DeployPublisher][WARN] No wars found. Deploy aborted. %n");
-                return;
+                throw new InterruptedException("[DeployPublisher][WARN] No wars found. Deploy aborted. %n");
             }
             listener.getLogger().printf("[DeployPublisher][INFO] Attempting to deploy %d war file(s)%n", wars.length);
 
