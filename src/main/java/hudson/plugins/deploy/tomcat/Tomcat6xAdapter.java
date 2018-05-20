@@ -13,8 +13,8 @@ import org.kohsuke.stapler.DataBoundConstructor;
 public class Tomcat6xAdapter extends TomcatAdapter {
 
     @DataBoundConstructor
-    public Tomcat6xAdapter(String url, String credentialsId) {
-        super(url, credentialsId);
+    public Tomcat6xAdapter(String url, String credentialsId, String context) {
+        super(url, credentialsId, context);
     }
 
     public String getContainerId() {

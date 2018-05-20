@@ -43,6 +43,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <cargo.version>1.6.5</cargo.version>
         <jenkins.version>1.642.3</jenkins.version>
+        <commons-lang.version>3.7</commons-lang.version>
         <workflow-cps-plugin.version>2.15</workflow-cps-plugin.version>
     </properties>
 
@@ -118,6 +119,12 @@
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>structs</artifactId>
             <version>1.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang.version}</version>
         </dependency>
 
         <dependency>

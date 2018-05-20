@@ -1,13 +1,19 @@
 package hudson.plugins.deploy.tomcat;
 
 import hudson.EnvVars;
+import hudson.FilePath;
+import hudson.Launcher;
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.plugins.deploy.PasswordProtectedAdapterCargo;
 import hudson.util.VariableResolver;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.cargo.container.configuration.Configuration;
 import org.codehaus.cargo.container.deployable.WAR;
 import org.codehaus.cargo.container.property.RemotePropertySet;
@@ -23,10 +29,15 @@ public abstract class TomcatAdapter extends PasswordProtectedAdapterCargo {
      * Top URL of Tomcat.
      */
     public final String url;
+    /**
+     * Alternative context that override context defined in plugin main configuration
+     */
+    public final String context;
 
-    public TomcatAdapter(String url, String credentialsId) {
+    public TomcatAdapter(String url, String credentialsId, String context) {
         super(credentialsId);
         this.url = url;
+        this.context = context;
     }
 
     @Override
@@ -54,5 +65,13 @@ public abstract class TomcatAdapter extends PasswordProtectedAdapterCargo {
     @Override
     protected WAR createWAR(File deployableFile) {
         return new TomcatWAR(deployableFile.getAbsolutePath());
+    }
+
+    @Override
+    public void redeployFile(
+        FilePath war, String aContextPath, Run<?, ?> run, Launcher launcher, TaskListener listener)
+        throws IOException, InterruptedException {
+        String finalContextPath = StringUtils.defaultIfBlank(this.context, aContextPath);
+        super.redeployFile(war, finalContextPath, run, launcher, listener);
     }
 }
