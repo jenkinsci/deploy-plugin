@@ -20,6 +20,8 @@ import org.kohsuke.stapler.DataBoundConstructor;
  */
 public class Tomcat8xAdapter extends TomcatAdapter {
 
+    private static String path = "/manager/text";
+
     /**
      * Tomcat 8 support
      *
@@ -28,18 +30,7 @@ public class Tomcat8xAdapter extends TomcatAdapter {
      */
     @DataBoundConstructor
     public Tomcat8xAdapter(String url, String credentialsId) {
-        super(url, credentialsId);
-    }
-
-    @Override
-    public void configure(Configuration config, EnvVars envVars, VariableResolver<String> resolver) {
-        super.configure(config, envVars, resolver);
-        try {
-            URL _url = new URL(expandVariable(envVars, resolver, url) + "/manager/text");
-            config.setProperty(RemotePropertySet.URI, _url.toExternalForm());
-        } catch (MalformedURLException e) {
-            throw new AssertionError(e);
-        }
+        super(url, credentialsId, path);
     }
 
     /**

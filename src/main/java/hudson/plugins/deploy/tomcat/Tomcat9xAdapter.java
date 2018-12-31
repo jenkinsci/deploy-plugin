@@ -14,38 +14,38 @@ import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
- * Tomcat 7.x
+ * Tomcat 9.x
  *
- * @author soudmaijer
+ * @author m4ndr4ck
  */
-public class Tomcat7xAdapter extends TomcatAdapter {
+public class Tomcat9xAdapter extends TomcatAdapter {
 
     private static String path = "/manager/text";
 
     /**
-     * Tomcat 7 support
+     * Tomcat 9 support
      *
      * @param url Tomcat server location (for example: http://localhost:8080)
-     * @param credentialsId the tomcat user credentials
+     * @param credentialsId tomcat manager username password credentials
      */
     @DataBoundConstructor
-    public Tomcat7xAdapter(String url, String credentialsId) {
+    public Tomcat9xAdapter(String url, String credentialsId) {
         super(url, credentialsId, path);
     }
 
     /**
      * Tomcat Cargo containerId
-     * @return tomcat7x
+     * @return tomcat9x
      */
     public String getContainerId() {
-        return "tomcat7x";
+        return "tomcat9x";
     }
 
-    @Symbol("tomcat7")
+    @Symbol("tomcat9")
     @Extension
     public static final class DescriptorImpl extends ContainerAdapterDescriptor {
         public String getDisplayName() {
-            return "Tomcat 7.x";
+            return "Tomcat 9.x";
         }
     }
 }
