@@ -135,6 +135,7 @@ public abstract class PasswordProtectedAdapterCargo extends DefaultCargoContaine
      * Migrates to credentials.
      * In case where migration fails, we retain the original username/password/passwordScrambled fields and should avoid
      * saving to disk until the user can help resolve the situation.
+     * @param generated generated credentials which should be checked
      * @return True if migration succeeded, false if we tried to create credentials and failed.
      */
     public boolean migrateCredentials(List<StandardUsernamePasswordCredentials> generated) {

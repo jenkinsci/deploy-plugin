@@ -18,7 +18,6 @@ public class GlassFish2xAdapter extends GlassFishAdapter {
      * @param home location of the GlassFish installation
      * @param credentialsId the id of the credential
      * @param adminPort admin server port
-     * @param hostname hostname
      */
     @DataBoundConstructor
     public GlassFish2xAdapter(String home, String credentialsId, String adminPort) {
