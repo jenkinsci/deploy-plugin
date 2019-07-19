@@ -19,6 +19,8 @@ import org.codehaus.cargo.container.tomcat.TomcatWAR;
  * @author Kohsuke Kawaguchi
  */
 public abstract class TomcatAdapter extends PasswordProtectedAdapterCargo {
+    private static final long serialVersionUID = 4326184683787248367L;
+
     /**
      * Top URL of Tomcat.
      */
