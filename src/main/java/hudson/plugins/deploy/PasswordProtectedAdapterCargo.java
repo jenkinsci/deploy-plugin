@@ -64,6 +64,8 @@ import java.util.logging.Logger;
  * @author Kohsuke Kawaguchi
  */
 public abstract class PasswordProtectedAdapterCargo extends DefaultCargoContainerAdapterImpl {
+    private static final long serialVersionUID = 8002030181042078933L;
+
     @Deprecated // backwards compatibility
     private String passwordScrambled;
 
@@ -98,7 +100,7 @@ public abstract class PasswordProtectedAdapterCargo extends DefaultCargoContaine
      *
      * @param job the job to lookup the scope for
      */
-    public void loadCredentials(Job job) {
+    public void loadCredentials(Job<?, ?> job) {
         StandardUsernamePasswordCredentials credentials = ContainerAdapterDescriptor.lookupCredentials(job, getUrl(), credentialsId);
         if (credentials != null) {
             CredentialsProvider.track(job, credentials);

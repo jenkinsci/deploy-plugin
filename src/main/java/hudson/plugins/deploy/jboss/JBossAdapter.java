@@ -17,6 +17,8 @@ import org.codehaus.cargo.container.property.ServletPropertySet;
  * @author Kohsuke Kawaguchi
  */
 public abstract class JBossAdapter extends PasswordProtectedAdapterCargo {
+    private static final long serialVersionUID = -949918552961403592L;
+
     public final String url;
 
     protected JBossAdapter(String url, String credentialsId) {

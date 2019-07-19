@@ -21,6 +21,8 @@ import org.codehaus.cargo.container.property.RemotePropertySet;
  * @author Kohsuke Kawaguchi
  */
 public abstract class DefaultCargoContainerAdapterImpl extends CargoContainerAdapter {
+    private static final long serialVersionUID = -4399554450872748605L;
+
     @Target({FIELD, METHOD})
     @Retention(RUNTIME)
     @Documented
@@ -52,7 +54,7 @@ public abstract class DefaultCargoContainerAdapterImpl extends CargoContainerAda
         try {
             String v = ConvertUtils.convert(getPropertyValue(ao));
             if(v!=null) {
-                if (v!=RemotePropertySet.PASSWORD) {
+                if (!v.equals(RemotePropertySet.PASSWORD)) {
                     v = expandVariable(envVars, resolver, v);
                 }
                 config.setProperty(p.value(), v);

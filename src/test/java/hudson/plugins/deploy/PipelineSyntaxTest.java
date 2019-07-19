@@ -123,7 +123,7 @@ public class PipelineSyntaxTest {
 
     @Test
     public void testSnippetizerDefaults() throws Exception {
-        WorkflowJob p = j.getInstance().createProject(WorkflowJob.class, "SnippetTest");
+        j.getInstance().createProject(WorkflowJob.class, "SnippetTest");
         SnippetizerTester t = new SnippetizerTester(j);
 
         ContainerAdapter tc = new Tomcat8xAdapter("http://example.com", "test-id");
