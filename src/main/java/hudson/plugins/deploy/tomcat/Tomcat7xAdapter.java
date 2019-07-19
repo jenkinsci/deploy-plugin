@@ -21,6 +21,8 @@ import org.kohsuke.stapler.DataBoundConstructor;
 public class Tomcat7xAdapter extends TomcatAdapter {
     private static final long serialVersionUID = -7404114022873678861L;
 
+    private static String path = "/manager/text";
+
     /**
      * Tomcat 7 support
      *

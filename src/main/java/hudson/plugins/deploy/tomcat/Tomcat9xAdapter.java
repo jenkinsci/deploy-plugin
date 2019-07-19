@@ -14,51 +14,38 @@ import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
- * Tomcat 8.x
+ * Tomcat 9.x
  *
- * @author soudmaijer
+ * @author m4ndr4ck
  */
-public class Tomcat8xAdapter extends TomcatAdapter {
-    private static final long serialVersionUID = -998875391401118618L;
+public class Tomcat9xAdapter extends TomcatAdapter {
 
     private static String path = "/manager/text";
 
     /**
-     * Tomcat 8 support
+     * Tomcat 9 support
      *
      * @param url Tomcat server location (for example: http://localhost:8080)
      * @param credentialsId tomcat manager username password credentials
      */
     @DataBoundConstructor
-    public Tomcat8xAdapter(String url, String credentialsId) {
-        super(url, credentialsId);
-    }
-
-    @Override
-    public void configure(Configuration config, EnvVars envVars, VariableResolver<String> resolver) {
-        super.configure(config, envVars, resolver);
-        try {
-            URL _url = new URL(expandVariable(envVars, resolver, this.url) + "/manager/text");
-            config.setProperty(RemotePropertySet.URI, _url.toExternalForm());
-        } catch (MalformedURLException e) {
-            throw new AssertionError(e);
-        }
+    public Tomcat9xAdapter(String url, String credentialsId) {
+        super(url, credentialsId, path);
     }
 
     /**
      * Tomcat Cargo containerId
-     * @return tomcat8x
+     * @return tomcat9x
      */
     public String getContainerId() {
-        return "tomcat8x";
+        return "tomcat9x";
     }
 
-    @Symbol("tomcat8")
+    @Symbol("tomcat9")
     @Extension
     public static final class DescriptorImpl extends ContainerAdapterDescriptor {
-        @Override
         public String getDisplayName() {
-            return "Tomcat 8.x";
+            return "Tomcat 9.x";
         }
     }
 }

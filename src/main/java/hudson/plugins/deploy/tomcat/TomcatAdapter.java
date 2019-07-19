@@ -25,10 +25,17 @@ public abstract class TomcatAdapter extends PasswordProtectedAdapterCargo {
      * Top URL of Tomcat.
      */
     public final String url;
+    private String path = "/manager";
 
     public TomcatAdapter(String url, String credentialsId) {
         super(credentialsId);
         this.url = url;
+    }
+
+    public TomcatAdapter(String url, String credentialsId, String path) {
+        super(credentialsId);
+        this.url = url;
+        this.path = path;
     }
 
     @Override
@@ -40,7 +47,7 @@ public abstract class TomcatAdapter extends PasswordProtectedAdapterCargo {
     public void configure(Configuration config, EnvVars envVars, VariableResolver<String> resolver) {
         super.configure(config, envVars, resolver);
         try {
-            URL _url = new URL(expandVariable(envVars, resolver, this.url) + "/manager");
+            URL _url = new URL(expandVariable(envVars, resolver, this.url) + path);
             config.setProperty(RemotePropertySet.URI, _url.toExternalForm());
         } catch (MalformedURLException e) {
             throw new AssertionError(e);
