@@ -1,6 +1,9 @@
 [![Jenkins Plugins](https://img.shields.io/jenkins/plugin/v/deploy.svg)](https://plugins.jenkins.io/deploy)
 [![Jenkins Plugins](https://img.shields.io/jenkins/plugin/i/deploy.svg)](https://plugins.jenkins.io/deploy)
+[![Build Status](https://ci.jenkins.io/buildStatus/icon?job=Plugins/deploy-plugin/master)](https://ci.jenkins.io/blue/organizations/jenkins/Plugins%2Fdeploy-plugin/branches)
+[![javadoc](https://img.shields.io/badge/javadoc-available-brightgreen.svg)](https://javadoc.jenkins.io/plugin/deploy/)
 [![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE.md)
+
 
 Jenkins Deploy Plugin
 =========================
