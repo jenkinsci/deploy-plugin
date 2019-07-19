@@ -13,6 +13,7 @@ import hudson.model.TaskListener;
 import jenkins.model.Jenkins;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import static hudson.Util.isOverridden;
 
@@ -26,7 +27,8 @@ import static hudson.Util.isOverridden;
  *
  * @author Kohsuke Kawaguchi
  */
-public abstract class ContainerAdapter implements Describable<ContainerAdapter>, ExtensionPoint {
+public abstract class ContainerAdapter implements Describable<ContainerAdapter>, ExtensionPoint, Serializable {
+    private static final long serialVersionUID = -447057201467218044L;
 
     @Deprecated
     public boolean redeploy(FilePath war, String aContextPath, AbstractBuild<?,?> build, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException {

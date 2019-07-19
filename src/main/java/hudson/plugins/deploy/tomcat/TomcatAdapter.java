@@ -25,19 +25,31 @@ import org.codehaus.cargo.container.tomcat.TomcatWAR;
  * @author Kohsuke Kawaguchi
  */
 public abstract class TomcatAdapter extends PasswordProtectedAdapterCargo {
+    private static final long serialVersionUID = 4326184683787248367L;
+
     /**
      * Top URL of Tomcat.
      */
     public final String url;
+
     /**
      * Alternative context that override context defined in plugin main configuration
      */
     public final String context;
 
+    private String path = "/manager";
+
+
     public TomcatAdapter(String url, String credentialsId, String context) {
         super(credentialsId);
         this.url = url;
         this.context = context;
+    }
+
+    public TomcatAdapter(String url, String credentialsId, String path) {
+        super(credentialsId);
+        this.url = url;
+        this.path = path;
     }
 
     @Override
@@ -49,7 +61,7 @@ public abstract class TomcatAdapter extends PasswordProtectedAdapterCargo {
     public void configure(Configuration config, EnvVars envVars, VariableResolver<String> resolver) {
         super.configure(config, envVars, resolver);
         try {
-            URL _url = new URL(expandVariable(envVars, resolver, this.url) + "/manager");
+            URL _url = new URL(expandVariable(envVars, resolver, this.url) + path);
             config.setProperty(RemotePropertySet.URI, _url.toExternalForm());
         } catch (MalformedURLException e) {
             throw new AssertionError(e);

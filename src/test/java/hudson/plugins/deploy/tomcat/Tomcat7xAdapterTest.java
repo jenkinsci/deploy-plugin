@@ -2,6 +2,7 @@ package hudson.plugins.deploy.tomcat;
 
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.CredentialsScope;
+import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
 import com.cloudbees.plugins.credentials.domains.Domain;
 import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
 import hudson.EnvVars;
@@ -90,7 +91,7 @@ public class Tomcat7xAdapterTest {
             new Tomcat7xAdapter(
                 getVariable(urlVariable), c.getId(), getVariable(alternativeContextVariable));
         Configuration config = new DefaultConfigurationFactory().createConfiguration(adapter.getContainerId(), ContainerType.REMOTE, ConfigurationType.RUNTIME);
-        adapter.migrateCredentials(Collections.EMPTY_LIST);
+        adapter.migrateCredentials(Collections.<StandardUsernamePasswordCredentials>emptyList());
         adapter.loadCredentials(project);
         adapter.configure(config, project.getEnvironment(n, listener), build.getBuildVariableResolver());
 

@@ -1,17 +1,17 @@
 package hudson.plugins.deploy;
 
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.management.MBeanServerConnection;
+import javax.management.MBeanServerInvocationHandler;
+import javax.management.ObjectName;
+import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
-import javax.management.remote.JMXConnector;
-import javax.management.MBeanServerConnection;
-import javax.management.ObjectName;
-import javax.management.MBeanInfo;
-import javax.management.ObjectInstance;
-import javax.management.MBeanServerInvocationHandler;
 import javax.naming.Context;
-import java.util.Hashtable;
-import java.net.URLClassLoader;
-import java.net.URL;
 
 /**
  *
@@ -31,16 +31,14 @@ public class Foo {
         // otherwise JNDI fails to find an InitialContextFactory
         Thread.currentThread().setContextClassLoader(cl);
 
-        Hashtable h = new Hashtable();
+        Map<String, Object> h = new HashMap<>();
         h.put(Context.SECURITY_PRINCIPAL, "admin");
         h.put(Context.SECURITY_CREDENTIALS, "adminadmin");
         h.put(JMXConnectorFactory.PROTOCOL_PROVIDER_CLASS_LOADER,cl);
         h.put(JMXConnectorFactory.PROTOCOL_PROVIDER_PACKAGES,"weblogic.management.remote");
         
         JMXConnector connector = JMXConnectorFactory.connect(serviceURL, h);
-        MBeanServerConnection con = connector.getMBeanServerConnection();
-
-        
+        connector.getMBeanServerConnection();
     }
 
     interface DeployerRuntime {
@@ -69,7 +67,7 @@ public class Foo {
         JMXServiceURL serviceURL = new JMXServiceURL(protocol, hostname, port,
                 jndiroot + mserver);
 
-        Hashtable h = new Hashtable();
+        Map<String, String> h = new HashMap<>();
         h.put(Context.SECURITY_PRINCIPAL, "admin");
         h.put(Context.SECURITY_CREDENTIALS, "adminadmin");
 
@@ -79,7 +77,7 @@ public class Foo {
 //            System.out.println(on);
 
         ObjectName on = new ObjectName("com.bea:Name=DeployerRuntime,Type=DeployerRuntime");
-        DeployerRuntime dr = MBeanServerInvocationHandler.newProxyInstance(con, on, DeployerRuntime.class, false);
+        MBeanServerInvocationHandler.newProxyInstance(con, on, DeployerRuntime.class, false);
         System.out.println(con.invoke(on,"activate",new Object[]{"src/test/simple.war","simple",null,null,null},
                 new String [] { "java.lang.String", "java.lang.String", "java.lang.String", "weblogic.management.deploy.DeploymentData", "java.lang.String" })); 
 

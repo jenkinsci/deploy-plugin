@@ -11,6 +11,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
  * @author Kohsuke Kawaguchi
  */
 public class Tomcat6xAdapter extends TomcatAdapter {
+    private static final long serialVersionUID = 1558737368614036333L;
 
     @DataBoundConstructor
     public Tomcat6xAdapter(String url, String credentialsId, String context) {
@@ -24,6 +25,7 @@ public class Tomcat6xAdapter extends TomcatAdapter {
     @Symbol("tomcat6")
     @Extension
     public static final class DescriptorImpl extends ContainerAdapterDescriptor {
+        @Override
         public String getDisplayName() {
             return "Tomcat 6.x";
         }

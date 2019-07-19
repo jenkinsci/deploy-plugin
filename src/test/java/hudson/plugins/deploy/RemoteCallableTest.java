@@ -68,7 +68,7 @@ public class RemoteCallableTest {
         adapters.add(new Tomcat8xAdapter("http://example.com", "test-id", StringUtils.EMPTY));
         project.getPublishersList().add(new DeployPublisher(adapters, war.getName()));
 
-        Run run = project.scheduleBuild2(0).get();
+        Run<?, ?> run = project.scheduleBuild2(0).get();
         j.assertBuildStatus(Result.FAILURE, run); // should fail because Tomcat DNE
         j.assertLogContains("java.io.FileNotFoundException: http://example.com/manager/text/list", run);
     }

@@ -10,6 +10,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
  * @author Kohsuke Kawaguchi
  */
 public class JBoss5xAdapter extends JBossAdapter {
+    private static final long serialVersionUID = -1054886428296132098L;
 
     @DataBoundConstructor
     public JBoss5xAdapter(String url, String credentialsId) {
@@ -20,7 +21,6 @@ public class JBoss5xAdapter extends JBossAdapter {
     public String getContainerId() {
         return "jboss5x";
     }
-
 
     @Extension
     @Symbol("jboss5")

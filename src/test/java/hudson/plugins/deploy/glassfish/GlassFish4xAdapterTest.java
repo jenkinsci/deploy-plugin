@@ -2,6 +2,7 @@ package hudson.plugins.deploy.glassfish;
 
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.CredentialsScope;
+import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
 import com.cloudbees.plugins.credentials.domains.Domain;
 import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
 import hudson.EnvVars;
@@ -29,6 +30,7 @@ import org.jvnet.hudson.test.JenkinsRule;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 
@@ -113,15 +115,20 @@ public class GlassFish4xAdapterTest {
      */
     //@Test
     public void testDeploy() throws IOException, InterruptedException {
-
-        adapter.redeploy(new FilePath(new File("src/test/simple.war")), "contextPath", null, null, new StreamBuildListener(System.out));
+        adapter.redeployFile(new FilePath(new File("src/test/simple.war"))
+                , "contextPath"
+                , null
+                , null
+                , new StreamBuildListener(System.out, StandardCharsets.UTF_8));
     }
     
     //@Test
     public void testRemoteDeploy() throws IOException, InterruptedException {
-
-
-        remoteAdapter.redeploy(new FilePath(new File("src/test/simple.war")), "contextPath", null, null, new StreamBuildListener(System.out));
+        remoteAdapter.redeployFile(new FilePath(new File("src/test/simple.war"))
+                , "contextPath"
+                , null
+                , null
+                , new StreamBuildListener(System.out, StandardCharsets.UTF_8));
     }
     
     @Test
@@ -147,7 +154,7 @@ public class GlassFish4xAdapterTest {
 
         adapter = new  GlassFish4xAdapter(getVariable(homeVariable), c.getId(), getVariable(adminPortVariable), null);
         Configuration config = new DefaultConfigurationFactory().createConfiguration(adapter.getContainerId(), ContainerType.REMOTE, ConfigurationType.RUNTIME);
-        adapter.migrateCredentials(Collections.EMPTY_LIST);
+        adapter.migrateCredentials(Collections.<StandardUsernamePasswordCredentials>emptyList());
         adapter.loadCredentials(project);
         adapter.configure(config, project.getEnvironment(n, listener), build.getBuildVariableResolver());
 
@@ -156,7 +163,7 @@ public class GlassFish4xAdapterTest {
 
         remoteAdapter = new  GlassFish4xAdapter(null, c.getId(), getVariable(adminPortVariable), getVariable(hostnameVariable));
         config = new DefaultConfigurationFactory().createConfiguration(remoteAdapter.getContainerId(), ContainerType.REMOTE, ConfigurationType.RUNTIME);
-        remoteAdapter.migrateCredentials(Collections.EMPTY_LIST);
+        remoteAdapter.migrateCredentials(Collections.<StandardUsernamePasswordCredentials>emptyList());
         remoteAdapter.loadCredentials(project);
         remoteAdapter.configure(config, project.getEnvironment(n, listener), build.getBuildVariableResolver());
 

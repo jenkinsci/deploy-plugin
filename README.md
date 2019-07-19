@@ -1,18 +1,21 @@
+[![Jenkins Plugins](https://img.shields.io/jenkins/plugin/v/deploy.svg)](https://plugins.jenkins.io/deploy)
+[![Jenkins Plugins](https://img.shields.io/jenkins/plugin/i/deploy.svg)](https://plugins.jenkins.io/deploy)
+[![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE.md)
+
 Jenkins Deploy Plugin
 =========================
 
 This plugin permits Jenkins to Deploy into containers and application servers.
 
-See [Deploy Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Deploy+Plugin) for more information.
+See [Deploy Plugin](https://plugins.jenkins.io/deploy) for more information.
 
-[![Build Status](https://jenkins.ci.cloudbees.com/buildStatus/icon?job=plugins/deploy-plugin)](https://jenkins.ci.cloudbees.com/job/plugins/job/deploy-plugin/)
 
 License
 -------
 
 	The MIT License (MIT)
 
-    Copyright (c) 2014 <copyright holders>
+    Copyright (c) 2014-2019 <copyright holders>
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal

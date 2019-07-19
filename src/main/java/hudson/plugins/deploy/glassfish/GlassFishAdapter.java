@@ -12,7 +12,6 @@ import org.codehaus.cargo.container.glassfish.GlassFishPropertySet;
 import org.codehaus.cargo.container.property.GeneralPropertySet;
 import org.codehaus.cargo.container.property.RemotePropertySet;
 import org.codehaus.cargo.container.spi.AbstractInstalledLocalContainer;
-import org.codehaus.cargo.container.spi.AbstractRemoteContainer;
 import org.codehaus.cargo.container.spi.configuration.AbstractRuntimeConfiguration;
 import org.codehaus.cargo.container.spi.configuration.AbstractStandaloneLocalConfiguration;
 import org.codehaus.cargo.generic.ContainerFactory;
@@ -22,6 +21,7 @@ import org.codehaus.cargo.generic.configuration.ConfigurationFactory;
  * GlassFishAdapter, configures the cargo GlassFish container.
  */
 public abstract class GlassFishAdapter extends PasswordProtectedAdapterCargo {
+    private static final long serialVersionUID = 7637381017646912632L;
 
     /**
      * Property home is required for GlassFish local containers.
@@ -62,19 +62,12 @@ public abstract class GlassFishAdapter extends PasswordProtectedAdapterCargo {
      */
     @Override
     protected Container getContainer(ConfigurationFactory configFactory, ContainerFactory containerFactory, String id, EnvVars envVars, VariableResolver<String> resolver) {
-
         if (hostname != null) {
-
-
             AbstractRuntimeConfiguration config = (AbstractRuntimeConfiguration) configFactory.createConfiguration(id, ContainerType.REMOTE, ConfigurationType.RUNTIME);
             configure(config, envVars, resolver);
             config.setProperty(RemotePropertySet.PASSWORD, getPassword());
 
-            AbstractRemoteContainer container = (AbstractRemoteContainer) containerFactory.createContainer(id, ContainerType.REMOTE, config);
-
-            return container;
-
-
+            return containerFactory.createContainer(id, ContainerType.REMOTE, config);
         } else {
             AbstractStandaloneLocalConfiguration config = (AbstractStandaloneLocalConfiguration) configFactory.createConfiguration(id, ContainerType.INSTALLED, ConfigurationType.STANDALONE, home);
             configure(config, envVars, resolver);

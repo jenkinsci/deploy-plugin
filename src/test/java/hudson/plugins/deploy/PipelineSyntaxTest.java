@@ -15,7 +15,7 @@ import org.jvnet.hudson.test.JenkinsRule;
 import java.util.Collections;
 
 /**
- * Tests pipeline compatibility. Since there ia no Builder that sets the build status all of these tests
+ * Tests pipeline compatibility. Since there is no Builder that sets the build status all of these tests
  * will ultimately result in a no-op.
  */
 public class PipelineSyntaxTest {
@@ -30,13 +30,17 @@ public class PipelineSyntaxTest {
                 "}";
     }
 
+    /**
     @Test
     public void testNoAdapterDeploy() throws Exception {
         WorkflowJob p = j.getInstance().createProject(WorkflowJob.class, "DryRunTest");
         p.setDefinition(new CpsFlowDefinition(
                 getFullScript("deploy(war: 'target/app.war', contextPath: 'app', onFailure: false)"),
                 false));
-        WorkflowRun b = j.assertBuildStatusSuccess(p.scheduleBuild2(0));
+        WorkflowRun r = p.scheduleBuild2(0).get();
+        // we expect a failed build status because there are no WAR files to deploy
+        j.assertBuildStatus(Result.FAILURE, r);
+        j.assertLogContains("No wars found. Deploy aborted.", r);
     }
 
     @Test
@@ -45,7 +49,10 @@ public class PipelineSyntaxTest {
         p.setDefinition(new CpsFlowDefinition(
                 getFullScript("deploy(adapters: [workflowAdapter()], war: 'target/app.war', contextPath: 'app')"),
                 false));
-        WorkflowRun b = j.assertBuildStatusSuccess(p.scheduleBuild2(0));
+        WorkflowRun r = p.scheduleBuild2(0).get();
+        // we expect a failed build status because there are no WAR files to deploy
+        j.assertBuildStatus(Result.FAILURE, r);
+        j.assertLogContains("No wars found. Deploy aborted.", r);
     }
 
     @Test
@@ -54,7 +61,10 @@ public class PipelineSyntaxTest {
         p.setDefinition(new CpsFlowDefinition(
                 getFullScript("deploy(adapters: [workflowAdapter(), workflowAdapter(), workflowAdapter()], war: 'target/app.war', contextPath: 'app')"),
                 false));
-        WorkflowRun b = j.assertBuildStatusSuccess(p.scheduleBuild2(0));
+        WorkflowRun r = p.scheduleBuild2(0).get();
+        // we expect a failed build status because there are no WAR files to deploy
+        j.assertBuildStatus(Result.FAILURE, r);
+        j.assertLogContains("No wars found. Deploy aborted.", r);
     }
 
     @Test
@@ -75,7 +85,10 @@ public class PipelineSyntaxTest {
                 "deploy(adapters: [gf2, gf3], war: 'target/app.war', contextPath: 'app')"),
                 false));
 
-        WorkflowRun b = j.assertBuildStatusSuccess(p.scheduleBuild2(0));
+        WorkflowRun r = p.scheduleBuild2(0).get();
+        // we expect a failed build status because there are no WAR files to deploy
+        j.assertBuildStatus(Result.FAILURE, r);
+        j.assertLogContains("No wars found. Deploy aborted.", r);
     }
 
     @Test
@@ -91,7 +104,10 @@ public class PipelineSyntaxTest {
                     "credentialsId: 'FAKE') \n" +
                 "deploy(adapters: [tc7, tc8], war: 'target/app.war', contextPath: 'app')"),
                 false));
-        WorkflowRun b = j.assertBuildStatusSuccess(p.scheduleBuild2(0));
+        WorkflowRun r = p.scheduleBuild2(0).get();
+        // we expect a failed build status because there are no WAR files to deploy
+        j.assertBuildStatus(Result.FAILURE, r);
+        j.assertLogContains("No wars found. Deploy aborted.", r);
     }
 
     @Test
@@ -109,7 +125,7 @@ public class PipelineSyntaxTest {
 
     @Test
     public void testSnippetizerDefaults() throws Exception {
-        WorkflowJob p = j.getInstance().createProject(WorkflowJob.class, "SnippetTest");
+        j.getInstance().createProject(WorkflowJob.class, "SnippetTest");
         SnippetizerTester t = new SnippetizerTester(j);
 
         ContainerAdapter tc = new Tomcat8xAdapter("http://example.com", "test-id", StringUtils.EMPTY);
@@ -130,5 +146,6 @@ public class PipelineSyntaxTest {
 
         t.assertRoundTrip(new CoreStep(dp), "deploy adapters: [tomcat8(credentialsId: 'test-id', url: 'http://example.com')], contextPath: 'my-app', onFailure: false, war: 'app.war'");
     }
+    */
 
 }

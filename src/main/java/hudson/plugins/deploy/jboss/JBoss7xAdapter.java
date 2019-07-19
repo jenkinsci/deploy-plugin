@@ -7,6 +7,7 @@ import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 public class JBoss7xAdapter extends JBossAdapter {
+    private static final long serialVersionUID = 651865313737173321L;
 
     @DataBoundConstructor
     public JBoss7xAdapter(String url, String credentialsId) {
@@ -17,7 +18,6 @@ public class JBoss7xAdapter extends JBossAdapter {
     public String getContainerId() {
         return "jboss7x";
     }
-
 
     @Extension
     @Symbol("jboss7")
