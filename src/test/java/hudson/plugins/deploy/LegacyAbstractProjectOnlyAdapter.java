@@ -15,6 +15,8 @@ import java.io.IOException;
  */
 @Extension
 public class LegacyAbstractProjectOnlyAdapter extends ContainerAdapter {
+    private static final long serialVersionUID = -7370111436986998619L;
+
     String containerName;
 
     @DataBoundConstructor
@@ -23,15 +25,16 @@ public class LegacyAbstractProjectOnlyAdapter extends ContainerAdapter {
     }
 
     @Override
-    public boolean redeploy(FilePath war, String aContextPath, AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
+    public boolean redeploy(FilePath war, String aContextPath, AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener)
+            throws IOException, InterruptedException
+    {
         listener.getLogger().println("Mock container deployed to " + containerName);
         return true;
     }
 
     public String getContainerId() {
-            return containerName;
-        }
-
+        return containerName;
+    }
 
     @Symbol("legacyAdapter")
     @Extension

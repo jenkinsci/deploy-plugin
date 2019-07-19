@@ -64,6 +64,8 @@ import java.util.logging.Logger;
  * @author Kohsuke Kawaguchi
  */
 public abstract class PasswordProtectedAdapterCargo extends DefaultCargoContainerAdapterImpl {
+    private static final long serialVersionUID = 8002030181042078933L;
+
     @Deprecated // backwards compatibility
     private String passwordScrambled;
 
@@ -98,7 +100,7 @@ public abstract class PasswordProtectedAdapterCargo extends DefaultCargoContaine
      *
      * @param job the job to lookup the scope for
      */
-    public void loadCredentials(Job job) {
+    public void loadCredentials(Job<?, ?> job) {
         StandardUsernamePasswordCredentials credentials = ContainerAdapterDescriptor.lookupCredentials(job, getUrl(), credentialsId);
         if (credentials != null) {
             CredentialsProvider.track(job, credentials);
@@ -133,6 +135,7 @@ public abstract class PasswordProtectedAdapterCargo extends DefaultCargoContaine
      * Migrates to credentials.
      * In case where migration fails, we retain the original username/password/passwordScrambled fields and should avoid
      * saving to disk until the user can help resolve the situation.
+     * @param generated generated credentials which should be checked
      * @return True if migration succeeded, false if we tried to create credentials and failed.
      */
     public boolean migrateCredentials(List<StandardUsernamePasswordCredentials> generated) {

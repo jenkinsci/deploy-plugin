@@ -11,6 +11,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
  * @author Kohsuke Kawaguchi
  */
 public class Tomcat4xAdapter extends TomcatAdapter {
+    private static final long serialVersionUID = -3577537993151201721L;
 
     @DataBoundConstructor
     public Tomcat4xAdapter(String url, String credentialsId) {
@@ -24,6 +25,7 @@ public class Tomcat4xAdapter extends TomcatAdapter {
     @Symbol("tomcat4")
     @Extension
     public static final class DescriptorImpl extends ContainerAdapterDescriptor {
+        @Override
         public String getDisplayName() {
             return "Tomcat 4.x";
         }

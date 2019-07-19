@@ -12,6 +12,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
  * @author Kohsuke Kawaguchi
  */
 public class JBoss3xAdapter extends JBossAdapter {
+    private static final long serialVersionUID = -8453620846047059775L;
 
     @DataBoundConstructor
     public JBoss3xAdapter(String url, String credentialsId) {

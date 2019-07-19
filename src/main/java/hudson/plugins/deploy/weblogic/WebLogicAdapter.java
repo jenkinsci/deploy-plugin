@@ -1,12 +1,5 @@
 package hudson.plugins.deploy.weblogic;
 
-import hudson.EnvVars;
-import hudson.plugins.deploy.ContainerAdapterDescriptor;
-import hudson.plugins.deploy.DefaultCargoContainerAdapterImpl;
-import hudson.plugins.deploy.PasswordProtectedAdapterCargo;
-import hudson.util.FormValidation;
-import hudson.util.VariableResolver;
-
 import java.io.File;
 
 import org.codehaus.cargo.container.Container;
@@ -16,10 +9,14 @@ import org.codehaus.cargo.container.configuration.ConfigurationType;
 import org.codehaus.cargo.generic.ContainerFactory;
 import org.codehaus.cargo.generic.configuration.ConfigurationFactory;
 import org.kohsuke.accmod.Restricted;
-import org.kohsuke.accmod.restrictions.DoNotUse;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
-import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
+
+import hudson.EnvVars;
+import hudson.plugins.deploy.ContainerAdapterDescriptor;
+import hudson.plugins.deploy.PasswordProtectedAdapterCargo;
+import hudson.util.FormValidation;
+import hudson.util.VariableResolver;
 
 /**
  * Base class for WebLogic support.
@@ -28,6 +25,7 @@ import org.kohsuke.stapler.QueryParameter;
  */
 @Restricted(NoExternalUse.class)
 public abstract class WebLogicAdapter extends PasswordProtectedAdapterCargo {
+    private static final long serialVersionUID = -744142864265772395L;
 
     // @Property(WebLogicPropertySet.SERVER)
     public final String server;
@@ -52,7 +50,7 @@ public abstract class WebLogicAdapter extends PasswordProtectedAdapterCargo {
         return containerFactory.createContainer(id, ContainerType.INSTALLED, config);
     }
 
-    public static abstract class WebLogicAdapterDescriptor extends ContainerAdapterDescriptor {
+    public abstract static class WebLogicAdapterDescriptor extends ContainerAdapterDescriptor {
         public FormValidation doCheckHome(@QueryParameter String value) {
             if(new File(new File(value),"autodeploy").isDirectory())
                 return FormValidation.ok();

@@ -19,6 +19,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
  * @author soudmaijer
  */
 public class Tomcat8xAdapter extends TomcatAdapter {
+    private static final long serialVersionUID = -998875391401118618L;
 
     private static String path = "/manager/text";
 
@@ -30,7 +31,18 @@ public class Tomcat8xAdapter extends TomcatAdapter {
      */
     @DataBoundConstructor
     public Tomcat8xAdapter(String url, String credentialsId) {
-        super(url, credentialsId, path);
+        super(url, credentialsId);
+    }
+
+    @Override
+    public void configure(Configuration config, EnvVars envVars, VariableResolver<String> resolver) {
+        super.configure(config, envVars, resolver);
+        try {
+            URL _url = new URL(expandVariable(envVars, resolver, this.url) + "/manager/text");
+            config.setProperty(RemotePropertySet.URI, _url.toExternalForm());
+        } catch (MalformedURLException e) {
+            throw new AssertionError(e);
+        }
     }
 
     /**
@@ -44,6 +56,7 @@ public class Tomcat8xAdapter extends TomcatAdapter {
     @Symbol("tomcat8")
     @Extension
     public static final class DescriptorImpl extends ContainerAdapterDescriptor {
+        @Override
         public String getDisplayName() {
             return "Tomcat 8.x";
         }

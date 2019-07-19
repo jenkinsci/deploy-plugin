@@ -16,6 +16,8 @@ import java.io.IOException;
  */
 @Extension
 public class WorkflowCompatibleAdapter extends ContainerAdapter {
+    private static final long serialVersionUID = 4901226580419700415L;
+
     String containerName;
 
     @DataBoundConstructor
@@ -24,14 +26,15 @@ public class WorkflowCompatibleAdapter extends ContainerAdapter {
     }
 
     @Override
-    public void redeployFile(FilePath war, String aContextPath, Run<?, ?> run, Launcher launcher, TaskListener listener) throws IOException, InterruptedException {
+    public void redeployFile(FilePath war, String aContextPath, Run<?, ?> run, Launcher launcher, TaskListener listener) throws IOException,
+            InterruptedException
+    {
         listener.getLogger().println("Mock container deployed to " + containerName);
     }
 
     public String getContainerId() {
-            return containerName;
-        }
-
+        return containerName;
+    }
 
     @Symbol("workflowAdapter")
     @Extension

@@ -41,6 +41,7 @@ import org.codehaus.cargo.generic.deployer.DeployerFactory;
  * @author Kohsuke Kawaguchi
  */
 public abstract class CargoContainerAdapter extends ContainerAdapter implements Serializable {
+    private static final long serialVersionUID = 5369849174353254743L;
 
     /**
      * Returns the container ID used by Cargo.
@@ -126,13 +127,14 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
     public void redeployFile(FilePath war, final String contextPath, final Run<?, ?> run, final Launcher launcher, final TaskListener listener) throws IOException, InterruptedException {
         EnvVars envVars = new EnvVars();
         if (run instanceof AbstractBuild) {
-            AbstractBuild build = (AbstractBuild) run;
+            AbstractBuild<?, ?> build = (AbstractBuild<?, ?>) run;
             envVars = build.getEnvironment(listener);
         }
         war.act(new DeployCallable(this, getContainerId(), envVars, listener, contextPath));
     }
 
     public static class DeployCallable extends MasterToSlaveFileCallable<Boolean> {
+        private static final long serialVersionUID = 2695944029141469818L;
 
         private CargoContainerAdapter adapter;
         private String containerId;
@@ -160,7 +162,7 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
             ConfigurationFactory configFactory = new DefaultConfigurationFactory(cl);
             ContainerFactory containerFactory = new DefaultContainerFactory(cl);
 
-            VariableResolver<String> resolver = new VariableResolver.ByMap<String>(envVars);
+            VariableResolver<String> resolver = new VariableResolver.ByMap<>(envVars);
             Container container = adapter.getContainer(configFactory, containerFactory, containerId, envVars, resolver);
             adapter.deploy(deployerFactory, listener, container, f, Util.replaceMacro(envVars.expand(contextPath), resolver));
 
