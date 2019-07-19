@@ -1,10 +1,10 @@
 package hudson.plugins.deploy.glassfish;
 
-import hudson.Extension;
-import hudson.plugins.deploy.ContainerAdapterDescriptor;
-import org.codehaus.cargo.container.glassfish.GlassFish4xStandaloneLocalConfiguration;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
+
+import hudson.Extension;
+import hudson.plugins.deploy.ContainerAdapterDescriptor;
 
 /**
  * GlassFish 4.x support
@@ -12,25 +12,21 @@ import org.kohsuke.stapler.DataBoundConstructor;
  * @author frenout
  */
 public class GlassFish4xAdapter extends GlassFishAdapter {
+    private static final long serialVersionUID = 2137808194916814021L;
 
     /**
      * GlassFish 4.x
      *
-     * @param home GlassFish home directory
-     * @param credentialsId the id of the username password credential
-     * @param adminPort glassfish admin port
+     * @param home location of the GlassFish installation
+     * @param credentialsId the id of the credential
+     * @param adminPort admin server port
+     * @param hostname hostname
      */
     @DataBoundConstructor
     public GlassFish4xAdapter(String home, String credentialsId, String adminPort, String hostname) {
         super(home, credentialsId, adminPort, hostname);
-        GlassFish4xStandaloneLocalConfiguration conf;
     }
 
-    /**password, userName, adminPort, hostname);
-     }
-     * GlassFish Cargo containerId
-     * @return glassfish3x
-     */
     @Override
     protected String getContainerId() {
         return "glassfish4x";
@@ -39,9 +35,10 @@ public class GlassFish4xAdapter extends GlassFishAdapter {
     /**
      * {@inheritDoc}
      */
-    @Symbol("glassfish3")
+    @Symbol("glassfish4")
     @Extension
     public static final class DescriptorImpl extends ContainerAdapterDescriptor {
+        @Override
         public String getDisplayName() {
             return "GlassFish 4.x";
         }
