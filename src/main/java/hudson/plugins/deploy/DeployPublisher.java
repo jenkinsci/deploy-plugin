@@ -1,7 +1,30 @@
 package hudson.plugins.deploy;
 
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.annotation.Nonnull;
+
+import org.jenkinsci.Symbol;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
+
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
-import hudson.*;
+
+import hudson.AbortException;
+import hudson.EnvVars;
+import hudson.Extension;
+import hudson.FilePath;
+import hudson.Launcher;
+import hudson.Util;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Result;
@@ -16,21 +39,6 @@ import hudson.util.VariableResolver;
 import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 import jenkins.util.io.FileBoolean;
-import org.jenkinsci.Symbol;
-import org.kohsuke.accmod.Restricted;
-import org.kohsuke.accmod.restrictions.NoExternalUse;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
-
-import javax.annotation.Nonnull;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Deploys WAR to a container.
@@ -38,6 +46,7 @@ import java.util.logging.Logger;
  * @author Kohsuke Kawaguchi
  */
 public class DeployPublisher extends Notifier implements SimpleBuildStep, Serializable {
+    private static final long serialVersionUID = 2244731062465136983L;
 
     private List<ContainerAdapter> adapters;
     private String contextPath = "";
@@ -95,11 +104,11 @@ public class DeployPublisher extends Notifier implements SimpleBuildStep, Serial
             }
             EnvVars envVars = new EnvVars();
             if (run instanceof AbstractBuild) {
-                final AbstractBuild build = (AbstractBuild) run;
+                final AbstractBuild<?, ?> build = (AbstractBuild<?, ?>) run;
                 envVars = build.getEnvironment(listener);
             }
             
-            final VariableResolver<String> resolver = new VariableResolver.ByMap<String>(envVars);
+            final VariableResolver<String> resolver = new VariableResolver.ByMap<>(envVars);
             final String warFiles = Util.replaceMacro(envVars.expand(this.war), resolver); 
 
             FilePath[] wars = workspace.list(warFiles);
@@ -109,8 +118,8 @@ public class DeployPublisher extends Notifier implements SimpleBuildStep, Serial
             listener.getLogger().printf("[DeployPublisher][INFO] Attempting to deploy %d war file(s)%n", wars.length);
 
             for (FilePath warFile : wars) {
-                for (ContainerAdapter adapter : adapters) {
-                    adapter.redeployFile(warFile, contextPath, run, launcher, listener);
+                for (ContainerAdapter containerAdapter : adapters) {
+                    containerAdapter.redeployFile(warFile, contextPath, run, launcher, listener);
                 }
             }
         } else {
@@ -123,12 +132,6 @@ public class DeployPublisher extends Notifier implements SimpleBuildStep, Serial
     }
     
     public Object readResolve() {
-    	if(adapter != null) {
-    		if(adapters == null) {
-    			adapters = new ArrayList<ContainerAdapter>();
-    		}
-    		adapters.add(adapter);
-    	}
     	return this;
     }
 
@@ -145,7 +148,7 @@ public class DeployPublisher extends Notifier implements SimpleBuildStep, Serial
     @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
         @Override
-        public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+        public boolean isApplicable(@SuppressWarnings("rawtypes") Class<? extends AbstractProject> jobType) {
             return true;
         }
 
@@ -153,6 +156,7 @@ public class DeployPublisher extends Notifier implements SimpleBuildStep, Serial
             return !(job instanceof AbstractProject);
         }
 
+        @Override
         public String getDisplayName() {
             return Messages.DeployPublisher_DisplayName();
         }
@@ -163,7 +167,7 @@ public class DeployPublisher extends Notifier implements SimpleBuildStep, Serial
          * @return a alphabetically sorted list of AdapterDescriptors
          */
         public List<ContainerAdapterDescriptor> getAdaptersDescriptors() {
-            List<ContainerAdapterDescriptor> r = new ArrayList<ContainerAdapterDescriptor>(ContainerAdapter.all());
+            List<ContainerAdapterDescriptor> r = new ArrayList<>(ContainerAdapter.all());
             Collections.sort(r,new Comparator<ContainerAdapterDescriptor>() {
                 public int compare(ContainerAdapterDescriptor o1, ContainerAdapterDescriptor o2) {
                     return o1.getDisplayName().compareTo(o2.getDisplayName());
@@ -173,20 +177,17 @@ public class DeployPublisher extends Notifier implements SimpleBuildStep, Serial
         }
     }
 
-    private static final long serialVersionUID = 1L;
-
     @Restricted(NoExternalUse.class)
     @Extension
     public static final class Migrator extends ItemListener {
 
-        @SuppressWarnings("deprecation")
         @Override
         public void onLoaded() {
             FileBoolean migrated = new FileBoolean(getClass(), "migratedCredentials");
             if (migrated.isOn()) {
                 return;
             }
-            List<StandardUsernamePasswordCredentials> generatedCredentials = new ArrayList<StandardUsernamePasswordCredentials>();
+            List<StandardUsernamePasswordCredentials> generatedCredentials = new ArrayList<>();
             for (AbstractProject<?,?> project : Jenkins.getActiveInstance().getAllItems(AbstractProject.class)) {
                 try {
                     DeployPublisher d = project.getPublishersList().get(DeployPublisher.class);
