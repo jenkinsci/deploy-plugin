@@ -1,15 +1,8 @@
 package hudson.plugins.deploy.tomcat;
 
-import hudson.EnvVars;
 import hudson.Extension;
 import hudson.plugins.deploy.ContainerAdapterDescriptor;
-import hudson.util.VariableResolver;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import org.codehaus.cargo.container.configuration.Configuration;
-import org.codehaus.cargo.container.property.RemotePropertySet;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -19,8 +12,9 @@ import org.kohsuke.stapler.DataBoundConstructor;
  * @author m4ndr4ck
  */
 public class Tomcat9xAdapter extends TomcatAdapter {
+    private static final long serialVersionUID = -7479041536985095270L;
 
-    private static String path = "/manager/text";
+    private static final String PATH = "/manager/text";
 
     /**
      * Tomcat 9 support
@@ -30,13 +24,10 @@ public class Tomcat9xAdapter extends TomcatAdapter {
      */
     @DataBoundConstructor
     public Tomcat9xAdapter(String url, String credentialsId) {
-        super(url, credentialsId, path);
+        super(url, credentialsId, PATH);
     }
 
-    /**
-     * Tomcat Cargo containerId
-     * @return tomcat9x
-     */
+    @Override
     public String getContainerId() {
         return "tomcat9x";
     }
@@ -44,6 +35,7 @@ public class Tomcat9xAdapter extends TomcatAdapter {
     @Symbol("tomcat9")
     @Extension
     public static final class DescriptorImpl extends ContainerAdapterDescriptor {
+        @Override
         public String getDisplayName() {
             return "Tomcat 9.x";
         }
