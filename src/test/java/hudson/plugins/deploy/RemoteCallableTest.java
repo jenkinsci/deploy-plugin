@@ -36,6 +36,8 @@ import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
 import java.util.ArrayList;
+import org.junit.ClassRule;
+import org.jvnet.hudson.test.BuildWatcher;
 
 /**
  * Tests that deployment can be called from a remote agent.
@@ -44,6 +46,8 @@ import java.util.ArrayList;
  */
 public class RemoteCallableTest {
 
+    @ClassRule
+    public static BuildWatcher buildWatcher = new BuildWatcher();
     @Rule
     public JenkinsRule j = new JenkinsRule();
 
