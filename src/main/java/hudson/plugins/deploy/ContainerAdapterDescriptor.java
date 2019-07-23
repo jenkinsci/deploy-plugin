@@ -51,7 +51,7 @@ public abstract class ContainerAdapterDescriptor extends Descriptor<ContainerAda
     public ListBoxModel doFillCredentialsIdItems(@AncestorInPath Item project,
                                                  @QueryParameter String url,
                                                  @QueryParameter String credentialsId) {
-        if (project == null && !Jenkins.getActiveInstance().hasPermission(Jenkins.ADMINISTER) ||
+        if (project == null && !Jenkins.get().hasPermission(Jenkins.ADMINISTER) ||
                 project != null && !project.hasPermission(Item.EXTENDED_READ)) {
             return new StandardListBoxModel().includeCurrentValue(credentialsId);
         }
@@ -68,7 +68,7 @@ public abstract class ContainerAdapterDescriptor extends Descriptor<ContainerAda
     public FormValidation doCheckCredentialsId(@AncestorInPath Item project,
                                                @QueryParameter String url,
                                                @QueryParameter String value) {
-        if (project == null && !Jenkins.getActiveInstance().hasPermission(Jenkins.ADMINISTER) ||
+        if (project == null && !Jenkins.get().hasPermission(Jenkins.ADMINISTER) ||
                 project != null && !project.hasPermission(Item.EXTENDED_READ)) {
             return FormValidation.ok();
         }

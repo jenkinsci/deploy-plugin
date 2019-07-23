@@ -179,7 +179,7 @@ public class DeployPublisher extends Notifier implements SimpleBuildStep, Serial
                 return;
             }
             List<StandardUsernamePasswordCredentials> generatedCredentials = new ArrayList<>();
-            for (AbstractProject<?,?> project : Jenkins.getActiveInstance().getAllItems(AbstractProject.class)) {
+            for (AbstractProject<?,?> project : Jenkins.get().getAllItems(AbstractProject.class)) {
                 try {
                     DeployPublisher d = project.getPublishersList().get(DeployPublisher.class);
                     if (d == null) {

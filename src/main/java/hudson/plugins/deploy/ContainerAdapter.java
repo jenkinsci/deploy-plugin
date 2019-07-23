@@ -75,10 +75,10 @@ public abstract class ContainerAdapter implements Describable<ContainerAdapter>,
     }
 
     public ContainerAdapterDescriptor getDescriptor() {
-        return (ContainerAdapterDescriptor)Jenkins.getActiveInstance().getDescriptor(getClass());
+        return (ContainerAdapterDescriptor)Jenkins.get().getDescriptor(getClass());
     }
 
     public static DescriptorExtensionList<ContainerAdapter,ContainerAdapterDescriptor> all() {
-        return Jenkins.getActiveInstance().<ContainerAdapter,ContainerAdapterDescriptor>getDescriptorList(ContainerAdapter.class);
+        return Jenkins.get().<ContainerAdapter,ContainerAdapterDescriptor>getDescriptorList(ContainerAdapter.class);
     }
 }
