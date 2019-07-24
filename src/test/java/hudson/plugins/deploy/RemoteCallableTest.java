@@ -23,19 +23,26 @@
  */
 package hudson.plugins.deploy;
 
+import java.util.ArrayList;
+
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.Test;
+import org.jvnet.hudson.test.BuildWatcher;
+import org.jvnet.hudson.test.JenkinsRule;
+
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.domains.Domain;
 import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
+
 import hudson.FilePath;
-import hudson.model.*;
+import hudson.model.FreeStyleProject;
+import hudson.model.Result;
+import hudson.model.Run;
+import hudson.model.Slave;
 import hudson.plugins.deploy.tomcat.Tomcat8xAdapter;
 import jenkins.model.Jenkins;
-import org.junit.Rule;
-import org.junit.Test;
-import org.jvnet.hudson.test.JenkinsRule;
-
-import java.util.ArrayList;
 
 /**
  * Tests that deployment can be called from a remote agent.
@@ -44,6 +51,8 @@ import java.util.ArrayList;
  */
 public class RemoteCallableTest {
 
+    @ClassRule
+    public static BuildWatcher buildWatcher = new BuildWatcher();
     @Rule
     public JenkinsRule j = new JenkinsRule();
 
@@ -64,11 +73,11 @@ public class RemoteCallableTest {
                 new UsernamePasswordCredentialsImpl(CredentialsScope.GLOBAL, "test-id", "", "user", "pass"));
 
         ArrayList<ContainerAdapter> adapters = new ArrayList<ContainerAdapter>();
-        adapters.add(new Tomcat8xAdapter("http://example.com", "test-id"));
+        adapters.add(new Tomcat8xAdapter(j.getURL().toExternalForm(), "test-id"));
         project.getPublishersList().add(new DeployPublisher(adapters, war.getName()));
 
         Run<?, ?> run = project.scheduleBuild2(0).get();
         j.assertBuildStatus(Result.FAILURE, run); // should fail because Tomcat DNE
-        j.assertLogContains("java.io.FileNotFoundException: http://example.com/manager/text/list", run);
+        j.assertLogContains("java.io.FileNotFoundException:", run);
     }
 }
