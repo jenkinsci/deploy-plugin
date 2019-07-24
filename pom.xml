@@ -8,7 +8,7 @@
     </parent>
 
     <artifactId>deploy</artifactId>
-    <version>1.14</version>
+    <version>1.15-SNAPSHOT</version>
     <packaging>hpi</packaging>
     <name>Deploy to container Plugin</name>
     <url>http://wiki.jenkins-ci.org/display/JENKINS/Deploy+Plugin</url>
@@ -17,7 +17,7 @@
         <connection>scm:git:git://github.com/jenkinsci/deploy-plugin.git</connection>
         <developerConnection>scm:git:https://github.com/jenkinsci/deploy-plugin.git</developerConnection>
         <url>https://github.com/jenkinsci/deploy-plugin</url>
-        <tag>deploy-1.14</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <developers>
