@@ -34,7 +34,6 @@ public class GlassFish2xAdapterTest {
     private static final String home = "/dev/null";
     private static final String username = "username";
     private static final String password = "password";
-    private static final String port = "1234";
     
     @Rule
     public JenkinsRule jenkinsRule = new JenkinsRule();
@@ -44,7 +43,7 @@ public class GlassFish2xAdapterTest {
         UsernamePasswordCredentialsImpl c = new UsernamePasswordCredentialsImpl(CredentialsScope.GLOBAL, "test", "sample", username, password);
         CredentialsProvider.lookupStores(jenkinsRule.jenkins).iterator().next().addCredentials(Domain.global(), c);
 
-        adapter = new GlassFish2xAdapter(home, c.getId(), port);
+        adapter = new GlassFish2xAdapter(home, c.getId(), null);
         adapter.loadCredentials(/* temp project to avoid npe */ jenkinsRule.createFreeStyleProject());
     }
 
@@ -56,7 +55,6 @@ public class GlassFish2xAdapterTest {
     @Test
     public void testConfigure() throws IOException, InterruptedException, ExecutionException {
         Assert.assertEquals(home, adapter.home);
-        Assert.assertEquals(port, adapter.adminPort);
         Assert.assertEquals(username, adapter.getUsername());
         Assert.assertEquals(password, adapter.getPassword());
 

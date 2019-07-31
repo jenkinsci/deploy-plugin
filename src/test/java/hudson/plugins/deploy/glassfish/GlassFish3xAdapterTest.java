@@ -10,14 +10,18 @@ import hudson.FilePath;
 import hudson.model.BuildListener;
 import hudson.model.FreeStyleBuild;
 import hudson.model.StreamBuildListener;
+import hudson.plugins.deploy.ContainerAdapter;
+import hudson.plugins.deploy.DeployPublisher;
 import hudson.model.FreeStyleProject;
 import hudson.model.Node;
+import hudson.model.Result;
+import hudson.model.Run;
 import hudson.slaves.EnvironmentVariablesNodeProperty;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 
@@ -51,7 +55,6 @@ public class GlassFish3xAdapterTest {
     private static final String username = "admin";
     private static final String usernameVariable = "uname";
     private static final String password = "";
-    private static final String port = "1234";
     private static final String hostname = "localhost";
     private static final String hostnameVariable = "hostname";
     private static final String adminPort = "4848";
@@ -66,7 +69,7 @@ public class GlassFish3xAdapterTest {
         UsernamePasswordCredentialsImpl c = new UsernamePasswordCredentialsImpl(CredentialsScope.GLOBAL, "test", "sample", username, password);
         CredentialsProvider.lookupStores(jenkinsRule.jenkins).iterator().next().addCredentials(Domain.global(), c);
 
-        adapter = new GlassFish3xAdapter(home, c.getId(), port, null);
+        adapter = new GlassFish3xAdapter(home, c.getId(), null, null);
         adapter.loadCredentials(/* temp project to avoid npe */ jenkinsRule.createFreeStyleProject());
         remoteAdapter = new GlassFish3xAdapter(null, c.getId(), adminPort, hostname);
         remoteAdapter.loadCredentials(/* temp project to avoid npe */ jenkinsRule.createFreeStyleProject());
@@ -80,7 +83,6 @@ public class GlassFish3xAdapterTest {
     @Test
     public void testConfigure() throws IOException, InterruptedException, ExecutionException {
         Assert.assertEquals(home, adapter.home);
-        Assert.assertEquals(port, adapter.adminPort);
         Assert.assertEquals(username, adapter.getUsername());
         Assert.assertEquals(password, adapter.getPassword());
         Assert.assertEquals(null, adapter.hostname);
@@ -113,29 +115,40 @@ public class GlassFish3xAdapterTest {
         Assert.assertNotNull(container);
     }
 
-    /**
-     * This test only runs in your local environment
-     * @throws IOException
-     * @throws InterruptedException
-     */
+    // This test only runs in your local environment
     //@Test
-    public void testDeploy() throws IOException, InterruptedException {
-        adapter.redeployFile(new FilePath(new File("src/test/simple.war"))
-                , "contextPath"
-                , null
-                , null
-                , new StreamBuildListener(System.out, StandardCharsets.UTF_8));
+    public void testDeploy() throws Exception {
+        FreeStyleProject project = this.jenkinsRule.createFreeStyleProject();
+        FreeStyleBuild freeStyleBuild = project.scheduleBuild2(0).get(); // touch workspace
+
+        FilePath workspace = freeStyleBuild.getWorkspace();
+        new FilePath(new File("src/test/simple.war")).copyTo(workspace.child("simple.war"));
+
+        ArrayList<ContainerAdapter> adapters = new ArrayList<ContainerAdapter>();
+        adapters.add(this.adapter);
+        project.getPublishersList().add(new DeployPublisher(adapters, "simple.war"));
+
+        Run<?, ?> run = project.scheduleBuild2(0).get();
+        this.jenkinsRule.assertBuildStatus(Result.SUCCESS, run);
     }
-    
+
+    // This test only runs in your remote environment
     //@Test
-    public void testRemoteDeploy() throws IOException, InterruptedException {
-        remoteAdapter.redeployFile(new FilePath(new File("src/test/simple.war"))
-                , "contextPath"
-                , null
-                , null
-                , new StreamBuildListener(System.out, StandardCharsets.UTF_8));
+    public void testRemoteDeploy() throws Exception {
+        FreeStyleProject project = this.jenkinsRule.createFreeStyleProject();
+        FreeStyleBuild freeStyleBuild = project.scheduleBuild2(0).get(); // touch workspace
+
+        FilePath workspace = freeStyleBuild.getWorkspace();
+        new FilePath(new File("src/test/simple.war")).copyTo(workspace.child("simple.war"));
+
+        ArrayList<ContainerAdapter> adapters = new ArrayList<ContainerAdapter>();
+        adapters.add(this.remoteAdapter);
+        project.getPublishersList().add(new DeployPublisher(adapters, "simple.war"));
+
+        Run<?, ?> run = project.scheduleBuild2(0).get();
+        this.jenkinsRule.assertBuildStatus(Result.SUCCESS, run);
     }
-    
+
     @Test
     public void testVariables() throws Exception {
         Node n = jenkinsRule.createSlave();
