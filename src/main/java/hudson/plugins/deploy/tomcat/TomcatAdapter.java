@@ -7,7 +7,9 @@ import java.net.URL;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.cargo.container.configuration.Configuration;
 import org.codehaus.cargo.container.deployable.WAR;
+import org.codehaus.cargo.container.property.GeneralPropertySet;
 import org.codehaus.cargo.container.property.RemotePropertySet;
+import org.codehaus.cargo.container.property.ServletPropertySet;
 import org.codehaus.cargo.container.tomcat.TomcatWAR;
 
 import hudson.EnvVars;
@@ -53,10 +55,16 @@ public abstract class TomcatAdapter extends PasswordProtectedAdapterCargo {
     public void configure(Configuration config, EnvVars envVars, VariableResolver<String> resolver) {
         super.configure(config, envVars, resolver);
         try {
-            // overwrite remote URI if alternative manager context path is specified
             if (StringUtils.isNotBlank(this.path)) {
-                URL _url = new URL(expandVariable(envVars, resolver, this.url) + expandVariable(envVars, resolver, this.path));
-                config.setProperty(RemotePropertySet.URI, _url.toExternalForm());
+                // set remote URI directly if alternative manager context path is specified
+                URL managerUrl = new URL(expandVariable(envVars, resolver, this.url) + expandVariable(envVars, resolver, this.path));
+                config.setProperty(RemotePropertySet.URI, managerUrl.toExternalForm());
+            } else {
+                // overwrite default values with current URL
+                URL baseUrl = new URL(expandVariable(envVars, resolver, this.url));
+                config.setProperty(GeneralPropertySet.PROTOCOL, baseUrl.getProtocol());
+                config.setProperty(GeneralPropertySet.HOSTNAME, baseUrl.getHost());
+                config.setProperty(ServletPropertySet.PORT, String.valueOf(baseUrl.getPort()));
             }
         } catch (MalformedURLException e) {
             throw new AssertionError(e);
