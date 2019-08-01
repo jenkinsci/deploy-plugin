@@ -35,7 +35,8 @@ public class Tomcat7xAdapterTest {
 
     private Tomcat7xAdapter adapter;
     private static final String url = "http://localhost:8080";
-    private static final String configuredUrl = "http://localhost:8080/manager/text";
+    private static final String managerContextPath = "/foo-manager/text";
+    private static final String configuredUrl = url + managerContextPath;
     private static final String urlVariable = "URL";
     private static final String username = "usernm";
     private static final String usernameVariable = "user";
@@ -50,7 +51,7 @@ public class Tomcat7xAdapterTest {
         UsernamePasswordCredentialsImpl c = new UsernamePasswordCredentialsImpl(CredentialsScope.GLOBAL, "test", "sample", username, password);
         CredentialsProvider.lookupStores(jenkinsRule.jenkins).iterator().next().addCredentials(Domain.global(), c);
 
-        adapter = new  Tomcat7xAdapter(url, c.getId());
+        adapter = new Tomcat7xAdapter(url, c.getId(), null);
         adapter.loadCredentials(/* temp project to avoid npe */ jenkinsRule.createFreeStyleProject());
     }
 
@@ -85,7 +86,7 @@ public class Tomcat7xAdapterTest {
                 "", getVariable(usernameVariable), password);
         CredentialsProvider.lookupStores(jenkinsRule.jenkins).iterator().next().addCredentials(Domain.global(), c);
 
-        adapter = new Tomcat7xAdapter(getVariable(urlVariable), c.getId());
+        adapter = new Tomcat7xAdapter(getVariable(urlVariable), c.getId(), managerContextPath);
         Configuration config = new DefaultConfigurationFactory().createConfiguration(adapter.getContainerId(), ContainerType.REMOTE, ConfigurationType.RUNTIME);
         adapter.migrateCredentials(Collections.<StandardUsernamePasswordCredentials>emptyList());
         adapter.loadCredentials(project);
