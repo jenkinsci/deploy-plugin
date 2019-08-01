@@ -6,14 +6,20 @@ import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredenti
 import com.cloudbees.plugins.credentials.domains.Domain;
 import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
 import hudson.EnvVars;
+import hudson.FilePath;
 import hudson.model.BuildListener;
 import hudson.model.FreeStyleBuild;
 import hudson.model.StreamBuildListener;
+import hudson.plugins.deploy.ContainerAdapter;
+import hudson.plugins.deploy.DeployPublisher;
 import hudson.model.FreeStyleProject;
 import hudson.model.Node;
+import hudson.model.Result;
+import hudson.model.Run;
 import hudson.slaves.EnvironmentVariablesNodeProperty;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.Collections;
 
 import org.codehaus.cargo.container.ContainerType;
@@ -93,6 +99,21 @@ public class Tomcat8xAdapterTest {
 
         Assert.assertEquals(configuredUrl, config.getPropertyValue(RemotePropertySet.URI));
         Assert.assertEquals(username, config.getPropertyValue(RemotePropertySet.USERNAME));
+    }
+
+    // This test only runs in your local environment.
+    //@Test
+    public void testDeploy() throws Exception {
+        FreeStyleProject project = this.jenkinsRule.createFreeStyleProject();
+        FreeStyleBuild freeStyleBuild = project.scheduleBuild2(0).get(); // touch workspace
+
+        FilePath workspace = freeStyleBuild.getWorkspace();
+        new FilePath(new File("src/test/simple.war")).copyTo(workspace.child("simple.war"));
+
+        project.getPublishersList().add(new DeployPublisher(Collections.singletonList((ContainerAdapter) this.adapter), "simple.war"));
+
+        Run<?, ?> run = project.scheduleBuild2(0).get();
+        this.jenkinsRule.assertBuildStatus(Result.SUCCESS, run);
     }
 
     private String getVariable(String variableName) {
