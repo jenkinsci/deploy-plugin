@@ -2,6 +2,8 @@ package hudson.plugins.deploy.tomcat;
 
 import hudson.Extension;
 import hudson.plugins.deploy.ContainerAdapterDescriptor;
+
+import org.codehaus.cargo.container.tomcat.Tomcat4xRemoteContainer;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -14,13 +16,13 @@ public class Tomcat4xAdapter extends TomcatAdapter {
     private static final long serialVersionUID = -3577537993151201721L;
 
     @DataBoundConstructor
-    public Tomcat4xAdapter(String url, String credentialsId) {
-        super(url, credentialsId);
+    public Tomcat4xAdapter(String url, String credentialsId, String path) {
+        super(url, credentialsId, path);
     }
 
     @Override
     public String getContainerId() {
-        return "tomcat4x";
+        return Tomcat4xRemoteContainer.ID;
     }
 
     @Symbol("tomcat4")
@@ -28,7 +30,7 @@ public class Tomcat4xAdapter extends TomcatAdapter {
     public static final class DescriptorImpl extends ContainerAdapterDescriptor {
         @Override
         public String getDisplayName() {
-            return "Tomcat 4.x";
+            return new Tomcat4xRemoteContainer(null).getName();
         }
     }
 }
