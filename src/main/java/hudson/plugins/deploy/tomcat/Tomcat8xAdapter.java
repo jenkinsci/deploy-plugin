@@ -2,8 +2,6 @@ package hudson.plugins.deploy.tomcat;
 
 import hudson.Extension;
 import hudson.plugins.deploy.ContainerAdapterDescriptor;
-
-import hudson.plugins.deploy.DeploymentContext;
 import org.codehaus.cargo.container.tomcat.Tomcat8xRemoteContainer;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -26,7 +24,7 @@ public class Tomcat8xAdapter extends TomcatAdapter {
      */
     @DataBoundConstructor
     public Tomcat8xAdapter(
-        String url, String credentialsId, DeploymentContext alternativeDeploymentContext, String path) {
+        String url, String credentialsId, String alternativeDeploymentContext, String path) {
         super(url, credentialsId, alternativeDeploymentContext, path);
     }
 

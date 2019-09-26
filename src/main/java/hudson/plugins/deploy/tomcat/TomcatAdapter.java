@@ -42,11 +42,15 @@ public abstract class TomcatAdapter extends PasswordProtectedAdapterCargo {
     private final String path;
 
     public TomcatAdapter(
-        String url, String credentialsId, DeploymentContext alternativeDeploymentContext, String path) {
+        String url, String credentialsId, String alternativeDeploymentContext, String path) {
         super(credentialsId);
         this.url = url;
         this.path = path;
-        this.alternativeDeploymentContext = alternativeDeploymentContext;
+        if(StringUtils.isNotBlank(alternativeDeploymentContext)) {
+            this.alternativeDeploymentContext = DeploymentContext.of(alternativeDeploymentContext);
+        } else {
+            this.alternativeDeploymentContext = null;
+        }
     }
 
     @Override

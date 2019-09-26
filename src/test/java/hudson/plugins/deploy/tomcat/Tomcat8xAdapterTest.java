@@ -93,7 +93,7 @@ public class Tomcat8xAdapterTest extends TomcatAdapterTest {
 
         adapter =
             new Tomcat8xAdapter(
-                getVariable(urlVariable), c.getId(), getDeploymentContextVariable(alternativeContextVariable), managerContextPath);
+                getVariable(urlVariable), c.getId(), getVariable(alternativeContextVariable), managerContextPath);
         Configuration config = new DefaultConfigurationFactory().createConfiguration(adapter.getContainerId(), ContainerType.REMOTE, ConfigurationType.RUNTIME);
         adapter.migrateCredentials(Collections.<StandardUsernamePasswordCredentials>emptyList());
         adapter.loadCredentials(project);

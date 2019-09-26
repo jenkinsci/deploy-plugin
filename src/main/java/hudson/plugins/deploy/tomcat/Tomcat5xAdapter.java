@@ -2,7 +2,6 @@ package hudson.plugins.deploy.tomcat;
 
 import hudson.Extension;
 import hudson.plugins.deploy.ContainerAdapterDescriptor;
-import hudson.plugins.deploy.DeploymentContext;
 import org.codehaus.cargo.container.tomcat.Tomcat5xRemoteContainer;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -16,7 +15,7 @@ public class Tomcat5xAdapter extends TomcatAdapter {
     private static final long serialVersionUID = 2441615146518612287L;
 
     @DataBoundConstructor
-    public Tomcat5xAdapter(String url, String credentialsId, DeploymentContext alternativeDeploymentContext, String path) {
+    public Tomcat5xAdapter(String url, String credentialsId, String alternativeDeploymentContext, String path) {
         super(url, credentialsId, alternativeDeploymentContext, path);
     }
 

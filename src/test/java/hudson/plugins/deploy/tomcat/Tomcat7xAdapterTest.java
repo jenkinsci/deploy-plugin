@@ -89,7 +89,7 @@ public class Tomcat7xAdapterTest extends TomcatAdapterTest {
 
         adapter =
             new Tomcat7xAdapter(
-                getVariable(urlVariable), c.getId(), getDeploymentContextVariable(alternativeContextVariable), managerContextPath);
+                getVariable(urlVariable), c.getId(), getVariable(alternativeContextVariable), managerContextPath);
         Configuration config = new DefaultConfigurationFactory().createConfiguration(adapter.getContainerId(), ContainerType.REMOTE, ConfigurationType.RUNTIME);
         adapter.migrateCredentials(Collections.<StandardUsernamePasswordCredentials>emptyList());
         adapter.loadCredentials(project);
