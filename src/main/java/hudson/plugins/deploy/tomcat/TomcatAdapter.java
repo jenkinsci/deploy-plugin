@@ -1,10 +1,14 @@
 package hudson.plugins.deploy.tomcat;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import org.apache.commons.lang.StringUtils;
+import hudson.EnvVars;
+import hudson.FilePath;
+import hudson.Launcher;
+import hudson.model.Run;
+import hudson.model.TaskListener;
+import hudson.plugins.deploy.DeploymentContext;
+import hudson.plugins.deploy.PasswordProtectedAdapterCargo;
+import hudson.util.VariableResolver;
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.cargo.container.configuration.Configuration;
 import org.codehaus.cargo.container.deployable.WAR;
 import org.codehaus.cargo.container.property.GeneralPropertySet;
@@ -12,9 +16,10 @@ import org.codehaus.cargo.container.property.RemotePropertySet;
 import org.codehaus.cargo.container.property.ServletPropertySet;
 import org.codehaus.cargo.container.tomcat.TomcatWAR;
 
-import hudson.EnvVars;
-import hudson.plugins.deploy.PasswordProtectedAdapterCargo;
-import hudson.util.VariableResolver;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Base class for Tomcat adapters.
@@ -28,18 +33,20 @@ public abstract class TomcatAdapter extends PasswordProtectedAdapterCargo {
      * Top URL of Tomcat.
      */
     public final String url;
+
+    /**
+     * Alternative context that override context defined in plugin main configuration
+     */
+    public final DeploymentContext alternativeDeploymentContext;
+
     private final String path;
 
-    public TomcatAdapter(String url, String credentialsId) {
-        super(credentialsId);
-        this.url = url;
-        this.path = null;
-    }
-
-    public TomcatAdapter(String url, String credentialsId, String path) {
+    public TomcatAdapter(
+        String url, String credentialsId, DeploymentContext alternativeDeploymentContext, String path) {
         super(credentialsId);
         this.url = url;
         this.path = path;
+        this.alternativeDeploymentContext = alternativeDeploymentContext;
     }
 
     @Override
@@ -80,5 +87,16 @@ public abstract class TomcatAdapter extends PasswordProtectedAdapterCargo {
     @Override
     protected WAR createWAR(File deployableFile) {
         return new TomcatWAR(deployableFile.getAbsolutePath());
+    }
+
+    @Override
+    public void redeployFile(
+        FilePath war, String aContextPath, Run<?, ?> run, Launcher launcher, TaskListener listener)
+        throws IOException, InterruptedException {
+        String finalContextPath = aContextPath;
+        if(this.alternativeDeploymentContext != null) {
+            finalContextPath = this.alternativeDeploymentContext.toString();
+        }
+        super.redeployFile(war, finalContextPath, run, launcher, listener);
     }
 }
