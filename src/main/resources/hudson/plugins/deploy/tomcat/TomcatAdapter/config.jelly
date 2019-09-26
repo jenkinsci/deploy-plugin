@@ -8,7 +8,7 @@
     <f:textbox />
   </f:entry>
   <f:advanced>
-    <f:entry title="Alternative deployment context" field="context">
+    <f:entry title="Alternative deployment context" field="alternativeDeploymentContext">
       <f:textbox />
     </f:entry>
     <f:entry title="Manager context path" field="path">
