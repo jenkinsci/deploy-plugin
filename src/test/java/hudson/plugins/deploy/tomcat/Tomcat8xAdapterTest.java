@@ -36,7 +36,7 @@ import java.util.Collections;
 /**
  * @author frekele
  */
-public class Tomcat8xAdapterTest extends TomcatAdapterTest {
+public class Tomcat8xAdapterTest {
 
     private Tomcat8xAdapter adapter;
     private static final String url = "http://localhost:8080";
@@ -116,5 +116,9 @@ public class Tomcat8xAdapterTest extends TomcatAdapterTest {
 
         Run<?, ?> run = project.scheduleBuild2(0).get();
         this.jenkinsRule.assertBuildStatus(Result.SUCCESS, run);
+    }
+
+    private String getVariable(String variableName) {
+    	return variableStart + variableName + variableEnd;
     }
 }

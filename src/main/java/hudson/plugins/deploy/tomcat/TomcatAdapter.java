@@ -5,7 +5,6 @@ import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import hudson.plugins.deploy.DeploymentContext;
 import hudson.plugins.deploy.PasswordProtectedAdapterCargo;
 import hudson.util.VariableResolver;
 import org.apache.commons.lang3.StringUtils;
@@ -37,7 +36,7 @@ public abstract class TomcatAdapter extends PasswordProtectedAdapterCargo {
     /**
      * Alternative context that override context defined in plugin main configuration
      */
-    public final DeploymentContext alternativeDeploymentContext;
+    public final String alternativeDeploymentContext;
 
     private final String path;
 
@@ -46,11 +45,7 @@ public abstract class TomcatAdapter extends PasswordProtectedAdapterCargo {
         super(credentialsId);
         this.url = url;
         this.path = path;
-        if(StringUtils.isNotBlank(alternativeDeploymentContext)) {
-            this.alternativeDeploymentContext = DeploymentContext.of(alternativeDeploymentContext);
-        } else {
-            this.alternativeDeploymentContext = null;
-        }
+        this.alternativeDeploymentContext = alternativeDeploymentContext;
     }
 
     @Override
@@ -97,10 +92,8 @@ public abstract class TomcatAdapter extends PasswordProtectedAdapterCargo {
     public void redeployFile(
         FilePath war, String aContextPath, Run<?, ?> run, Launcher launcher, TaskListener listener)
         throws IOException, InterruptedException {
-        String finalContextPath = aContextPath;
-        if(this.alternativeDeploymentContext != null) {
-            finalContextPath = this.alternativeDeploymentContext.toString();
-        }
+        String finalContextPath =
+            StringUtils.defaultIfBlank(this.alternativeDeploymentContext, aContextPath);
         super.redeployFile(war, finalContextPath, run, launcher, listener);
     }
 }

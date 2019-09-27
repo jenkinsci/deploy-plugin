@@ -8,16 +8,10 @@ import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
 import hudson.EnvVars;
 import hudson.model.BuildListener;
 import hudson.model.FreeStyleBuild;
-import hudson.model.StreamBuildListener;
 import hudson.model.FreeStyleProject;
 import hudson.model.Node;
-import hudson.plugins.deploy.DeploymentContext;
+import hudson.model.StreamBuildListener;
 import hudson.slaves.EnvironmentVariablesNodeProperty;
-
-import java.io.ByteArrayOutputStream;
-import java.util.Collections;
-
-import org.apache.commons.lang3.StringUtils;
 import org.codehaus.cargo.container.ContainerType;
 import org.codehaus.cargo.container.configuration.Configuration;
 import org.codehaus.cargo.container.configuration.ConfigurationType;
@@ -30,10 +24,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
+import java.io.ByteArrayOutputStream;
+import java.util.Collections;
+
 /**
  * @author soudmaijer
  */
-public class Tomcat7xAdapterTest extends TomcatAdapterTest {
+public class Tomcat7xAdapterTest {
 
     private Tomcat7xAdapter adapter;
     private static final String url = "http://localhost:8080";
@@ -44,6 +41,8 @@ public class Tomcat7xAdapterTest extends TomcatAdapterTest {
     private static final String usernameVariable = "user";
     private static final String password = "password";
     private static final String alternativeContextVariable = "context";
+    private static final String variableStart = "${";
+    private static final String variableEnd = "}";
 
     @Rule public JenkinsRule jenkinsRule = new JenkinsRule();
 
@@ -99,4 +98,7 @@ public class Tomcat7xAdapterTest extends TomcatAdapterTest {
         Assert.assertEquals(username, config.getPropertyValue(RemotePropertySet.USERNAME));
     }
 
+    private String getVariable(String variableName) {
+    	return variableStart + variableName + variableEnd;
+    }
 }

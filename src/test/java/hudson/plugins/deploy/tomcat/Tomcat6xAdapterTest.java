@@ -30,7 +30,7 @@ import java.util.Collections;
 /**
  * @author frekele
  */
-public class Tomcat6xAdapterTest extends TomcatAdapterTest {
+public class Tomcat6xAdapterTest {
 
     private Tomcat6xAdapter adapter;
     private static final String url = "http://localhost:8080";
@@ -92,5 +92,9 @@ public class Tomcat6xAdapterTest extends TomcatAdapterTest {
 
         Assert.assertEquals(configuredUrl, config.getPropertyValue(RemotePropertySet.URI));
         Assert.assertEquals(username, config.getPropertyValue(RemotePropertySet.USERNAME));
+    }
+
+    private String getVariable(String variableName) {
+        return variableStart + variableName + variableEnd;
     }
 }
