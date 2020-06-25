@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>2.29</version>
+        <version>3.47</version>
     </parent>
 
     <artifactId>deploy</artifactId>
@@ -37,21 +37,41 @@
             <id>frekele</id>
             <name>Leandro Kersting de Freitas</name>
         </developer>
+        <developer>
+            <id>jansohn</id>
+            <name>Robin Jansohn</name>
+        </developer>
     </developers>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <cargo.version>1.6.5</cargo.version>
-        <jenkins.version>1.642.3</jenkins.version>
-        <workflow-cps-plugin.version>2.15</workflow-cps-plugin.version>
+        <java.level>8</java.level>
+        <jenkins.version>2.138.4</jenkins.version>
+        <cargo.version>1.7.6</cargo.version>
+        <deployment-client.version>5.1.0</deployment-client.version>
+        <xml-apis.version>1.4.01</xml-apis.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.jenkins.tools.bom</groupId>
+                <artifactId>bom</artifactId>
+                <version>2.138.1</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
 
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>structs</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>credentials</artifactId>
-            <version>2.1.13</version>
         </dependency>
 
         <dependency>
@@ -74,6 +94,10 @@
                 <exclusion>
                     <groupId>org.apache.ant</groupId>
                     <artifactId>ant</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.ant</groupId>
+                    <artifactId>ant-launcher</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -105,61 +129,45 @@
         <dependency>
             <groupId>org.glassfish.main.deployment</groupId>
             <artifactId>deployment-client</artifactId>
-            <version>3.1.2</version>
+            <version>${deployment-client.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.glassfish.main.hk2</groupId>
+                    <artifactId>tiger-types</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
-            <version>1.4.01</version>
+            <version>${xml-apis.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.jenkins-ci.plugins</groupId>
-            <artifactId>structs</artifactId>
-            <version>1.5</version>
-        </dependency>
-
+        <!-- test dependencies -->
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
-            <artifactId>workflow-job</artifactId>
-            <version>2.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jenkins-ci.plugins.workflow</groupId>
-            <artifactId>workflow-api</artifactId>
-            <version>2.0</version>
+            <artifactId>workflow-cps</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
             <artifactId>workflow-basic-steps</artifactId>
-            <version>2.5</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
-            <artifactId>workflow-step-api</artifactId>
-            <version>2.9</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jenkins-ci.plugins.workflow</groupId>
-            <artifactId>workflow-cps</artifactId>
-            <version>${workflow-cps-plugin.version}</version>
+            <artifactId>workflow-job</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
             <artifactId>workflow-durable-task-step</artifactId>
-            <version>1.14</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
             <artifactId>workflow-cps</artifactId>
-            <version>${workflow-cps-plugin.version}</version>
             <classifier>tests</classifier>
             <scope>test</scope>
         </dependency>

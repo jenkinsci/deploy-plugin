@@ -157,7 +157,7 @@ public abstract class PasswordProtectedAdapterCargo extends DefaultCargoContaine
                         null, "Generated deploy-plugin credentials for " + getContainerId(),
                         userName, password);
                 try {
-                    CredentialsProvider.lookupStores(Jenkins.getInstance())
+                    CredentialsProvider.lookupStores(Jenkins.get())
                             .iterator().next().addCredentials(Domain.global(), newCredentials);
                     generated.add(newCredentials);
                     validCredentials = true;
