@@ -138,6 +138,11 @@ public class DeployPublisher extends Notifier implements SimpleBuildStep, Serial
     @Symbol("deploy")
     @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
+
+        public DescriptorImpl() {
+            Items.XSTREAM2.processAnnotations(PasswordProtectedAdapterCargo.class);
+        }
+
         @Override
         public boolean isApplicable(@SuppressWarnings("rawtypes") Class<? extends AbstractProject> jobType) {
             return true;
