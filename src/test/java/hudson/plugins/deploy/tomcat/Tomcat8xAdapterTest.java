@@ -46,7 +46,8 @@ public class Tomcat8xAdapterTest {
     private static final String username = "usernm";
     private static final String usernameVariable = "user";
     private static final String password = "password";
-    private static final String alternativeContextVariable = "context";
+    private static final String alternativeContext = "context";
+    private static final String alternativeContextVariable = "altcontext";
     private static final String variableStart = "${";
     private static final String variableEnd = "}";
     
@@ -80,6 +81,7 @@ public class Tomcat8xAdapterTest {
     	EnvVars envVars = property.getEnvVars();
     	envVars.put(urlVariable, url);
     	envVars.put(usernameVariable, username);
+    	envVars.put(alternativeContextVariable, alternativeContext);
     	jenkinsRule.jenkins.getGlobalNodeProperties().add(property);
 
         FreeStyleProject project = jenkinsRule.createFreeStyleProject();
