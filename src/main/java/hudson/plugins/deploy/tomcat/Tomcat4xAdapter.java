@@ -2,7 +2,6 @@ package hudson.plugins.deploy.tomcat;
 
 import hudson.Extension;
 import hudson.plugins.deploy.ContainerAdapterDescriptor;
-
 import org.codehaus.cargo.container.tomcat.Tomcat4xRemoteContainer;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -16,8 +15,8 @@ public class Tomcat4xAdapter extends TomcatAdapter {
     private static final long serialVersionUID = -3577537993151201721L;
 
     @DataBoundConstructor
-    public Tomcat4xAdapter(String url, String credentialsId, String path) {
-        super(url, credentialsId, path);
+    public Tomcat4xAdapter(String url, String credentialsId, String alternativeDeploymentContext, String path) {
+        super(url, credentialsId, alternativeDeploymentContext, path);
     }
 
     @Override

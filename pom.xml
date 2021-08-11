@@ -49,6 +49,7 @@
         <cargo.version>1.7.6</cargo.version>
         <deployment-client.version>5.1.0</deployment-client.version>
         <xml-apis.version>1.4.01</xml-apis.version>
+        <commons-lang.version>3.7</commons-lang.version>
     </properties>
 
     <dependencyManagement>
@@ -142,6 +143,11 @@
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
             <version>${xml-apis.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang.version}</version>
         </dependency>
 
         <!-- test dependencies -->
