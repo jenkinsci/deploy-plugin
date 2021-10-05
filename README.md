@@ -41,6 +41,17 @@ Helge Taubert for this idea.
 
 ## Change Log
 
+##### Version 1.16 (Nov 3, 2020)
+
+-   Call XStream.processAnnotations (#[43](https://github.com/jenkinsci/deploy-plugin/pull/43))
+-   Updated parent to latest version (#[37](https://github.com/jenkinsci/deploy-plugin/pull/37))
+-   Changed to azure container instances (#[41](https://github.com/jenkinsci/deploy-plugin/pull/41))
+
+##### Version 1.15 (Aug 1, 2019)
+
+-   Configure alternative context for each Tomcat container
+    ([JENKINS-51440](https://issues.jenkins.io/browse/JENKINS-51440))
+
 ##### Version 1.14 (Jul 24, 2019)
 
 -   deployment plugin does not show any error message when the war file
