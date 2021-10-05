@@ -8,7 +8,7 @@
 Jenkins Deploy Plugin
 =========================
 
-This plugin permits Jenkins to Deploy into containers and application servers. It takes a war/ear file and deploys that to a running remote application server at the end of a build. The implementation is based on [Cargo](http://cargo.codehaus.org/). The list of currently supported containers include:
+This plugin permits Jenkins to Deploy into containers and application servers. It takes a war/ear file and deploys that to a running remote application server at the end of a build. The implementation is based on [Cargo](https://codehaus-cargo.github.io/cargo/Home.html). The list of currently supported containers include:
 
 -   Tomcat 4.x/5.x/6.x/7.x/8.x/9.x
 -   JBoss 3.x/4.x/5.x/6.x/7.x
