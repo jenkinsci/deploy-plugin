@@ -73,8 +73,7 @@ public class PipelineSyntaxTest {
                 "def gf2 = glassfish2( " +
                     "home: 'FAKE', " +
                     "credentialsId: 'FAKE'," +
-                    "adminPort: '1234', " +
-                    "hostname: 'localhost') \n" +
+                    "adminPort: '1234') \n" +
                 "def gf3 = glassfish3( " +
                     "home: 'FAKE', " +
                     "credentialsId: 'FAKE'," +
@@ -98,7 +97,6 @@ public class PipelineSyntaxTest {
                     "url: 'FAKE', " +
                     "credentialsId: 'FAKE') \n" +
                 "def tc8 = tomcat8( " +
-                    "home: 'FAKE', " +
                     "credentialsId: 'FAKE') \n" +
                 "deploy(adapters: [tc7, tc8], war: 'target/app.war', contextPath: 'app')"),
                 false));
