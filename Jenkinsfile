@@ -1,1 +1,1 @@
-buildPlugin(useAci: true)
+buildPlugin(useContainerAgent: true)
