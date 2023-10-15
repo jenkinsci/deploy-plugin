@@ -48,7 +48,7 @@
     <properties>
         <revision>1.17</revision>
         <changelist>-SNAPSHOT</changelist>
-        <jenkins.version>2.332.3</jenkins.version>
+        <jenkins.version>2.361.4</jenkins.version>
         <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
         <cargo.version>1.7.6</cargo.version>
         <deployment-client.version>5.1.0</deployment-client.version>
