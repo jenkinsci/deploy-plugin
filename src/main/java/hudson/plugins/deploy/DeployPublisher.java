@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.annotation.Nonnull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.jenkinsci.Symbol;
 import org.kohsuke.accmod.Restricted;
@@ -86,7 +86,7 @@ public class DeployPublisher extends Notifier implements SimpleBuildStep, Serial
     }
 
     @Override
-    public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
+    public void perform(@NonNull Run<?, ?> run, @NonNull FilePath workspace, @NonNull Launcher launcher, @NonNull TaskListener listener) throws InterruptedException, IOException {
         Result result = run.getResult();
         if (onFailure || result == null || Result.SUCCESS.equals(result)) {
             if (!workspace.exists()) {

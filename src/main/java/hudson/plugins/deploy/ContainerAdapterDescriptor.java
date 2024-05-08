@@ -3,7 +3,7 @@ package hudson.plugins.deploy;
 import java.io.IOException;
 import java.net.URL;
 
-import javax.annotation.CheckForNull;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.accmod.Restricted;
