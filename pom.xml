@@ -48,7 +48,9 @@
     <properties>
         <revision>1.17</revision>
         <changelist>-SNAPSHOT</changelist>
-        <jenkins.version>2.361.4</jenkins.version>
+        <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
+        <jenkins.baseline>2.361</jenkins.baseline>
+        <jenkins.version>${jenkins.baseline}.4</jenkins.version>
         <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
         <cargo.version>1.7.6</cargo.version>
         <deployment-client.version>5.1.0</deployment-client.version>
@@ -58,7 +60,7 @@
         <dependencies>
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
-                <artifactId>bom-2.361.x</artifactId>
+                <artifactId>bom-${jenkins.baseline}.x</artifactId>
                 <version>2102.v854b_fec19c92</version>
                 <scope>import</scope>
                 <type>pom</type>
