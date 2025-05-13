@@ -34,12 +34,11 @@ import hudson.model.Run;
 import hudson.model.Slave;
 import hudson.plugins.deploy.tomcat.Tomcat8xAdapter;
 import jenkins.model.Jenkins;
-import org.junit.ClassRule;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.jvnet.hudson.test.BuildWatcher;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
 import java.util.ArrayList;
 
@@ -48,16 +47,19 @@ import java.util.ArrayList;
  *
  * @author Alex Johnson
  */
-public class RemoteCallableTest {
+@WithJenkins
+class RemoteCallableTest {
 
-    @ClassRule
-    public static BuildWatcher buildWatcher = new BuildWatcher();
-    @Rule
-    public JenkinsRule j = new JenkinsRule();
+    private JenkinsRule j;
 
-    @Ignore("test does not make sense without running Tomcat, log message is dependent on actual Jenkins version")
+    @BeforeEach
+    void setUp(JenkinsRule rule) {
+        j = rule;
+    }
+
+    @Disabled("test does not make sense without running Tomcat, log message is dependent on actual Jenkins version")
     @Test
-    public void testCallableSerialization () throws Exception {
+    void testCallableSerialization() throws Exception {
         j.jenkins.setNumExecutors(0);
         Slave s = j.createOnlineSlave();
 
@@ -72,7 +74,7 @@ public class RemoteCallableTest {
         CredentialsProvider.lookupStores(Jenkins.get()).iterator().next().addCredentials(Domain.global(),
                 new UsernamePasswordCredentialsImpl(CredentialsScope.GLOBAL, "test-id", "", "user", "pass"));
 
-        ArrayList<ContainerAdapter> adapters = new ArrayList<ContainerAdapter>();
+        ArrayList<ContainerAdapter> adapters = new ArrayList<>();
         adapters.add(new Tomcat8xAdapter(j.getURL().toExternalForm(), "test-id", null, "/manager/text"));
         project.getPublishersList().add(new DeployPublisher(adapters, war.getName()));
 

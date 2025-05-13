@@ -9,6 +9,7 @@ import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.IOException;
+import java.io.Serial;
 
 /**
  * Mocks out a ContainerAdapter so that we can actually run the deployer in a trivial way, just to test pipeline compatibility
@@ -16,6 +17,7 @@ import java.io.IOException;
  */
 @Extension
 public class WorkflowCompatibleAdapter extends ContainerAdapter {
+    @Serial
     private static final long serialVersionUID = 4901226580419700415L;
 
     String containerName;
