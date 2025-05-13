@@ -8,6 +8,7 @@ import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import hudson.FilePath;
 import hudson.Launcher;
+import hudson.model.Descriptor;
 import hudson.model.Run;
 import hudson.model.Job;
 import hudson.Util;
@@ -70,7 +71,7 @@ public abstract class PasswordProtectedAdapterCargo extends DefaultCargoContaine
     private String passwordScrambled;
 
     @XStreamOmitField // do not store the password locally, but serialize for remoting
-    public String userName;
+    private String userName;
     @XStreamOmitField
     private String password;
     @CheckForNull
@@ -153,9 +154,15 @@ public abstract class PasswordProtectedAdapterCargo extends DefaultCargoContaine
 
             boolean validCredentials = newCredentials != null;
             if (!validCredentials) {
-                newCredentials = new UsernamePasswordCredentialsImpl(CredentialsScope.GLOBAL,
-                        null, "Generated deploy-plugin credentials for " + getContainerId(),
-                        userName, password);
+                try {
+                    newCredentials = new UsernamePasswordCredentialsImpl(CredentialsScope.GLOBAL,
+                            null, "Generated deploy-plugin credentials for " + getContainerId(),
+                            userName, password);
+                } catch (Descriptor.FormException e) {
+                    Logger.getLogger(DeployPublisher.class.getName()).log(Level.SEVERE, "deploy-plugin credentials could not be created!");
+                    return false;
+                }
+
                 try {
                     CredentialsProvider.lookupStores(Jenkins.get())
                             .iterator().next().addCredentials(Domain.global(), newCredentials);

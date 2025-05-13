@@ -35,6 +35,7 @@ import hudson.model.Slave;
 import hudson.plugins.deploy.tomcat.Tomcat8xAdapter;
 import jenkins.model.Jenkins;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.BuildWatcher;
@@ -54,6 +55,7 @@ public class RemoteCallableTest {
     @Rule
     public JenkinsRule j = new JenkinsRule();
 
+    @Ignore("test does not make sense without running Tomcat, log message is dependent on actual Jenkins version")
     @Test
     public void testCallableSerialization () throws Exception {
         j.jenkins.setNumExecutors(0);
