@@ -71,7 +71,7 @@ public abstract class PasswordProtectedAdapterCargo extends DefaultCargoContaine
     private String passwordScrambled;
 
     @XStreamOmitField // do not store the password locally, but serialize for remoting
-    public String userName;
+    private String userName;
     @XStreamOmitField
     private String password;
     @CheckForNull
