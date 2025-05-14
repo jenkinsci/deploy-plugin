@@ -9,12 +9,14 @@ import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.IOException;
+import java.io.Serial;
 
 /**
  * A ContainerAdapter that uses the AbstractProject method
  */
 @Extension
 public class LegacyAbstractProjectOnlyAdapter extends ContainerAdapter {
+    @Serial
     private static final long serialVersionUID = -7370111436986998619L;
 
     String containerName;

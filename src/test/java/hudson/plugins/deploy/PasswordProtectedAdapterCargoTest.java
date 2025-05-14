@@ -4,33 +4,39 @@ import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
 import hudson.model.AbstractProject;
 import hudson.plugins.deploy.glassfish.GlassFish3xAdapter;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import org.jvnet.hudson.test.recipes.LocalData;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 /**
  * Confirms that old adapters are serialized and deserialized correctly
  *
  * @author Alex Johnson
  */
-public class PasswordProtectedAdapterCargoTest {
-
-    @Rule
-    public JenkinsRule j = new JenkinsRule();
+@WithJenkins
+class PasswordProtectedAdapterCargoTest {
 
     // these need to match what is configured in the @LocalData resource .zip
-    private String username0 = "admin";
-    private String password0 = "schoolbus";
-    private String username1 = "manager";
-    private String password1 = "lighthouse";
+    private final String username0 = "admin";
+    private final String password0 = "schoolbus";
+    private final String username1 = "manager";
+    private final String password1 = "lighthouse";
+
+    private JenkinsRule j;
+
+    @BeforeEach
+    void setUp(JenkinsRule rule) {
+        j = rule;
+    }
 
     @Test
     @LocalData
-    public void testMigrateOldPLainPassword () throws Exception {
+    void testMigrateOldPLainPassword() {
         AbstractProject<?, ?> project = j.getInstance().getItemByFullName("plainPassword", AbstractProject.class);
         DeployPublisher deployer = project.getPublishersList().get(DeployPublisher.class);
 
@@ -44,7 +50,7 @@ public class PasswordProtectedAdapterCargoTest {
 
     @Test
     @LocalData
-    public void testMigrateOldScrambledPassword () throws Exception {
+    void testMigrateOldScrambledPassword() {
         AbstractProject<?, ?> project = j.getInstance().getItemByFullName("scrambledPassword", AbstractProject.class);
         DeployPublisher deployer = project.getPublishersList().get(DeployPublisher.class);
 
@@ -58,7 +64,7 @@ public class PasswordProtectedAdapterCargoTest {
 
     @Test
     @LocalData
-    public void testMatchGeneratedCredentials () throws Exception {
+    void testMatchGeneratedCredentials() throws Exception {
         // create 2 projects and first build
         AbstractProject<?, ?> project0 = j.getInstance().getItemByFullName("scrambledPassword", AbstractProject.class);
         project0.scheduleBuild2(0).get();

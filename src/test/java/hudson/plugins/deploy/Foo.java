@@ -36,7 +36,7 @@ public class Foo {
         h.put(Context.SECURITY_CREDENTIALS, "adminadmin");
         h.put(JMXConnectorFactory.PROTOCOL_PROVIDER_CLASS_LOADER,cl);
         h.put(JMXConnectorFactory.PROTOCOL_PROVIDER_PACKAGES,"weblogic.management.remote");
-        
+
         JMXConnector connector = JMXConnectorFactory.connect(serviceURL, h);
         connector.getMBeanServerConnection();
     }
@@ -57,8 +57,7 @@ public class Foo {
         String hostname = "localhost";
         int port = 7001;
         String protocol = "rmi";
-        String jndiroot = new String("/jndi/iiop://" + hostname + ":" +
-                port + "/");
+        String jndiroot = "/jndi/iiop://" + hostname + ":" + port + "/";
         // weblogic.management.mbeanservers.domainruntime
         // weblogic.management.mbeanservers.runtime
         // weblogic.management.mbeanservers.edit
@@ -79,7 +78,7 @@ public class Foo {
         ObjectName on = new ObjectName("com.bea:Name=DeployerRuntime,Type=DeployerRuntime");
         MBeanServerInvocationHandler.newProxyInstance(con, on, DeployerRuntime.class, false);
         System.out.println(con.invoke(on,"activate",new Object[]{"src/test/simple.war","simple",null,null,null},
-                new String [] { "java.lang.String", "java.lang.String", "java.lang.String", "weblogic.management.deploy.DeploymentData", "java.lang.String" })); 
+                new String [] { "java.lang.String", "java.lang.String", "java.lang.String", "weblogic.management.deploy.DeploymentData", "java.lang.String" }));
 
         // see http://90kts.com/blog/2008/monitoring-weblogic-using-jmx-in-sitescope/
         // the trick is:
@@ -94,7 +93,7 @@ Then provide a default username and password for the IIOP user.
 
 Note: IIOP is already enabled by default, but a username and pwd is not. This change requires a server restart for WL. You must make sure that the username and password is >= 8 digits, otherwise the CORBA connection will fail when using SiteScope.
 
-        
+
          */
     }
 }
