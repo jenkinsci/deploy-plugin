@@ -52,6 +52,7 @@
         <jenkins.baseline>2.479</jenkins.baseline>
         <jenkins.version>${jenkins.baseline}.3</jenkins.version>
         <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
+        <ban-junit4-imports.skip>false</ban-junit4-imports.skip>
         <cargo.version>1.10.13</cargo.version>
         <deployment-client.version>5.1.0</deployment-client.version>
     </properties>
