@@ -52,6 +52,8 @@
         <jenkins.baseline>2.479</jenkins.baseline>
         <jenkins.version>${jenkins.baseline}.3</jenkins.version>
         <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
+        <hpi.bundledArtifacts>admin-cli,admin-util,aopalliance-repackaged,asm-all,asm-repackaged,cargo-core-api-container,cargo-core-api-generic,cargo-core-api-module,cargo-core-api-util,cargo-core-container-glassfish,cargo-core-container-jboss,cargo-core-container-jetty,cargo-core-container-tomcat,cargo-core-container-weblogic,cargo-core-container-wildfly,cargo-licensed-dtds,class-model,classmate,common-util,commons-codec,commons-compress,commons-discovery,commons-io,config-api,config-types,deployment-client,deployment-common,geronimo-j2ee-deployment_1.1_spec,glassfish-api,gmbal,grizzly-config,grizzly-framework,grizzly-http,grizzly-http-server,grizzly-http2,grizzly-portunif,hibernate-validator,hk2,hk2-api,hk2-config,hk2-core,hk2-locator,hk2-runlevel,hk2-utils,internal-api,jackson-annotations,jackson-core,jackson-databind,jackson-module-jaxb-annotations,jakarta.enterprise.deploy-api,jakarta.inject,javassist,jaxen,jboss-logging,jdom2,jettison,jna,jna-platform,json-simple,launcher,ldapbp,logging,management-api,mimepull,nucleus-grizzly-all,pfl-asm,pfl-basic,pfl-basic-tools,pfl-dynamic,pfl-tf,pfl-tf-tools,scattered-archive-api,security,security-services,simple-glassfish-api,ssl-impl,stax-api,validation-api,xz</hpi.bundledArtifacts>
+        <hpi.strictBundledArtifacts>true</hpi.strictBundledArtifacts>
         <ban-junit4-imports.skip>false</ban-junit4-imports.skip>
         <cargo.version>1.10.13</cargo.version>
         <deployment-client.version>5.1.0</deployment-client.version>
