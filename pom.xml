@@ -48,10 +48,10 @@
     <properties>
         <changelist>999999-SNAPSHOT</changelist>
         <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
-        <jenkins.baseline>2.479</jenkins.baseline>
-        <jenkins.version>${jenkins.baseline}.3</jenkins.version>
+        <jenkins.baseline>2.568</jenkins.baseline>
+        <jenkins.version>${jenkins.baseline}.1</jenkins.version>
         <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
-        <hpi.bundledArtifacts>admin-cli,admin-util,aopalliance-repackaged,asm-all,asm-repackaged,cargo-core-api-container,cargo-core-api-generic,cargo-core-api-module,cargo-core-api-util,cargo-core-container-glassfish,cargo-core-container-jboss,cargo-core-container-jetty,cargo-core-container-tomcat,cargo-core-container-weblogic,cargo-core-container-wildfly,cargo-licensed-dtds,class-model,classmate,common-util,commons-codec,commons-compress,commons-discovery,commons-io,config-api,config-types,deployment-client,deployment-common,geronimo-j2ee-deployment_1.1_spec,glassfish-api,gmbal,grizzly-config,grizzly-framework,grizzly-http,grizzly-http-server,grizzly-http2,grizzly-portunif,hibernate-validator,hk2,hk2-api,hk2-config,hk2-core,hk2-locator,hk2-runlevel,hk2-utils,internal-api,jackson-annotations,jackson-core,jackson-databind,jackson-module-jaxb-annotations,jakarta.enterprise.deploy-api,jakarta.inject,javassist,jaxen,jboss-logging,jdom2,jettison,jna,jna-platform,json-simple,launcher,ldapbp,logging,management-api,mimepull,nucleus-grizzly-all,pfl-asm,pfl-basic,pfl-basic-tools,pfl-dynamic,pfl-tf,pfl-tf-tools,scattered-archive-api,security,security-services,simple-glassfish-api,ssl-impl,stax-api,validation-api,xz</hpi.bundledArtifacts>
+        <hpi.bundledArtifacts>admin-cli,admin-util,aopalliance-repackaged,asm-all,asm-repackaged,cargo-core-api-container,cargo-core-api-generic,cargo-core-api-module,cargo-core-api-util,cargo-core-container-glassfish,cargo-core-container-jboss,cargo-core-container-jetty,cargo-core-container-tomcat,cargo-core-container-weblogic,cargo-core-container-wildfly,cargo-licensed-dtds,class-model,classmate,common-util,commons-compress,commons-discovery,config-api,config-types,deployment-client,deployment-common,geronimo-j2ee-deployment_1.1_spec,glassfish-api,gmbal,grizzly-config,grizzly-framework,grizzly-http,grizzly-http-server,grizzly-http2,grizzly-portunif,hibernate-validator,hk2,hk2-api,hk2-config,hk2-core,hk2-locator,hk2-runlevel,hk2-utils,internal-api,jackson-annotations,jackson-core,jackson-databind,jackson-module-jaxb-annotations,jakarta.enterprise.deploy-api,jakarta.inject,javassist,jboss-logging,jdom2,jettison,jna-platform,json-simple,launcher,ldapbp,logging,management-api,mimepull,nucleus-grizzly-all,pfl-asm,pfl-basic,pfl-basic-tools,pfl-dynamic,pfl-tf,pfl-tf-tools,scattered-archive-api,security,security-services,simple-glassfish-api,ssl-impl,stax-api,validation-api,xz</hpi.bundledArtifacts>
         <hpi.strictBundledArtifacts>true</hpi.strictBundledArtifacts>
         <ban-junit4-imports.skip>false</ban-junit4-imports.skip>
         <cargo.version>1.10.28</cargo.version>
@@ -64,7 +64,7 @@
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
                 <artifactId>bom-${jenkins.baseline}.x</artifactId>
-                <version>5054.v620b_5d2b_d5e6</version>
+                <version>6931.vea_a_b_c6fd017d</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -86,6 +86,29 @@
             <groupId>org.codehaus.cargo</groupId>
             <artifactId>cargo-core-api-generic</artifactId>
             <version>${cargo.version}</version>
+            <exclusions>
+                <!-- Provided by Jenkins core -->
+                <exclusion>
+                    <groupId>commons-codec</groupId>
+                    <artifactId>commons-codec</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-io</groupId>
+                    <artifactId>commons-io</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>jaxen</groupId>
+                    <artifactId>jaxen</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>net.java.dev.jna</groupId>
+                    <artifactId>jna</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -110,6 +133,27 @@
                 <exclusion>
                     <groupId>org.apache.commons</groupId>
                     <artifactId>commons-lang3</artifactId>
+                </exclusion>
+                <!-- Provided by Jenkins core -->
+                <exclusion>
+                    <groupId>commons-codec</groupId>
+                    <artifactId>commons-codec</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-io</groupId>
+                    <artifactId>commons-io</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>jaxen</groupId>
+                    <artifactId>jaxen</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>net.java.dev.jna</groupId>
+                    <artifactId>jna</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
